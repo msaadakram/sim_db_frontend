@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "seed:sim-guide": "node scripts/seed-sim-details-guide.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
