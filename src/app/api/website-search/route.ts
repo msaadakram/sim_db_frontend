@@ -5,12 +5,26 @@ import { getMongoDbName } from '@/lib/mongoUri';
 
 const VISITOR_COOKIE = 'sf_visitor_token';
 const TRACKING_COLLECTION = 'website_search_tracking';
+const GATE_EVENT_COLLECTION = 'website_search_gate_events';
 const DEFAULT_FREE_QUERIES = 3;
 const DEFAULT_UNLOCK_TTL_MS = 10 * 60 * 1000;
+const DEFAULT_PROVIDER_TIMEOUT_MS = 12_000;
+const SETTINGS_CACHE_TTL_MS = 30_000;
 
 type ShortlinkProviderName = 'cuty' | 'exe' | 'gplinks' | 'shrinkearn';
 
 const PROVIDER_ROTATION: ShortlinkProviderName[] = ['cuty', 'exe', 'gplinks', 'shrinkearn'];
+
+type GateRuntimeSettings = {
+  gateEnabled: boolean;
+  freeQueries: number;
+  providerRotation: ShortlinkProviderName[];
+  providerEnabled: Record<ShortlinkProviderName, boolean>;
+  failoverEnabled: boolean;
+  unlockTtlMs: number;
+};
+
+let gateSettingsCache: { value: GateRuntimeSettings; expiresAt: number } | null = null;
 
 function getClientIp(request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for');
@@ -29,6 +43,18 @@ function isGateEnabled(): boolean {
 
 function getUnlockSecret(): string {
   return process.env.SHORTLINK_UNLOCK_SECRET || process.env.JWT_SECRET || 'sim-finder-website-gate-secret';
+}
+
+function getUnlockTtlMs(): number {
+  const minutes = Number.parseInt(process.env.SHORTLINK_GATE_UNLOCK_TTL_MINUTES || '', 10);
+  if (!Number.isFinite(minutes) || minutes < 1) return DEFAULT_UNLOCK_TTL_MS;
+  return minutes * 60 * 1000;
+}
+
+function getProviderTimeoutMs(): number {
+  const parsed = Number.parseInt(process.env.SHORTLINK_PROVIDER_TIMEOUT_MS || '', 10);
+  if (!Number.isFinite(parsed) || parsed < 1000) return DEFAULT_PROVIDER_TIMEOUT_MS;
+  return parsed;
 }
 
 function toBase64Url(input: string): string {
@@ -66,7 +92,7 @@ function normalizeProviderResponse(raw: unknown): { ok: boolean; shortUrl?: stri
 
   const data = raw as Record<string, unknown>;
   const status = String(data.status || '').toLowerCase();
-  const shortUrl = String(data.shortenedUrl || data.shortenedURL || data.short_url || data.shortened_url || '').trim();
+  const shortUrl = String(data.shortenedUrl || data.shortenedURL || data.short_url || data.shortened_url || data.short || data.url || '').trim();
 
   if ((status === 'success' || shortUrl) && shortUrl) {
     return { ok: true, shortUrl };
@@ -77,6 +103,109 @@ function normalizeProviderResponse(raw: unknown): { ok: boolean; shortUrl?: stri
     : String(data.message || data.error || 'Short-link creation failed');
 
   return { ok: false, message };
+}
+
+function normalizeProviderRotation(raw: unknown): ShortlinkProviderName[] {
+  if (!Array.isArray(raw)) return [...PROVIDER_ROTATION];
+  const seen = new Set<ShortlinkProviderName>();
+  const cleaned = raw
+    .map((v) => String(v || '').trim().toLowerCase())
+    .filter((v): v is ShortlinkProviderName => PROVIDER_ROTATION.includes(v as ShortlinkProviderName))
+    .filter((v) => {
+      if (seen.has(v)) return false;
+      seen.add(v);
+      return true;
+    });
+
+  const missing = PROVIDER_ROTATION.filter((provider) => !cleaned.includes(provider));
+  return [...cleaned, ...missing];
+}
+
+function normalizeProviderEnabled(raw: unknown): Record<ShortlinkProviderName, boolean> {
+  const defaults: Record<ShortlinkProviderName, boolean> = {
+    cuty: true,
+    exe: true,
+    gplinks: true,
+    shrinkearn: true,
+  };
+
+  if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return defaults;
+
+  const source = raw as Record<string, unknown>;
+  for (const provider of PROVIDER_ROTATION) {
+    if (source[provider] !== undefined) {
+      defaults[provider] = Boolean(source[provider]);
+    }
+  }
+
+  return defaults;
+}
+
+function getSettingsApiUrl(): string {
+  return (process.env.SHORTLINK_SETTINGS_API_URL || '').trim();
+}
+
+async function loadRuntimeSettings(): Promise<GateRuntimeSettings> {
+  const now = Date.now();
+  if (gateSettingsCache && gateSettingsCache.expiresAt > now) {
+    return gateSettingsCache.value;
+  }
+
+  const base: GateRuntimeSettings = {
+    gateEnabled: isGateEnabled(),
+    freeQueries: getFreeQueries(),
+    providerRotation: [...PROVIDER_ROTATION],
+    providerEnabled: {
+      cuty: true,
+      exe: true,
+      gplinks: true,
+      shrinkearn: true,
+    },
+    failoverEnabled: (process.env.SHORTLINK_GATE_FAILOVER_ENABLED || 'true').toLowerCase() !== 'false',
+    unlockTtlMs: getUnlockTtlMs(),
+  };
+
+  const settingsApiUrl = getSettingsApiUrl();
+  if (!settingsApiUrl) {
+    gateSettingsCache = { value: base, expiresAt: now + SETTINGS_CACHE_TTL_MS };
+    return base;
+  }
+
+  try {
+    const res = await fetch(settingsApiUrl, {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(getProviderTimeoutMs()),
+    });
+
+    if (!res.ok) {
+      gateSettingsCache = { value: base, expiresAt: now + SETTINGS_CACHE_TTL_MS };
+      return base;
+    }
+
+    const data = (await res.json()) as Record<string, unknown>;
+    const merged: GateRuntimeSettings = {
+      gateEnabled: data.websiteGateEnabled === undefined ? base.gateEnabled : Boolean(data.websiteGateEnabled),
+      freeQueries: (() => {
+        const parsed = Number.parseInt(String(data.websiteGateFreeQueries ?? ''), 10);
+        return Number.isFinite(parsed) && parsed >= 0 ? parsed : base.freeQueries;
+      })(),
+      providerRotation: normalizeProviderRotation(data.websiteGateProviderRotation),
+      providerEnabled: normalizeProviderEnabled(data.websiteGateProviderEnabled),
+      failoverEnabled:
+        data.websiteGateFailoverEnabled === undefined ? base.failoverEnabled : Boolean(data.websiteGateFailoverEnabled),
+      unlockTtlMs: (() => {
+        const parsed = Number.parseInt(String(data.websiteGateUnlockTtlMinutes ?? ''), 10);
+        if (!Number.isFinite(parsed) || parsed < 1) return base.unlockTtlMs;
+        return parsed * 60 * 1000;
+      })(),
+    };
+
+    gateSettingsCache = { value: merged, expiresAt: now + SETTINGS_CACHE_TTL_MS };
+    return merged;
+  } catch {
+    gateSettingsCache = { value: base, expiresAt: now + SETTINGS_CACHE_TTL_MS };
+    return base;
+  }
 }
 
 function getProviderConfig(provider: ShortlinkProviderName): { endpoint: string; apiKey: string } {
@@ -110,15 +239,23 @@ async function createShortLink(provider: ShortlinkProviderName, destinationUrl: 
     return { ok: false, message: `Missing API key for provider: ${provider}` };
   }
 
-  const alias = `sf${Date.now().toString(36)}`;
   const requestUrl = new URL(endpoint);
   requestUrl.searchParams.set('api', apiKey);
   requestUrl.searchParams.set('url', destinationUrl);
-  requestUrl.searchParams.set('alias', alias);
 
   try {
-    const res = await fetch(requestUrl.toString(), { cache: 'no-store' });
+    const res = await fetch(requestUrl.toString(), {
+      cache: 'no-store',
+      signal: AbortSignal.timeout(getProviderTimeoutMs()),
+    });
+
     const text = await res.text();
+
+    const plainUrlMatch = text.match(/https?:\/\/[^\s"'<>]+/i);
+    if (!text.trim().startsWith('{') && plainUrlMatch?.[0]) {
+      return { ok: true, shortUrl: plainUrlMatch[0] };
+    }
+
     let parsed: unknown = text;
     try {
       parsed = JSON.parse(text);
@@ -126,9 +263,16 @@ async function createShortLink(provider: ShortlinkProviderName, destinationUrl: 
       return { ok: false, message: `Non-JSON response from ${provider}` };
     }
 
-    return normalizeProviderResponse(parsed);
-  } catch {
-    return { ok: false, message: `Failed to connect with provider: ${provider}` };
+    const normalized = normalizeProviderResponse(parsed);
+    if (!normalized.ok && !res.ok && !normalized.message) {
+      return { ok: false, message: `HTTP ${res.status} from ${provider}` };
+    }
+    return normalized;
+  } catch (err) {
+    const message = err instanceof Error && err.name === 'TimeoutError'
+      ? `Timeout from provider: ${provider}`
+      : `Failed to connect with provider: ${provider}`;
+    return { ok: false, message };
   }
 }
 
@@ -154,10 +298,30 @@ async function fetchSearchResult(query: string) {
   return { status: res.status, body: parsed };
 }
 
-function providerForSearchCount(searchCount: number): ShortlinkProviderName {
-  const startAt = getFreeQueries() + 1;
-  const idx = Math.max(0, searchCount - startAt) % PROVIDER_ROTATION.length;
-  return PROVIDER_ROTATION[idx];
+function providerForSearchCount(searchCount: number, freeQueries: number, rotation: ShortlinkProviderName[]): ShortlinkProviderName {
+  const startAt = freeQueries + 1;
+  const idx = Math.max(0, searchCount - startAt) % rotation.length;
+  return rotation[idx];
+}
+
+function getProviderAttemptOrder(
+  searchCount: number,
+  settings: GateRuntimeSettings
+): ShortlinkProviderName[] {
+  const enabledRotation = settings.providerRotation.filter((provider) => settings.providerEnabled[provider] !== false);
+  if (!enabledRotation.length) return [];
+
+  const primary = providerForSearchCount(searchCount, settings.freeQueries, settings.providerRotation);
+  const startIndex = enabledRotation.indexOf(primary);
+  const normalizedStartIndex = startIndex >= 0 ? startIndex : 0;
+
+  const ordered = [
+    ...enabledRotation.slice(normalizedStartIndex),
+    ...enabledRotation.slice(0, normalizedStartIndex),
+  ];
+
+  if (!settings.failoverEnabled) return [ordered[0]];
+  return ordered;
 }
 
 function getRedirectBaseUrl(request: NextRequest): string {
@@ -190,16 +354,27 @@ function getRedirectBaseUrl(request: NextRequest): string {
   return requestOrigin;
 }
 
-function jsonWithVisitorCookie(body: Record<string, unknown>, status: number, visitorToken: string) {
+function jsonWithVisitorCookie(request: NextRequest, body: Record<string, unknown>, status: number, visitorToken: string) {
   const response = NextResponse.json(body, { status });
+  const isSecureRequest = request.nextUrl.protocol === 'https:';
+
   response.cookies.set(VISITOR_COOKIE, visitorToken, {
     httpOnly: true,
     sameSite: 'lax',
-    secure: true,
+    secure: isSecureRequest || process.env.NODE_ENV === 'production',
     path: '/',
     maxAge: 60 * 60 * 24 * 365,
   });
   return response;
+}
+
+async function logGateEvent(dbName: string, payload: Record<string, unknown>) {
+  try {
+    const db = (await getMongoClientPromise()).db(dbName);
+    await db.collection(GATE_EVENT_COLLECTION).insertOne({ ...payload, createdAt: new Date() });
+  } catch {
+    // best-effort logging only
+  }
 }
 
 export async function GET(request: NextRequest) {
@@ -219,9 +394,11 @@ export async function GET(request: NextRequest) {
 
   const cookieToken = request.cookies.get(VISITOR_COOKIE)?.value || randomUUID();
   const ip = getClientIp(request);
+  const dbName = getMongoDbName();
+  const gateSettings = await loadRuntimeSettings();
 
   try {
-    const db = (await getMongoClientPromise()).db(getMongoDbName());
+    const db = (await getMongoClientPromise()).db(dbName);
     const collection = db.collection(TRACKING_COLLECTION);
 
     const now = new Date();
@@ -262,40 +439,88 @@ export async function GET(request: NextRequest) {
       searchCount = Number(updated?.searchCount || 1);
     }
 
-    const freeQueries = getFreeQueries();
+    const freeQueries = gateSettings.freeQueries;
 
-    if (isGateEnabled() && searchCount > freeQueries && !unlockedByToken) {
-      const provider = providerForSearchCount(searchCount);
-      const exp = Date.now() + DEFAULT_UNLOCK_TTL_MS;
-      const unlockToken = signUnlockToken({ token: cookieToken, q: cleaned, type, exp, c: searchCount });
-      const destinationBase = getRedirectBaseUrl(request);
-      const destination = `${destinationBase}/search?query=${encodeURIComponent(cleaned)}&type=${encodeURIComponent(type)}&unlock=${encodeURIComponent(unlockToken)}`;
-      const short = await createShortLink(provider, destination);
-
-      if (!short.ok || !short.shortUrl) {
+    if (gateSettings.gateEnabled && searchCount > freeQueries && !unlockedByToken) {
+      const providers = getProviderAttemptOrder(searchCount, gateSettings);
+      if (!providers.length) {
         return jsonWithVisitorCookie(
+          request,
           {
-            error: 'Unable to create short-link redirect right now.',
-            provider,
-            message: short.message || 'Provider failed',
+            error: 'Short-link providers are unavailable right now.',
+            message: 'No provider is enabled in gate settings',
           },
-          502,
+          503,
           cookieToken
         );
       }
 
-      return jsonWithVisitorCookie(
-        {
-          success: false,
-          requireShortlink: true,
-          provider,
-          redirectUrl: short.shortUrl,
-          meta: {
+      const primaryProvider = providers[0];
+      const exp = Date.now() + gateSettings.unlockTtlMs;
+      const unlockToken = signUnlockToken({ token: cookieToken, q: cleaned, type, exp, c: searchCount });
+      const destinationBase = getRedirectBaseUrl(request);
+      const destination = `${destinationBase}/search?query=${encodeURIComponent(cleaned)}&type=${encodeURIComponent(type)}&unlock=${encodeURIComponent(unlockToken)}`;
+
+      const attempts: Array<{ provider: ShortlinkProviderName; ok: boolean; message?: string }> = [];
+      for (const provider of providers) {
+        const short = await createShortLink(provider, destination);
+        attempts.push({ provider, ok: short.ok, message: short.message });
+
+        if (short.ok && short.shortUrl) {
+          await logGateEvent(dbName, {
+            kind: 'shortlink_redirect',
+            token: cookieToken,
+            ip,
+            q: cleaned,
+            type,
             searchCount,
-            freeQueries,
-          },
+            provider,
+            attempts,
+            success: true,
+          });
+
+          return jsonWithVisitorCookie(
+            request,
+            {
+              success: false,
+              requireShortlink: true,
+              provider,
+              redirectUrl: short.shortUrl,
+              meta: {
+                searchCount,
+                freeQueries,
+                attemptedProviders: attempts,
+                fallbackUsed: provider !== primaryProvider,
+              },
+            },
+            200,
+            cookieToken
+          );
+        }
+      }
+
+      await logGateEvent(dbName, {
+        kind: 'shortlink_redirect',
+        token: cookieToken,
+        ip,
+        q: cleaned,
+        type,
+        searchCount,
+        provider: primaryProvider,
+        attempts,
+        success: false,
+      });
+
+      const lastMessage = attempts[attempts.length - 1]?.message || 'Provider failed';
+      return jsonWithVisitorCookie(
+        request,
+        {
+          error: 'Unable to create short-link redirect right now.',
+          provider: primaryProvider,
+          message: lastMessage,
+          attemptedProviders: attempts,
         },
-        200,
+        502,
         cookieToken
       );
     }
@@ -303,6 +528,7 @@ export async function GET(request: NextRequest) {
     const result = await fetchSearchResult(cleaned);
     if (result.status >= 400) {
       return jsonWithVisitorCookie(
+        request,
         {
           success: false,
           error: (result.body as Record<string, unknown>)?.error || 'Search failed',
@@ -314,6 +540,7 @@ export async function GET(request: NextRequest) {
     }
 
     return jsonWithVisitorCookie(
+      request,
       {
         success: true,
         result: result.body,
@@ -328,6 +555,7 @@ export async function GET(request: NextRequest) {
     );
   } catch {
     return jsonWithVisitorCookie(
+      request,
       {
         success: false,
         error: 'Internal server error',

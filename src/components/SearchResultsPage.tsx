@@ -14,14 +14,18 @@ interface SearchResultsPageProps {
 interface SearchApiResponse {
   success: boolean;
   error?: string;
+  message?: string;
   requireShortlink?: boolean;
   provider?: string;
   redirectUrl?: string;
+  attemptedProviders?: Array<{ provider: string; ok: boolean; message?: string }>;
   result?: any;
   meta?: {
     searchCount?: number;
     freeQueries?: number;
     unlockedByToken?: boolean;
+    fallbackUsed?: boolean;
+    attemptedProviders?: Array<{ provider: string; ok: boolean; message?: string }>;
   };
 }
 
@@ -100,8 +104,8 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
 
         if (!active) return;
 
-        if (data.requireShortlink && data.redirectUrl) {
-          window.location.href = data.redirectUrl;
+        if (data.requireShortlink) {
+          setResponse(data);
           return;
         }
 
@@ -174,6 +178,50 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
               <Loader2 className="w-10 h-10 animate-spin text-accent" />
               <p>Searching records...</p>
             </div>
+          </div>
+        ) : response?.requireShortlink ? (
+          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-5 sm:p-6 text-blue-900">
+            <div className="flex items-start justify-between gap-4 flex-wrap">
+              <div>
+                <p className="font-semibold text-base sm:text-lg">One more step required</p>
+                <p className="mt-1 text-sm sm:text-base text-blue-800/90">
+                  To continue this search, open the short link once and return to this page.
+                </p>
+                <p className="mt-3 text-sm">
+                  Provider: <span className="font-semibold uppercase">{response.provider || 'N/A'}</span>
+                  {response.meta?.fallbackUsed ? (
+                    <span className="ml-2 px-2 py-0.5 rounded-lg bg-blue-100 border border-blue-200 text-xs">Fallback used</span>
+                  ) : null}
+                </p>
+              </div>
+
+              {response.redirectUrl ? (
+                <a
+                  href={response.redirectUrl}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700"
+                >
+                  Open Short Link <ExternalLink className="w-4 h-4" />
+                </a>
+              ) : null}
+            </div>
+
+            {response.meta?.attemptedProviders?.length || response.attemptedProviders?.length ? (
+              <div className="mt-4 bg-white/70 border border-blue-100 rounded-xl p-3">
+                <p className="text-xs font-semibold text-blue-900/80 mb-2">Provider attempts</p>
+                <div className="flex flex-wrap gap-2">
+                  {(response.meta?.attemptedProviders || response.attemptedProviders || []).map((attempt, idx) => (
+                    <span
+                      key={`${attempt.provider}-${idx}`}
+                      className={`px-2 py-1 rounded-lg text-xs border ${attempt.ok ? 'bg-emerald-50 border-emerald-200 text-emerald-700' : 'bg-red-50 border-red-200 text-red-700'}`}
+                    >
+                      {attempt.provider.toUpperCase()} · {attempt.ok ? 'OK' : (attempt.message || 'Failed')}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+
+            {response.message ? <p className="text-xs mt-3 text-blue-900/75">{response.message}</p> : null}
           </div>
         ) : error ? (
           <div className="bg-red-50 border border-red-200 rounded-2xl p-5 sm:p-6 text-red-700">

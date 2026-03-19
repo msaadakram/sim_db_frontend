@@ -39,6 +39,7 @@ Use these variables locally and in Vercel:
 - `MONGODB_DB_NAME` (recommended): Target MongoDB database used by the app. Default is `sim-finder`.
 - `MONGODB_SOURCE_DB_NAME` (optional): Source DB for one-time migration to `MONGODB_DB_NAME` (default fallback: `blog_views`).
 - `SEARCH_API_BASE_URL` (required for search): Base URL of backend API (for example `https://sim-db-backend.vercel.app`).
+- `SHORTLINK_SETTINGS_API_URL` (optional but recommended): URL of admin public gate settings endpoint (for example `https://your-admin-domain/api/public/website-gate-settings`).
 - `SHORTLINK_GATE_ENABLED` (optional): Enable website-only short-link gate after free searches.
 - `SHORTLINK_GATE_FREE_QUERIES` (optional): Number of free searches before short-link redirect starts (default `3`).
 - `SHORTLINK_UNLOCK_SECRET` (required when gate enabled): Secret used to verify short-link return tokens.
