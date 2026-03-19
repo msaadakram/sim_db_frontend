@@ -36,7 +36,15 @@ npm run dev
 Use these variables locally and in Vercel:
 
 - `MONGODB_URI` (required): MongoDB connection string used by `/api/views`.
+- `MONGODB_DB_NAME` (recommended): Target MongoDB database used by the app. Default is `sim-finder`.
+- `MONGODB_SOURCE_DB_NAME` (optional): Source DB for one-time migration to `MONGODB_DB_NAME` (default fallback: `blog_views`).
 - `NEXT_PUBLIC_SITE_URL` (recommended): Full site URL used for canonical, sitemap, and robots metadata.
+
+## Database setup and migration
+
+- The app now resolves MongoDB connection to `MONGODB_DB_NAME` (default: `sim-finder`).
+- If your existing active view data is in another DB (for example `blog_views`), migrate it with:
+   - `npm run migrate:active-db`
 
 If `NEXT_PUBLIC_SITE_URL` is not set, the app automatically falls back to Vercel URL envs in this order:
 

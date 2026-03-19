@@ -1,6 +1,5 @@
 import { MongoClient } from 'mongodb';
-
-const MONGODB_URI = process.env.MONGODB_URI;
+import { withMongoDbName } from './mongoUri';
 
 const options = {};
 
@@ -11,11 +10,14 @@ declare global {
 }
 
 function createClientPromise(): Promise<MongoClient> {
-  if (!MONGODB_URI) {
+  const sourceUri = process.env.MONGODB_URI;
+  if (!sourceUri) {
     throw new Error(
       'Missing MONGODB_URI environment variable. Add it to local env files and Vercel project settings.'
     );
   }
+
+  const MONGODB_URI = withMongoDbName(sourceUri);
 
   if (process.env.NODE_ENV === 'development') {
     if (!global._mongoClientPromise) {

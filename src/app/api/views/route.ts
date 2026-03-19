@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getMongoClientPromise } from '@/lib/mongodb';
+import { getMongoDbName } from '@/lib/mongoUri';
 
-const DB_NAME = 'blog_views';
+const DB_NAME = getMongoDbName();
 const VIEWS_COLLECTION = 'views';
 const VISITORS_COLLECTION = 'visitors';
 
