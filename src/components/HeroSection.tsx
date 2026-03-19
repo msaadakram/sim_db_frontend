@@ -271,7 +271,40 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
                       <p className="text-xs text-primary truncate">Karachi, PK</p>
                     </div>
                   </div>
-                  <div className="h-16 sm:h-20 bg-gradient-to-br from-[#7DB9BC]/10 to-[#7DB9BC]/30 rounded-lg"></div>
+                  <div className="relative h-16 sm:h-20 bg-gradient-to-br from-[#7DB9BC]/10 to-[#7DB9BC]/30 rounded-lg overflow-hidden border border-[#7DB9BC]/20">
+                    {/* Map grid */}
+                    <div
+                      className="absolute inset-0 opacity-35"
+                      style={{
+                        backgroundImage:
+                          'linear-gradient(to right, rgba(125,185,188,0.35) 1px, transparent 1px), linear-gradient(to bottom, rgba(125,185,188,0.35) 1px, transparent 1px)',
+                        backgroundSize: '12px 12px',
+                      }}
+                    />
+
+                    {/* Scanning sweep */}
+                    <motion.div
+                      animate={{ x: ['-110%', '110%'] }}
+                      transition={{ duration: 2.2, repeat: Infinity, ease: 'linear' }}
+                      className="absolute inset-y-0 w-8 bg-gradient-to-r from-transparent via-[#7DB9BC]/40 to-transparent"
+                    />
+
+                    {/* Pulse signal */}
+                    <motion.div
+                      animate={{ scale: [0.8, 1.4, 0.8], opacity: [0.65, 0.15, 0.65] }}
+                      transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+                      className="absolute top-1/2 left-1/2 w-6 h-6 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#7DB9BC]/40"
+                    />
+
+                    {/* Moving location pin */}
+                    <motion.div
+                      animate={{ x: ['-35%', '30%', '-5%', '-35%'], y: ['15%', '-10%', '20%', '15%'] }}
+                      transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                      className="absolute top-1/2 left-1/2"
+                    >
+                      <MapPin className="w-4 h-4 text-[#2A4D5A] drop-shadow-sm" />
+                    </motion.div>
+                  </div>
                 </motion.div>
 
                 {/* Floating Card 2 - Bottom Left - Mobile */}
