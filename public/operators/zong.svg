@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <rect width="120" height="120" rx="16" fill="#FFFFFF"/>
+  <rect x="2" y="2" width="116" height="116" rx="14" fill="#FFFFFF" stroke="#E8E8E8" stroke-width="1"/>
+  <text x="43" y="64" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="32" fill="#8DC63F" letter-spacing="-1">ZO</text>
+  <text x="88" y="64" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="32" fill="#8DC63F" letter-spacing="-1">NG</text>
+  <text x="105" y="40" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="16" fill="#E91E8C">4G</text>
+  <text x="60" y="90" text-anchor="middle" font-family="Arial, sans-serif" font-weight="600" font-size="9" fill="#E91E8C" letter-spacing="4">A NEW DREAM</text>
+</svg>

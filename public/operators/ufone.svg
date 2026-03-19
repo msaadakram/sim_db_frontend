@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <rect width="120" height="120" rx="16" fill="#FFFFFF"/>
+  <rect x="3" y="3" width="114" height="114" rx="14" fill="#FFFFFF" stroke="#F47B20" stroke-width="3"/>
+  <text x="28" y="76" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="42" fill="#8DC63F">u</text>
+  <text x="60" y="72" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="42" fill="#F47B20">fo</text>
+  <text x="94" y="76" text-anchor="middle" font-family="Arial Black, Arial, sans-serif" font-weight="900" font-size="42" fill="#F47B20">ne</text>
+</svg>

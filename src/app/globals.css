@@ -1,0 +1,97 @@
+@import '../styles/fonts.css';
+@import 'tailwindcss';
+@import '../styles/theme.css';
+@import 'tw-animate-css';
+
+@source '../**/*.{js,ts,jsx,tsx}';
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Performance optimizations */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Prevent horizontal scroll */
+body {
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Better touch scrolling on mobile */
+body {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* GPU acceleration for animations */
+.will-change-transform {
+  will-change: transform;
+}
+
+.will-change-opacity {
+  will-change: opacity;
+}
+
+/* Optimize animations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Improve scroll performance */
+* {
+  scroll-margin-top: 5rem;
+}
+
+/* Prevent layout shift */
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Better focus states */
+*:focus-visible {
+  outline: 2px solid hsl(var(--accent));
+  outline-offset: 2px;
+}
+
+/* Smooth transitions */
+a, button {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Loading optimization */
+.lazy-load {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 500px;
+}
+
+/* Sticky bar shine sweep animation */
+@keyframes shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(400%); }
+}
+
+.animate-shine {
+  animation: shine 3s ease-in-out infinite;
+}
+
+/* Infinite marquee loop animation */
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 15s linear infinite;
+}

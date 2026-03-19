@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+  <circle cx="60" cy="60" r="58" fill="#0066B3"/>
+  <circle cx="60" cy="60" r="55" fill="url(#telenorGrad)"/>
+  <defs>
+    <radialGradient id="telenorGrad" cx="40%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#2E8BC0"/>
+      <stop offset="100%" stop-color="#004F8B"/>
+    </radialGradient>
+  </defs>
+  <!-- Telenor swoosh symbol -->
+  <ellipse cx="48" cy="48" rx="14" ry="8" fill="none" stroke="#FFFFFF" stroke-width="3.5" transform="rotate(-30 48 48)"/>
+  <ellipse cx="48" cy="48" rx="14" ry="8" fill="none" stroke="#FFFFFF" stroke-width="3.5" transform="rotate(30 48 48)"/>
+  <ellipse cx="48" cy="48" rx="14" ry="8" fill="none" stroke="#FFFFFF" stroke-width="3.5" transform="rotate(90 48 48)"/>
+  <text x="60" y="88" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="400" font-size="16" fill="#FFFFFF" letter-spacing="1">telenor</text>
+</svg>
