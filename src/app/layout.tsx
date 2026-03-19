@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { getSiteUrl } from '@/lib/site-url';
+
+const SITE_URL = getSiteUrl();
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://simfinder.pk'),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: 'SIM Finder - Advanced SIM Tracking System',
     template: '%s | SIM Finder',

@@ -6,10 +6,11 @@ import { BlogPage as BlogPageContent } from '@/components/BlogPage';
 import { Footer } from '@/components/Footer';
 import { client } from '@/sanity/lib/client';
 import { urlFor } from '@/sanity/lib/image';
+import { getSiteUrl } from '@/lib/site-url';
 
 export const revalidate = 60;
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://simfinder.pk';
+const SITE_URL = getSiteUrl();
 
 export const metadata: Metadata = {
     title: 'Blog - Guides, Tips & SIM Tracking Insights',

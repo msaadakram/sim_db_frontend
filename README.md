@@ -1,36 +1,67 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SIM Finder (Next.js)
 
-## Getting Started
+Production-ready Next.js app with Sanity CMS content and MongoDB-backed view tracking API.
 
-First, run the development server:
+## Prerequisites
+
+- Node.js 20+
+- npm 10+
+
+## Local Setup
+
+1. Install dependencies:
+
+```bash
+npm install
+```
+
+2. Create your local env file:
+
+```bash
+cp .env.example .env.local
+```
+
+3. Fill in `.env.local` values.
+
+4. Run the app:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+5. Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Environment Variables
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Use these variables locally and in Vercel:
 
-## Learn More
+- `NEXT_PUBLIC_SANITY_PROJECT_ID` (required): Sanity project ID.
+- `NEXT_PUBLIC_SANITY_DATASET` (required): Sanity dataset, usually `production`.
+- `NEXT_PUBLIC_SANITY_API_VERSION` (optional): Sanity API version. Default is `2026-02-19`.
+- `MONGODB_URI` (required): MongoDB connection string used by `/api/views`.
+- `NEXT_PUBLIC_SITE_URL` (recommended): Full site URL used for canonical, sitemap, and robots metadata.
 
-To learn more about Next.js, take a look at the following resources:
+If `NEXT_PUBLIC_SITE_URL` is not set, the app automatically falls back to Vercel URL envs in this order:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. `VERCEL_PROJECT_PRODUCTION_URL`
+2. `VERCEL_URL`
+3. `http://localhost:3000` (local fallback)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Vercel Deployment
 
-## Deploy on Vercel
+1. Push this repository to GitHub.
+2. Import the repo in Vercel.
+3. In Vercel project settings, add the environment variables above for:
+   - Production
+   - Preview
+   - Development (optional if you use local `.env.local`)
+4. Set `NEXT_PUBLIC_SITE_URL` to your production domain (for example, `https://yourdomain.com`).
+5. Deploy.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Verify Before Deploying
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+npm run build
+```
+
+The build must pass before deployment.

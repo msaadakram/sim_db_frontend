@@ -3,7 +3,7 @@ import { MongoClient } from 'mongodb';
 const MONGODB_URI = process.env.MONGODB_URI!;
 
 if (!MONGODB_URI) {
-  throw new Error('Please define the MONGODB_URI environment variable in .env.local');
+  throw new Error('Missing MONGODB_URI environment variable. Add it to local env files and Vercel project settings.');
 }
 
 const options = {};

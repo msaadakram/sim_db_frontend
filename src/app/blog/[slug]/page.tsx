@@ -7,10 +7,11 @@ import { BlogSection } from '@/components/BlogSection';
 import { client } from '@/sanity/lib/client';
 import { urlFor } from '@/sanity/lib/image';
 import { notFound } from 'next/navigation';
+import { getSiteUrl } from '@/lib/site-url';
 
 export const revalidate = 60;
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://simfinder.pk';
+const SITE_URL = getSiteUrl();
 
 const Footer = lazy(() => import('@/components/Footer').then(m => ({ default: m.Footer })));
 

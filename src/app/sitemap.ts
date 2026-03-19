@@ -1,7 +1,8 @@
 import { MetadataRoute } from 'next';
 import { client } from '@/sanity/lib/client';
+import { getSiteUrl } from '@/lib/site-url';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://simfinder.pk';
+const SITE_URL = getSiteUrl();
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const posts = await client.fetch<{ slug: string; publishedAt: string }[]>(
