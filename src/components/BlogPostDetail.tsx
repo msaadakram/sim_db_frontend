@@ -6,6 +6,7 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PortableText, PortableTextComponents } from '@portabletext/react';
+import { NewsletterSubscribeSection } from './NewsletterSubscribeSection';
 
 interface PostData {
   title: string;
@@ -828,6 +829,13 @@ export function BlogPostDetail({ post, relatedPosts }: BlogPostDetailProps) {
                   </div>
                 </motion.div>
               )}
+
+              <div className="mt-16 sm:mt-20 md:mt-24">
+                <NewsletterSubscribeSection
+                  title="Enjoyed this article?"
+                  description="Subscribe to get new blog posts and SIM insights delivered first."
+                />
+              </div>
             </div>
           </div>
         </div>

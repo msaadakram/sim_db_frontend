@@ -6,6 +6,7 @@ import { HeroSection } from '@/components/HeroSection';
 import { LazySection } from '@/components/LazySection';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { BlogSection } from '@/components/BlogSection';
+import { NewsletterSubscribeSection } from '@/components/NewsletterSubscribeSection';
 import { useRouter } from 'next/navigation';
 
 // Lazy load components
@@ -94,6 +95,11 @@ export function HomeContent({ blogPosts }: HomeContentProps) {
                 </Suspense>
 
                 <BlogSection initialPosts={blogPosts} />
+
+                <NewsletterSubscribeSection
+                    title="Get SIM & Security Updates"
+                    description="Join our newsletter for the latest guides, tips, and tracking insights."
+                />
 
                 <Suspense fallback={<SectionLoader />}>
                     <LazySection>
