@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Calendar, User, ArrowRight, Clock, Tag, Search, Filter, Sparkles } from 'lucide-react';
+import { Calendar, User, ArrowRight, Clock, Tag, Search, Sparkles } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ImageWithFallback } from './figma/ImageWithFallback';
@@ -46,13 +46,14 @@ export function BlogPage({ posts }: BlogPageProps) {
       { threshold: 0.1 }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+    const currentSection = sectionRef.current;
+    if (currentSection) {
+      observer.observe(currentSection);
     }
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
+      if (currentSection) {
+        observer.unobserve(currentSection);
       }
     };
   }, []);

@@ -10,6 +10,8 @@ interface SearchResultsPageProps {
 }
 
 export function SearchResultsPage({ searchQuery, searchType, onBack }: SearchResultsPageProps) {
+  const trimmedQuery = searchQuery.trim();
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-muted/10 to-white pt-16 sm:pt-20 md:pt-24 pb-8 sm:pb-12 md:pb-16">
       <div className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
@@ -46,6 +48,11 @@ export function SearchResultsPage({ searchQuery, searchType, onBack }: SearchRes
             <p className="text-sm sm:text-base text-muted-foreground">
               The lookup service is currently not available. Please check back later.
             </p>
+            {trimmedQuery ? (
+              <p className="text-xs sm:text-sm text-muted-foreground/80">
+                Last request: <span className="font-medium text-foreground">{trimmedQuery}</span> ({searchType.toUpperCase()})
+              </p>
+            ) : null}
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

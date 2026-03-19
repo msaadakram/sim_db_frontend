@@ -3,7 +3,6 @@
 import { motion } from 'motion/react';
 import { CheckCircle, ArrowRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
 
 export function ServiceSection() {
   const [isVisible, setIsVisible] = useState(false);
@@ -19,13 +18,14 @@ export function ServiceSection() {
       { threshold: 0.1 }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+    const currentSection = sectionRef.current;
+    if (currentSection) {
+      observer.observe(currentSection);
     }
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
+      if (currentSection) {
+        observer.unobserve(currentSection);
       }
     };
   }, []);

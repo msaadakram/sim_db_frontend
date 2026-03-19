@@ -67,10 +67,6 @@ export function HomeContent({ blogPosts }: HomeContentProps) {
         router.push(`/search?query=${encodeURIComponent(query)}&type=${type}`);
     };
 
-    const handlePostClick = (slug: string) => {
-        router.push(`/blog/${slug}`);
-    };
-
     return (
         <div className="min-h-screen overflow-x-hidden">
             <Header />
@@ -107,7 +103,7 @@ export function HomeContent({ blogPosts }: HomeContentProps) {
                     </LazySection>
                 </Suspense>
 
-                <BlogSection onPostClick={handlePostClick} initialPosts={blogPosts} />
+                <BlogSection initialPosts={blogPosts} />
 
                 <Suspense fallback={<SectionLoader />}>
                     <LazySection>

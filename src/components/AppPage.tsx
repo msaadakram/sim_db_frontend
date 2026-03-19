@@ -1,13 +1,11 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Smartphone, Shield, Zap, MapPin, CheckCircle, Star, Download, Apple, Play, Phone, Lock, Globe, Search, Bell, Users, ArrowRight, ChevronDown } from 'lucide-react';
+import { Smartphone, Shield, Zap, MapPin, CheckCircle, Star, Download, Apple, Play, Phone, Globe, Search, Bell, Users, ArrowRight, ChevronDown } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
-import { ImageWithFallback } from './figma/ImageWithFallback';
 
 export function AppPage() {
   const [isVisible, setIsVisible] = useState(false);
-  const [activeTab, setActiveTab] = useState<'ios' | 'android'>('ios');
   const sectionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -24,13 +22,14 @@ export function AppPage() {
       { threshold: 0.1 }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+    const currentSection = sectionRef.current;
+    if (currentSection) {
+      observer.observe(currentSection);
     }
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
+      if (currentSection) {
+        observer.unobserve(currentSection);
       }
     };
   }, []);

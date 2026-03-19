@@ -1,6 +1,6 @@
 'use client';
 
-import { Search, Menu, X, Phone, MapPin, Shield, Smartphone, Home, Star, BookOpen, FileText, Mail } from 'lucide-react';
+import { Menu, X, Phone, Shield, Smartphone, Home, Star, BookOpen, Mail } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
 import Link from 'next/link';
@@ -286,49 +286,6 @@ function NavLink({ href, children, icon }: { href: string; children: React.React
         className="absolute bottom-0 left-0 right-0 h-0.5 bg-gradient-to-r from-accent to-primary rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
         layoutId="underline"
       />
-    </motion.a>
-  );
-}
-
-// Mobile Navigation Link Component
-function MobileNavLink({
-  href,
-  children,
-  onClick,
-  icon
-}: {
-  href: string;
-  children: React.ReactNode;
-  onClick: () => void;
-  icon?: React.ReactNode;
-}) {
-  return (
-    <motion.a
-      href={href}
-      onClick={onClick}
-      whileHover={{ x: 5 }}
-      whileTap={{ scale: 0.98 }}
-      className="flex items-center gap-3 px-5 py-4 text-foreground hover:text-accent hover:bg-muted/50 rounded-2xl transition-all duration-300 text-base font-medium group"
-      style={{ fontFamily: "'Inter', sans-serif" }}
-    >
-      {icon && (
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent/10 to-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-          {icon}
-        </div>
-      )}
-      {!icon && (
-        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-accent/10 to-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-          <div className="w-2 h-2 rounded-full bg-gradient-to-r from-accent to-primary"></div>
-        </div>
-      )}
-      <span className="flex-1">{children}</span>
-      <motion.div
-        className="w-6 h-6 rounded-full bg-accent/0 group-hover:bg-accent/10 flex items-center justify-center transition-colors"
-      >
-        <svg className="w-4 h-4 text-accent opacity-0 group-hover:opacity-100 transition-opacity" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-        </svg>
-      </motion.div>
     </motion.a>
   );
 }

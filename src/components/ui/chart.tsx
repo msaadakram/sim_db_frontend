@@ -118,7 +118,7 @@ function ChartTooltipContent({
   color,
   nameKey,
   labelKey,
-}: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}:  
   any & {
     hideLabel?: boolean;
     hideIndicator?: boolean;
@@ -256,7 +256,7 @@ function ChartLegendContent({
   payload,
   verticalAlign = "bottom",
   nameKey,
-}: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+}:  
   any & {
     hideIcon?: boolean;
     nameKey?: string;

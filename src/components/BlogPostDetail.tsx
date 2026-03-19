@@ -398,9 +398,12 @@ const createPortableTextComponents = (): PortableTextComponents => ({
       return (
         <figure className="my-10">
           <div className="rounded-2xl overflow-hidden shadow-lg">
-            <img
+            <Image
               src={imageUrl}
               alt={value?.alt || 'Blog image'}
+              width={1200}
+              height={675}
+              sizes="(max-width: 768px) 100vw, 1200px"
               className="w-full h-auto object-cover"
               loading="lazy"
             />

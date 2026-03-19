@@ -21,7 +21,6 @@ interface BlogPost {
 }
 
 interface BlogSectionProps {
-  onPostClick?: (slug: string) => void;
   initialPosts?: BlogPost[];
 }
 
@@ -32,7 +31,7 @@ function estimateReadingTime(text: string): string {
   return `${minutes} min read`;
 }
 
-export function BlogSection({ onPostClick, initialPosts }: BlogSectionProps) {
+export function BlogSection({ initialPosts }: BlogSectionProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
@@ -92,7 +91,7 @@ export function BlogSection({ onPostClick, initialPosts }: BlogSectionProps) {
     }
 
     fetchPosts();
-  }, []);
+  }, [initialPosts]);
 
   const categories = ['All', 'Guide', 'Security', 'Technology', 'Business'];
 
@@ -110,13 +109,14 @@ export function BlogSection({ onPostClick, initialPosts }: BlogSectionProps) {
       { threshold: 0.1 }
     );
 
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
+    const currentSection = sectionRef.current;
+    if (currentSection) {
+      observer.observe(currentSection);
     }
 
     return () => {
-      if (sectionRef.current) {
-        observer.unobserve(sectionRef.current);
+      if (currentSection) {
+        observer.unobserve(currentSection);
       }
     };
   }, []);
