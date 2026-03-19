@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useEffect, lazy, Suspense } from 'react';
+import { useEffect, lazy, Suspense } from 'react';
 import { Header } from '@/components/Header';
 import { HeroSection } from '@/components/HeroSection';
 import { LazySection } from '@/components/LazySection';
 import { ScrollToTop } from '@/components/ScrollToTop';
-import { LoadingScreen } from '@/components/LoadingScreen';
 import { BlogSection } from '@/components/BlogSection';
 import { useRouter } from 'next/navigation';
 
@@ -46,22 +45,13 @@ interface HomeContentProps {
 
 export function HomeContent({ blogPosts }: HomeContentProps) {
     const router = useRouter();
-    const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         document.documentElement.style.scrollBehavior = 'smooth';
-        const timer = setTimeout(() => {
-            setIsLoading(false);
-        }, 2000);
         return () => {
-            clearTimeout(timer);
             document.documentElement.style.scrollBehavior = 'auto';
         };
     }, []);
-
-    if (isLoading) {
-        return <LoadingScreen />;
-    }
 
     const handleSearch = (query: string, type: 'mobile' | 'cnic') => {
         router.push(`/search?query=${encodeURIComponent(query)}&type=${type}`);
