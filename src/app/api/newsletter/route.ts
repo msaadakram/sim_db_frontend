@@ -59,7 +59,8 @@ export async function POST(request: NextRequest) {
         ? 'Email is already subscribed.'
         : 'Subscribed successfully.',
     });
-  } catch {
+  } catch (err) {
+    console.error('Newsletter subscription error:', err);
     return NextResponse.json({ error: 'Unable to save email right now. Please try again.' }, { status: 500 });
   }
 }
