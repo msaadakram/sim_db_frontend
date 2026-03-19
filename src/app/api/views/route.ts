@@ -5,6 +5,26 @@ const DB_NAME = 'blog_views';
 const VIEWS_COLLECTION = 'views';
 const VISITORS_COLLECTION = 'visitors';
 
+declare global {
+  var __viewCounts: Map<string, number> | undefined;
+  var __viewVisitors: Set<string> | undefined;
+}
+
+function getFallbackStores() {
+  if (!global.__viewCounts) {
+    global.__viewCounts = new Map<string, number>();
+  }
+
+  if (!global.__viewVisitors) {
+    global.__viewVisitors = new Set<string>();
+  }
+
+  return {
+    counts: global.__viewCounts,
+    visitors: global.__viewVisitors,
+  };
+}
+
 function getClientIP(request: NextRequest): string {
   const forwarded = request.headers.get('x-forwarded-for');
   if (forwarded) {
@@ -20,7 +40,7 @@ function getClientIP(request: NextRequest): string {
 // GET: Retrieve view count for a slug
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const slug = searchParams.get('slug');
+  const slug = searchParams.get('slug')?.trim();
 
   if (!slug) {
     return NextResponse.json({ error: 'Slug is required' }, { status: 400 });
@@ -35,7 +55,8 @@ export async function GET(request: NextRequest) {
       views: viewDoc?.count || 0,
     });
   } catch {
-    return NextResponse.json({ views: 0 });
+    const { counts } = getFallbackStores();
+    return NextResponse.json({ views: counts.get(slug) || 0 });
   }
 }
 
@@ -45,7 +66,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    ({ slug } = body);
+    slug = typeof body?.slug === 'string' ? body.slug.trim() : undefined;
   } catch {
     return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
   }
@@ -95,6 +116,14 @@ export async function POST(request: NextRequest) {
       views: viewDoc?.count || 0,
     });
   } catch {
-    return NextResponse.json({ error: 'View service unavailable' }, { status: 503 });
+    const { counts, visitors } = getFallbackStores();
+    const visitorKey = `${slug}:${getClientIP(request)}`;
+
+    if (!visitors.has(visitorKey)) {
+      visitors.add(visitorKey);
+      counts.set(slug, (counts.get(slug) || 0) + 1);
+    }
+
+    return NextResponse.json({ views: counts.get(slug) || 0 });
   }
 }

@@ -217,11 +217,17 @@ function useViewCount(slug: string) {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ slug }),
         });
+        if (!res.ok) {
+          throw new Error('POST /api/views failed');
+        }
         const data = await res.json();
         setViews(data.views || 0);
       } catch {
         try {
-          const res = await fetch(`/api/views?slug=${slug}`);
+          const res = await fetch(`/api/views?slug=${encodeURIComponent(slug)}`);
+          if (!res.ok) {
+            throw new Error('GET /api/views failed');
+          }
           const data = await res.json();
           setViews(data.views || 0);
         } catch {
