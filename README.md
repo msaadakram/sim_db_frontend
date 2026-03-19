@@ -1,6 +1,6 @@
 # SIM Finder (Next.js)
 
-Production-ready Next.js app with Sanity CMS content and MongoDB-backed view tracking API.
+Production-ready Next.js app with local blog content and MongoDB-backed view tracking API.
 
 ## Prerequisites
 
@@ -35,9 +35,6 @@ npm run dev
 
 Use these variables locally and in Vercel:
 
-- `NEXT_PUBLIC_SANITY_PROJECT_ID` (required): Sanity project ID.
-- `NEXT_PUBLIC_SANITY_DATASET` (required): Sanity dataset, usually `production`.
-- `NEXT_PUBLIC_SANITY_API_VERSION` (optional): Sanity API version. Default is `2026-02-19`.
 - `MONGODB_URI` (required): MongoDB connection string used by `/api/views`.
 - `NEXT_PUBLIC_SITE_URL` (recommended): Full site URL used for canonical, sitemap, and robots metadata.
 

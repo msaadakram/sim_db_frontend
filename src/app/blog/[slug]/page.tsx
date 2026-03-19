@@ -4,8 +4,7 @@ import { Header } from '@/components/Header';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { BlogPostDetail } from '@/components/BlogPostDetail';
 import { BlogSection } from '@/components/BlogSection';
-import { client, isSanityConfigured } from '@/sanity/lib/client';
-import { urlFor } from '@/sanity/lib/image';
+import { getBlogPostBySlug, getRelatedBlogPosts } from '@/lib/blog';
 import { notFound } from 'next/navigation';
 import { getSiteUrl } from '@/lib/site-url';
 
@@ -23,90 +22,18 @@ function SectionLoader() {
     );
 }
 
-function estimateReadingTime(text: string): string {
-    const wordsPerMinute = 200;
-    const words = text.trim().split(/\s+/).length;
-    const minutes = Math.ceil(words / wordsPerMinute);
-    return `${minutes} min read`;
-}
-
-function extractBodyText(body: any[]): string {
-    if (!body) return '';
-    return body
-        .map((block: any) =>
-            block._type === 'block'
-                ? block.children?.map((child: any) => child.text).join('')
-                : ''
-        )
-        .join(' ');
-}
-
-async function getPost(slug: string) {
-    if (!isSanityConfigured) {
-        return null;
-    }
-
-    const query = `*[_type == "post" && slug.current == $slug][0]{
-        _id,
-        title,
-        "slug": slug.current,
-        mainImage,
-        publishedAt,
-        excerpt,
-        seoTitle,
-        seoDescription,
-        "categories": categories[]->title,
-        "author": author->name,
-        body
-    }`;
-
-    return await client.fetch(query, { slug });
-}
-
-async function getRelatedPosts(slug: string) {
-    if (!isSanityConfigured) {
-        return [];
-    }
-
-    const query = `*[_type == "post" && slug.current != $slug] | order(publishedAt desc)[0...3]{
-        _id,
-        title,
-        "slug": slug.current,
-        mainImage,
-        publishedAt,
-        "categories": categories[]->title,
-        "author": author->name,
-        body
-    }`;
-
-    const data = await client.fetch(query, { slug });
-
-    return data.map((post: any) => {
-        const bodyText = extractBodyText(post.body);
-        return {
-            id: post._id,
-            title: post.title,
-            slug: post.slug,
-            image: post.mainImage ? urlFor(post.mainImage).width(800).url() : '',
-            category: post.categories?.[0] || 'Uncategorized',
-            readTime: estimateReadingTime(bodyText),
-        };
-    });
-}
-
 // Dynamic SEO metadata
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
     const { slug } = await params;
-    const post = await getPost(slug);
+    const post = getBlogPostBySlug(slug);
 
     if (!post) {
         return { title: 'Post Not Found' };
     }
 
-    const bodyText = extractBodyText(post.body);
     const title = post.seoTitle || post.title;
-    const description = post.seoDescription || post.excerpt || bodyText.slice(0, 155);
-    const imageUrl = post.mainImage ? urlFor(post.mainImage).width(1200).height(630).url() : '';
+    const description = post.seoDescription || post.excerpt;
+    const imageUrl = post.image || '';
     const canonicalUrl = `${SITE_URL}/blog/${slug}`;
 
     return {
@@ -136,31 +63,25 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
-    const post = await getPost(slug);
+    const post = getBlogPostBySlug(slug);
 
     if (!post) {
         notFound();
     }
 
-    const bodyText = extractBodyText(post.body);
-
     const postData = {
         title: post.title,
         slug: post.slug,
         author: post.author || 'Anonymous',
-        date: new Date(post.publishedAt).toLocaleDateString('en-US', {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        }),
-        readTime: estimateReadingTime(bodyText),
-        category: post.categories?.[0] || 'Uncategorized',
-        image: post.mainImage ? urlFor(post.mainImage).width(1200).url() : '',
-        excerpt: post.excerpt || bodyText.slice(0, 155),
+        date: post.date,
+        readTime: post.readTime,
+        category: post.category,
+        image: post.image,
+        excerpt: post.excerpt,
         body: post.body || [],
     };
 
-    const relatedPosts = await getRelatedPosts(slug);
+    const relatedPosts = getRelatedBlogPosts(slug);
 
     // JSON-LD structured data
     const jsonLd = {

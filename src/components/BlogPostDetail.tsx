@@ -6,7 +6,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PortableText, PortableTextComponents } from '@portabletext/react';
-import { urlFor } from '@/sanity/lib/image';
 
 interface PostData {
   title: string;
@@ -391,9 +390,8 @@ const createPortableTextComponents = (): PortableTextComponents => ({
   },
   types: {
     image: ({ value }) => {
-      if (!value?.asset) return null;
-
-      const imageUrl = urlFor(value).width(1200).auto('format').url();
+      const imageUrl = value?.url || value?.asset?.url;
+      if (!imageUrl) return null;
 
       return (
         <figure className="my-10">

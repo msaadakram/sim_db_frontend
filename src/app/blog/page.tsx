@@ -4,8 +4,7 @@ import { Header } from '@/components/Header';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { BlogPage as BlogPageContent } from '@/components/BlogPage';
 import { Footer } from '@/components/Footer';
-import { client, isSanityConfigured } from '@/sanity/lib/client';
-import { urlFor } from '@/sanity/lib/image';
+import { getAllBlogPosts } from '@/lib/blog';
 import { getSiteUrl } from '@/lib/site-url';
 
 export const revalidate = 60;
@@ -40,58 +39,8 @@ function SectionLoader() {
     );
 }
 
-function estimateReadingTime(text: string): string {
-    const wordsPerMinute = 200;
-    const words = text.trim().split(/\s+/).length;
-    const minutes = Math.ceil(words / wordsPerMinute);
-    return `${minutes} min read`;
-}
-
-async function getPosts() {
-    if (!isSanityConfigured) {
-        return [];
-    }
-
-    const query = `*[_type == "post"] | order(publishedAt desc) {
-        _id,
-        title,
-        "slug": slug.current,
-        mainImage,
-        publishedAt,
-        excerpt,
-        "categories": categories[]->title,
-        "author": author->name,
-        body
-    }`;
-
-    const data = await client.fetch(query);
-
-    return data.map((post: any) => {
-        const bodyText = post.body?.map((block: any) =>
-            block._type === 'block' ? block.children?.map((child: any) => child.text).join('') : ''
-        ).join(' ') || '';
-
-        return {
-            id: post._id,
-            slug: post.slug,
-            title: post.title,
-            excerpt: post.excerpt || (bodyText.slice(0, 150) + (bodyText.length > 150 ? '...' : '')),
-            author: post.author || 'Anonymous',
-            date: new Date(post.publishedAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-            }),
-            readTime: estimateReadingTime(bodyText),
-            category: post.categories?.[0] || 'Uncategorized',
-            image: post.mainImage ? urlFor(post.mainImage).width(800).url() : '',
-            featured: false
-        };
-    });
-}
-
 export default async function BlogListPage() {
-    const posts = await getPosts();
+    const posts = getAllBlogPosts();
 
     return (
         <div className="min-h-screen overflow-x-hidden">

@@ -1,5 +1,6 @@
 export interface BlogPost {
   id: number;
+  slug?: string;
   title: string;
   excerpt: string;
   author: string;
@@ -21,6 +22,7 @@ export interface BlogPost {
 export const blogPosts: BlogPost[] = [
   {
     id: 1,
+    slug: 'how-to-check-sim-details-pakistan-2026-guide',
     title: 'Complete Guide: How to Check SIM Card Information in Pakistan',
     excerpt: 'Learn everything about tracking SIM card details including owner information, CNIC verification, and live location tracking with our comprehensive guide.',
     author: 'Ahmad Khan',

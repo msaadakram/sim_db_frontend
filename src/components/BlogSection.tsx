@@ -5,8 +5,7 @@ import { Calendar, User, ArrowRight, Clock, Tag, TrendingUp, Sparkles } from 'lu
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ImageWithFallback } from './figma/ImageWithFallback';
-import { client } from '@/sanity/lib/client';
-import { urlFor } from '@/sanity/lib/image';
+import { getHomepageBlogPosts } from '@/lib/blog';
 
 interface BlogPost {
   id: string;
@@ -24,74 +23,14 @@ interface BlogSectionProps {
   initialPosts?: BlogPost[];
 }
 
-function estimateReadingTime(text: string): string {
-  const wordsPerMinute = 200;
-  const words = text.trim().split(/\s+/).length;
-  const minutes = Math.ceil(words / wordsPerMinute);
-  return `${minutes} min read`;
-}
-
 export function BlogSection({ initialPosts }: BlogSectionProps) {
+  const fallbackPosts = getHomepageBlogPosts(6);
   const [isVisible, setIsVisible] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [hoveredCard, setHoveredCard] = useState<string | null>(null);
-  const [posts, setPosts] = useState<BlogPost[]>(initialPosts || []);
-  const [loading, setLoading] = useState(!initialPosts);
+  const [posts] = useState<BlogPost[]>((initialPosts && initialPosts.length > 0 ? initialPosts : fallbackPosts) as BlogPost[]);
+  const [loading] = useState(false);
   const sectionRef = useRef<HTMLElement>(null);
-
-  // Fetch posts from Sanity on mount (only if no initialPosts provided)
-  useEffect(() => {
-    if (initialPosts && initialPosts.length > 0) return;
-
-    async function fetchPosts() {
-      try {
-        const query = `*[_type == "post"] | order(publishedAt desc)[0...6] {
-          _id,
-          title,
-          "slug": slug.current,
-          mainImage,
-          publishedAt,
-          "categories": categories[]->title,
-          "author": author->name,
-          body
-        }`;
-
-        const data = await client.fetch(query);
-
-        const mappedPosts: BlogPost[] = data.map((post: any) => {
-          const bodyText = post.body?.map((block: any) =>
-            block._type === 'block' ? block.children?.map((child: any) => child.text).join('') : ''
-          ).join(' ') || '';
-
-          return {
-            id: post._id,
-            slug: post.slug,
-            title: post.title,
-            excerpt: bodyText.slice(0, 150) + (bodyText.length > 150 ? '...' : ''),
-            author: post.author || 'Anonymous',
-            date: post.publishedAt
-              ? new Date(post.publishedAt).toLocaleDateString('en-US', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })
-              : 'Recently',
-            readTime: estimateReadingTime(bodyText),
-            category: post.categories?.[0] || 'Uncategorized',
-            image: post.mainImage ? urlFor(post.mainImage).width(800).url() : '',
-          };
-        });
-
-        setPosts(mappedPosts);
-      } catch (err) {
-        console.error('Failed to fetch blog posts:', err);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchPosts();
-  }, [initialPosts]);
 
   const categories = ['All', 'Guide', 'Security', 'Technology', 'Business'];
 
