@@ -27,6 +27,10 @@ export function BlogPage({ posts }: BlogPageProps) {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
   const [hoveredCard, setHoveredCard] = useState<string | number | null>(null);
+  const [subscriberEmail, setSubscriberEmail] = useState('');
+  const [isSubscribing, setIsSubscribing] = useState(false);
+  const [subscriptionMessage, setSubscriptionMessage] = useState('');
+  const [subscriptionError, setSubscriptionError] = useState('');
   const sectionRef = useRef<HTMLElement>(null);
 
 
@@ -65,6 +69,48 @@ export function BlogPage({ posts }: BlogPageProps) {
       post.author.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/i;
+
+  const handleSubscribe = async () => {
+    const email = subscriberEmail.trim().toLowerCase();
+    setSubscriptionMessage('');
+    setSubscriptionError('');
+
+    if (!email) {
+      setSubscriptionError('Please enter your email address.');
+      return;
+    }
+
+    if (!emailRegex.test(email)) {
+      setSubscriptionError('Please enter a valid email address.');
+      return;
+    }
+
+    try {
+      setIsSubscribing(true);
+
+      const response = await fetch('/api/newsletter', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setSubscriptionError(data?.error || 'Unable to subscribe right now.');
+        return;
+      }
+
+      setSubscriptionMessage(data?.message || 'Subscribed successfully.');
+      setSubscriberEmail('');
+    } catch {
+      setSubscriptionError('Network issue. Please try again.');
+    } finally {
+      setIsSubscribing(false);
+    }
+  };
 
   return (
     <div className="min-h-screen overflow-x-hidden bg-white">
@@ -366,17 +412,44 @@ export function BlogPage({ posts }: BlogPageProps) {
             <input
               type="email"
               placeholder="Enter your email"
+              value={subscriberEmail}
+              onChange={(e) => {
+                setSubscriberEmail(e.target.value);
+                if (subscriptionError) setSubscriptionError('');
+                if (subscriptionMessage) setSubscriptionMessage('');
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  void handleSubscribe();
+                }
+              }}
+              disabled={isSubscribing}
               className="flex-1 px-4 sm:px-6 py-3 sm:py-4 rounded-full sm:rounded-2xl outline-none text-sm sm:text-base"
               style={{ fontFamily: "'Inter', sans-serif" }}
             />
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
+              onClick={() => {
+                void handleSubscribe();
+              }}
+              disabled={isSubscribing}
               className="px-6 sm:px-8 py-3 sm:py-4 bg-primary text-white rounded-full hover:bg-primary/90 transition-all duration-300 shadow-2xl hover:shadow-3xl text-sm sm:text-base font-semibold whitespace-nowrap"
             >
-              Subscribe Now
+              {isSubscribing ? 'Subscribing...' : 'Subscribe Now'}
             </motion.button>
           </motion.div>
+
+          {(subscriptionError || subscriptionMessage) && (
+            <div className="mt-4 min-h-6">
+              {subscriptionError ? (
+                <p className="text-red-100 text-sm sm:text-base">{subscriptionError}</p>
+              ) : (
+                <p className="text-white text-sm sm:text-base">{subscriptionMessage}</p>
+              )}
+            </div>
+          )}
         </div>
       </section>
     </div>
