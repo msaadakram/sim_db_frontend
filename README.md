@@ -38,7 +38,25 @@ Use these variables locally and in Vercel:
 - `MONGODB_URI` (required): MongoDB connection string used by `/api/views`.
 - `MONGODB_DB_NAME` (recommended): Target MongoDB database used by the app. Default is `sim-finder`.
 - `MONGODB_SOURCE_DB_NAME` (optional): Source DB for one-time migration to `MONGODB_DB_NAME` (default fallback: `blog_views`).
+- `SEARCH_API_BASE_URL` (required for search): Base URL of backend API (for example `https://sim-db-backend.vercel.app`).
+- `SHORTLINK_GATE_ENABLED` (optional): Enable website-only short-link gate after free searches.
+- `SHORTLINK_GATE_FREE_QUERIES` (optional): Number of free searches before short-link redirect starts (default `3`).
+- `SHORTLINK_UNLOCK_SECRET` (required when gate enabled): Secret used to verify short-link return tokens.
+- `SHORTLINK_REDIRECT_BASE_URL` (recommended): Public URL used as short-link destination base (helps providers reject neither localhost nor private URLs).
+- `SHORTLINK_CUTY_API_KEY`, `SHORTLINK_EXE_API_KEY`, `SHORTLINK_GPLINKS_API_KEY`, `SHORTLINK_SHRINKEARN_API_KEY`: API keys for short-link providers.
 - `NEXT_PUBLIC_SITE_URL` (recommended): Full site URL used for canonical, sitemap, and robots metadata.
+
+## Website-only short-link search gate
+
+- Search flow is enforced in the website route `/api/website-search` (frontend app), not in backend `/api/search`.
+- Direct backend API calls are not blocked by this website gate.
+- Flow:
+   1. Searches 1-3: direct output
+   2. Search 4: Cuty
+   3. Search 5: Exe
+   4. Search 6: GPLinks
+   5. Search 7: ShrinkEarn
+   6. Search 8+: repeat from Cuty
 
 ## Database setup and migration
 

@@ -20,6 +20,7 @@ function SearchContent() {
 
     const query = searchParams.get('query') || '';
     const type = (searchParams.get('type') as 'mobile' | 'cnic') || 'mobile';
+    const unlock = searchParams.get('unlock') || '';
 
     const handleBackToHome = () => {
         router.push('/');
@@ -29,6 +30,7 @@ function SearchContent() {
         <SearchResultsPage
             searchQuery={query}
             searchType={type}
+            unlockToken={unlock}
             onBack={handleBackToHome}
         />
     );
