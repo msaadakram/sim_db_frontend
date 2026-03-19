@@ -4,7 +4,7 @@ import { Header } from '@/components/Header';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { BlogPostDetail } from '@/components/BlogPostDetail';
 import { BlogSection } from '@/components/BlogSection';
-import { client } from '@/sanity/lib/client';
+import { client, isSanityConfigured } from '@/sanity/lib/client';
 import { urlFor } from '@/sanity/lib/image';
 import { notFound } from 'next/navigation';
 import { getSiteUrl } from '@/lib/site-url';
@@ -42,6 +42,10 @@ function extractBodyText(body: any[]): string {
 }
 
 async function getPost(slug: string) {
+    if (!isSanityConfigured) {
+        return null;
+    }
+
     const query = `*[_type == "post" && slug.current == $slug][0]{
         _id,
         title,
@@ -60,6 +64,10 @@ async function getPost(slug: string) {
 }
 
 async function getRelatedPosts(slug: string) {
+    if (!isSanityConfigured) {
+        return [];
+    }
+
     const query = `*[_type == "post" && slug.current != $slug] | order(publishedAt desc)[0...3]{
         _id,
         title,

@@ -1,5 +1,5 @@
 import { HomeContent } from '@/components/HomeContent';
-import { client } from '@/sanity/lib/client';
+import { client, isSanityConfigured } from '@/sanity/lib/client';
 import { urlFor } from '@/sanity/lib/image';
 
 export const revalidate = 60;
@@ -12,6 +12,10 @@ function estimateReadingTime(text: string): string {
 }
 
 async function getBlogPosts() {
+    if (!isSanityConfigured) {
+        return [];
+    }
+
     try {
         const query = `*[_type == "post"] | order(publishedAt desc)[0...6] {
             _id,

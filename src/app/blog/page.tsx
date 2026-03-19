@@ -4,7 +4,7 @@ import { Header } from '@/components/Header';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { BlogPage as BlogPageContent } from '@/components/BlogPage';
 import { Footer } from '@/components/Footer';
-import { client } from '@/sanity/lib/client';
+import { client, isSanityConfigured } from '@/sanity/lib/client';
 import { urlFor } from '@/sanity/lib/image';
 import { getSiteUrl } from '@/lib/site-url';
 
@@ -48,6 +48,10 @@ function estimateReadingTime(text: string): string {
 }
 
 async function getPosts() {
+    if (!isSanityConfigured) {
+        return [];
+    }
+
     const query = `*[_type == "post"] | order(publishedAt desc) {
         _id,
         title,
