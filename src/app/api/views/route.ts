@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import clientPromise from '@/lib/mongodb';
+import { getMongoClientPromise } from '@/lib/mongodb';
 
 const DB_NAME = 'blog_views';
 const VIEWS_COLLECTION = 'views';
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const client = await clientPromise;
+    const client = await getMongoClientPromise();
     const db = client.db(DB_NAME);
     const viewDoc = await db.collection(VIEWS_COLLECTION).findOne({ slug });
 
@@ -41,20 +41,26 @@ export async function GET(request: NextRequest) {
 
 // POST: Increment view count (unique by IP) and save visitor info
 export async function POST(request: NextRequest) {
+  let slug: string | undefined;
+
   try {
     const body = await request.json();
-    const { slug } = body;
+    ({ slug } = body);
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON body' }, { status: 400 });
+  }
 
-    if (!slug) {
-      return NextResponse.json({ error: 'Slug is required' }, { status: 400 });
-    }
+  if (!slug) {
+    return NextResponse.json({ error: 'Slug is required' }, { status: 400 });
+  }
 
+  try {
     const ip = getClientIP(request);
     const userAgent = request.headers.get('user-agent') || 'Unknown';
     const referer = request.headers.get('referer') || 'Direct';
     const language = request.headers.get('accept-language') || 'Unknown';
 
-    const client = await clientPromise;
+    const client = await getMongoClientPromise();
     const db = client.db(DB_NAME);
 
     // Check if this IP already viewed this slug
@@ -89,6 +95,6 @@ export async function POST(request: NextRequest) {
       views: viewDoc?.count || 0,
     });
   } catch {
-    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
+    return NextResponse.json({ error: 'View service unavailable' }, { status: 503 });
   }
 }

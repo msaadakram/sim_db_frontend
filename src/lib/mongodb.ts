@@ -1,30 +1,39 @@
 import { MongoClient } from 'mongodb';
 
-const MONGODB_URI = process.env.MONGODB_URI!;
-
-if (!MONGODB_URI) {
-  throw new Error('Missing MONGODB_URI environment variable. Add it to local env files and Vercel project settings.');
-}
+const MONGODB_URI = process.env.MONGODB_URI;
 
 const options = {};
 
-let client: MongoClient;
-let clientPromise: Promise<MongoClient>;
+let clientPromise: Promise<MongoClient> | undefined;
 
 declare global {
-  // eslint-disable-next-line no-var
   var _mongoClientPromise: Promise<MongoClient> | undefined;
 }
 
-if (process.env.NODE_ENV === 'development') {
-  if (!global._mongoClientPromise) {
-    client = new MongoClient(MONGODB_URI, options);
-    global._mongoClientPromise = client.connect();
+function createClientPromise(): Promise<MongoClient> {
+  if (!MONGODB_URI) {
+    throw new Error(
+      'Missing MONGODB_URI environment variable. Add it to local env files and Vercel project settings.'
+    );
   }
-  clientPromise = global._mongoClientPromise;
-} else {
-  client = new MongoClient(MONGODB_URI, options);
-  clientPromise = client.connect();
+
+  if (process.env.NODE_ENV === 'development') {
+    if (!global._mongoClientPromise) {
+      const client = new MongoClient(MONGODB_URI, options);
+      global._mongoClientPromise = client.connect();
+    }
+
+    return global._mongoClientPromise;
+  }
+
+  const client = new MongoClient(MONGODB_URI, options);
+  return client.connect();
 }
 
-export default clientPromise;
+export function getMongoClientPromise(): Promise<MongoClient> {
+  if (!clientPromise) {
+    clientPromise = createClientPromise();
+  }
+
+  return clientPromise;
+}
