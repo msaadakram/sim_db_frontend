@@ -42,6 +42,7 @@ Use these variables locally and in Vercel:
 - `SHORTLINK_SETTINGS_API_URL` (optional but recommended): URL of admin public gate settings endpoint (for example `https://your-admin-domain/api/public/website-gate-settings`).
 - `SHORTLINK_GATE_ENABLED` (optional): Enable website-only short-link gate after free searches.
 - `SHORTLINK_GATE_FREE_QUERIES` (optional): Number of free searches before short-link redirect starts (default `3`).
+- `SHORTLINK_GATE_RESET_WINDOW_MINUTES` (optional fallback): Resets free-search quota after this many minutes when settings API is unavailable (default `1440`).
 - `SHORTLINK_UNLOCK_SECRET` (required when gate enabled): Secret used to verify short-link return tokens.
 - `SHORTLINK_REDIRECT_BASE_URL` (recommended): Public URL used as short-link destination base (helps providers reject neither localhost nor private URLs).
 - `SHORTLINK_CUTY_API_KEY`, `SHORTLINK_EXE_API_KEY`, `SHORTLINK_GPLINKS_API_KEY`, `SHORTLINK_SHRINKEARN_API_KEY`: API keys for short-link providers.

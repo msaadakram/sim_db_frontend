@@ -22,6 +22,7 @@ type GateRuntimeSettings = {
   providerEnabled: Record<ShortlinkProviderName, boolean>;
   failoverEnabled: boolean;
   unlockTtlMs: number;
+  resetWindowMs: number;
 };
 
 let gateSettingsCache: { value: GateRuntimeSettings; expiresAt: number } | null = null;
@@ -55,6 +56,12 @@ function getProviderTimeoutMs(): number {
   const parsed = Number.parseInt(process.env.SHORTLINK_PROVIDER_TIMEOUT_MS || '', 10);
   if (!Number.isFinite(parsed) || parsed < 1000) return DEFAULT_PROVIDER_TIMEOUT_MS;
   return parsed;
+}
+
+function getResetWindowMs(): number {
+  const minutes = Number.parseInt(process.env.SHORTLINK_GATE_RESET_WINDOW_MINUTES || '', 10);
+  if (!Number.isFinite(minutes) || minutes < 1) return 1440 * 60 * 1000;
+  return minutes * 60 * 1000;
 }
 
 function toBase64Url(input: string): string {
@@ -163,6 +170,7 @@ async function loadRuntimeSettings(): Promise<GateRuntimeSettings> {
     },
     failoverEnabled: (process.env.SHORTLINK_GATE_FAILOVER_ENABLED || 'true').toLowerCase() !== 'false',
     unlockTtlMs: getUnlockTtlMs(),
+    resetWindowMs: getResetWindowMs(),
   };
 
   const settingsApiUrl = getSettingsApiUrl();
@@ -196,6 +204,11 @@ async function loadRuntimeSettings(): Promise<GateRuntimeSettings> {
       unlockTtlMs: (() => {
         const parsed = Number.parseInt(String(data.websiteGateUnlockTtlMinutes ?? ''), 10);
         if (!Number.isFinite(parsed) || parsed < 1) return base.unlockTtlMs;
+        return parsed * 60 * 1000;
+      })(),
+      resetWindowMs: (() => {
+        const parsed = Number.parseInt(String(data.websiteGateResetWindowMinutes ?? ''), 10);
+        if (!Number.isFinite(parsed) || parsed < 1) return base.resetWindowMs;
         return parsed * 60 * 1000;
       })(),
     };
@@ -404,6 +417,7 @@ export async function GET(request: NextRequest) {
     const now = new Date();
     let searchCount = 1;
     let unlockedByToken = false;
+    let resetAt: Date | null = null;
 
     if (unlock) {
       const payload = verifyUnlockToken(unlock);
@@ -422,21 +436,58 @@ export async function GET(request: NextRequest) {
         unlockedByToken = true;
         const existing = await collection.findOne({ token: cookieToken });
         searchCount = Number(existing?.searchCount || 1);
+        resetAt = existing?.resetAt ? new Date(existing.resetAt) : null;
       }
     }
 
     if (!unlockedByToken) {
-      const updated = await collection.findOneAndUpdate(
-        { token: cookieToken },
-        {
-          $setOnInsert: { createdAt: now, token: cookieToken },
-          $set: { updatedAt: now, ip },
-          $inc: { searchCount: 1 },
-        },
-        { upsert: true, returnDocument: 'after' }
-      );
+      const existing = await collection.findOne({ token: cookieToken });
+      const nextResetAt = new Date(now.getTime() + gateSettings.resetWindowMs);
 
-      searchCount = Number(updated?.searchCount || 1);
+      if (!existing) {
+        await collection.insertOne({
+          token: cookieToken,
+          ip,
+          searchCount: 1,
+          createdAt: now,
+          updatedAt: now,
+          windowStartedAt: now,
+          resetAt: nextResetAt,
+        });
+        searchCount = 1;
+        resetAt = nextResetAt;
+      } else {
+        const existingResetAt = existing.resetAt ? new Date(existing.resetAt) : null;
+        const shouldReset = !existingResetAt || existingResetAt.getTime() <= now.getTime();
+
+        if (shouldReset) {
+          await collection.updateOne(
+            { token: cookieToken },
+            {
+              $set: {
+                ip,
+                updatedAt: now,
+                windowStartedAt: now,
+                resetAt: nextResetAt,
+                searchCount: 1,
+              },
+            }
+          );
+          searchCount = 1;
+          resetAt = nextResetAt;
+        } else {
+          const updated = await collection.findOneAndUpdate(
+            { token: cookieToken },
+            {
+              $set: { updatedAt: now, ip },
+              $inc: { searchCount: 1 },
+            },
+            { returnDocument: 'after' }
+          );
+          searchCount = Number(updated?.searchCount || 1);
+          resetAt = updated?.resetAt ? new Date(updated.resetAt) : existingResetAt;
+        }
+      }
     }
 
     const freeQueries = gateSettings.freeQueries;
@@ -491,6 +542,7 @@ export async function GET(request: NextRequest) {
                 freeQueries,
                 attemptedProviders: attempts,
                 fallbackUsed: provider !== primaryProvider,
+                resetAt: resetAt?.toISOString(),
               },
             },
             200,
@@ -532,7 +584,11 @@ export async function GET(request: NextRequest) {
         {
           success: false,
           error: (result.body as Record<string, unknown>)?.error || 'Search failed',
-          meta: { searchCount, freeQueries },
+          meta: {
+            searchCount,
+            freeQueries,
+            resetAt: resetAt?.toISOString(),
+          },
         },
         result.status,
         cookieToken
@@ -548,6 +604,7 @@ export async function GET(request: NextRequest) {
           searchCount,
           freeQueries,
           unlockedByToken,
+          resetAt: resetAt?.toISOString(),
         },
       },
       200,
