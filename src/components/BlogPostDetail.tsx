@@ -463,6 +463,11 @@ export function BlogPostDetail({ post, relatedPosts }: BlogPostDetailProps) {
   useEffect(() => {
     setShareUrl(window.location.href);
   }, []);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }, [post.slug]);
+
   const shareTitle = encodeURIComponent(post.title);
 
   // Copy link handler
@@ -779,7 +784,7 @@ export function BlogPostDetail({ post, relatedPosts }: BlogPostDetailProps) {
 
                   <div className="grid sm:grid-cols-3 gap-8">
                     {relatedPosts.map((relatedPost, index) => (
-                      <Link key={relatedPost.id} href={`/blog/${relatedPost.slug}`}>
+                      <Link key={relatedPost.id} href={`/blog/${relatedPost.slug}`} scroll>
                         <motion.div
                           initial={{ opacity: 0, y: 30 }}
                           animate={{ opacity: 1, y: 0 }}
