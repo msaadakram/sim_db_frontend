@@ -229,6 +229,59 @@ function ResultTable({ title, rows }: { title: string; rows: any[] }) {
   );
 }
 
+function ComingSoonCard({ cleanedQuery, searchType }: { cleanedQuery: string; searchType: 'mobile' | 'cnic' }) {
+  return (
+    <div className="relative overflow-hidden rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 via-fuchsia-50 to-sky-50 p-6 sm:p-8 shadow-sm">
+      <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-violet-200/30 blur-2xl" />
+      <div className="absolute -left-10 -bottom-10 h-28 w-28 rounded-full bg-sky-200/30 blur-2xl" />
+
+      <div className="relative">
+        <div className="flex items-start gap-4">
+          <div className="shrink-0 rounded-2xl border border-violet-200 bg-white/80 p-3">
+            <Search className="w-6 h-6 text-violet-600" />
+          </div>
+
+          <div>
+            <p className="text-lg sm:text-xl font-semibold text-violet-900">No records found right now</p>
+            <p className="mt-1 text-sm sm:text-base text-violet-800/90">
+              Your query is saved. We are expanding the data index and user detail coverage.
+            </p>
+
+            <div className="mt-3 flex flex-wrap gap-2">
+              <span className="inline-flex items-center rounded-xl border border-violet-200 bg-white/80 px-3 py-1.5 text-xs sm:text-sm font-semibold text-violet-700">
+                2026 User Detail Update
+              </span>
+              <span className="inline-flex items-center rounded-xl border border-sky-200 bg-white/80 px-3 py-1.5 text-xs sm:text-sm font-semibold text-sky-700">
+                Coming next month 🚀
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="rounded-xl border border-violet-200/80 bg-white/75 p-3">
+            <p className="text-xs uppercase tracking-wide text-violet-700/80 font-semibold">Planned user details in 2026</p>
+            <ul className="mt-2 space-y-1.5 text-sm text-violet-900">
+              <li className="flex items-start gap-2"><span className="mt-1 h-1.5 w-1.5 rounded-full bg-violet-500" />Enhanced profile matching</li>
+              <li className="flex items-start gap-2"><span className="mt-1 h-1.5 w-1.5 rounded-full bg-violet-500" />Faster city-level lookup results</li>
+              <li className="flex items-start gap-2"><span className="mt-1 h-1.5 w-1.5 rounded-full bg-violet-500" />Improved multi-source data sync</li>
+            </ul>
+          </div>
+
+          <div className="rounded-xl border border-sky-200/80 bg-white/75 p-3">
+            <p className="text-xs uppercase tracking-wide text-sky-700/80 font-semibold">Request snapshot</p>
+            <div className="mt-2 space-y-2 text-sm text-slate-700">
+              <p><span className="font-semibold text-slate-900">Query:</span> {cleanedQuery}</p>
+              <p><span className="font-semibold text-slate-900">Type:</span> {searchType.toUpperCase()}</p>
+              <p><span className="font-semibold text-slate-900">Status:</span> Queued for upcoming index updates</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', onBack }: SearchResultsPageProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -305,6 +358,9 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const normalizedProvider = String(response?.provider || '').toLowerCase().replace(/[^a-z0-9]/g, '');
   const providerGuideUrl = SHORTLINK_VIDEO_GUIDES[normalizedProvider];
   const isApiNoRecordState = Boolean(response?.success) && numberData.length === 0 && cnicData.length === 0;
+  const noRecordText = `${response?.error || ''} ${response?.message || ''}`.toLowerCase();
+  const isNoRecordErrorState = Boolean(error) && /(no\s*record|not\s*found|no\s*data|not\s*available)/i.test(noRecordText);
+  const showComingSoonCard = isApiNoRecordState || isNoRecordErrorState;
 
   const shareReport = async () => {
     if (typeof window === 'undefined') return;
@@ -473,6 +529,8 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
 
             {response.message ? <p className="text-xs mt-3 text-blue-900/75">{response.message}</p> : null}
           </div>
+        ) : showComingSoonCard ? (
+          <ComingSoonCard cleanedQuery={cleanedQuery} searchType={searchType} />
         ) : error ? (
           <div className="bg-red-50 border border-red-200 rounded-2xl p-5 sm:p-6 text-red-700">
             <p className="font-medium">{error}</p>
@@ -494,57 +552,6 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
           <>
             {numberData.length > 0 && <ResultTable title="Number Results" rows={numberData} />}
             {cnicData.length > 0 && <ResultTable title={numberData.length > 0 ? 'Linked CNIC Results' : 'Results'} rows={cnicData} />}
-
-            {isApiNoRecordState && (
-              <div className="relative overflow-hidden rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 via-fuchsia-50 to-sky-50 p-6 sm:p-8 shadow-sm">
-                <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-violet-200/30 blur-2xl" />
-                <div className="absolute -left-10 -bottom-10 h-28 w-28 rounded-full bg-sky-200/30 blur-2xl" />
-
-                <div className="relative">
-                  <div className="flex items-start gap-4">
-                    <div className="shrink-0 rounded-2xl border border-violet-200 bg-white/80 p-3">
-                      <Search className="w-6 h-6 text-violet-600" />
-                    </div>
-
-                    <div>
-                      <p className="text-lg sm:text-xl font-semibold text-violet-900">No records found right now</p>
-                      <p className="mt-1 text-sm sm:text-base text-violet-800/90">
-                        Your query is saved. We are expanding the data index and user detail coverage.
-                      </p>
-
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        <span className="inline-flex items-center rounded-xl border border-violet-200 bg-white/80 px-3 py-1.5 text-xs sm:text-sm font-semibold text-violet-700">
-                          2026 User Detail Update
-                        </span>
-                        <span className="inline-flex items-center rounded-xl border border-sky-200 bg-white/80 px-3 py-1.5 text-xs sm:text-sm font-semibold text-sky-700">
-                          Coming next month 🚀
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="rounded-xl border border-violet-200/80 bg-white/75 p-3">
-                      <p className="text-xs uppercase tracking-wide text-violet-700/80 font-semibold">Planned user details in 2026</p>
-                      <ul className="mt-2 space-y-1.5 text-sm text-violet-900">
-                        <li className="flex items-start gap-2"><span className="mt-1 h-1.5 w-1.5 rounded-full bg-violet-500" />Enhanced profile matching</li>
-                        <li className="flex items-start gap-2"><span className="mt-1 h-1.5 w-1.5 rounded-full bg-violet-500" />Faster city-level lookup results</li>
-                        <li className="flex items-start gap-2"><span className="mt-1 h-1.5 w-1.5 rounded-full bg-violet-500" />Improved multi-source data sync</li>
-                      </ul>
-                    </div>
-
-                    <div className="rounded-xl border border-sky-200/80 bg-white/75 p-3">
-                      <p className="text-xs uppercase tracking-wide text-sky-700/80 font-semibold">Request snapshot</p>
-                      <div className="mt-2 space-y-2 text-sm text-slate-700">
-                        <p><span className="font-semibold text-slate-900">Query:</span> {cleanedQuery}</p>
-                        <p><span className="font-semibold text-slate-900">Type:</span> {searchType.toUpperCase()}</p>
-                        <p><span className="font-semibold text-slate-900">Status:</span> Queued for upcoming index updates</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
 
             {(numberData.length > 0 || cnicData.length > 0) && (
               <div className="mt-6 text-xs sm:text-sm text-muted-foreground bg-white border border-border/60 rounded-xl p-3.5 flex items-start gap-2">
