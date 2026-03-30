@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { ArrowLeft, Search, ExternalLink, Loader2, UserRound, Phone, IdCard, Building2, MapPin, Landmark, Info } from 'lucide-react';
+import { ArrowLeft, Search, ExternalLink, Loader2, UserRound, Phone, IdCard, Building2, MapPin, Landmark, Info, MessageCircle, Share2 } from 'lucide-react';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 
 interface SearchResultsPageProps {
@@ -32,6 +32,80 @@ interface SearchApiResponse {
 function toText(value: unknown): string {
   const v = String(value ?? '').trim();
   return v.length ? v : '-';
+}
+
+function getLocationQuery(row: any): string {
+  const parts = [row?.address, row?.city, row?.province]
+    .map((value) => String(value ?? '').trim())
+    .filter((value) => value.length > 0 && value !== '-');
+
+  return parts.join(', ');
+}
+
+function getMapUrl(locationQuery: string): string {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationQuery)}`;
+}
+
+function getShareText(row: any, locationQuery: string): string {
+  const name = toText(row?.name);
+  const number = toText(row?.number);
+  const cnic = toText(row?.cnic);
+  const company = toText(row?.company);
+  const location = locationQuery || 'Location not available';
+  return `SIM Finder Result\nName: ${name}\nNumber: ${number}\nCNIC: ${cnic}\nCompany: ${company}\nLocation: ${location}`;
+}
+
+function ResultActions({ row }: { row: any }) {
+  const locationQuery = getLocationQuery(row);
+  if (!locationQuery) {
+    return (
+      <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+        Location is not available for this record.
+      </div>
+    );
+  }
+
+  const mapUrl = getMapUrl(locationQuery);
+  const shareText = getShareText(row, locationQuery);
+  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${shareText}\n${mapUrl}`)}`;
+  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(mapUrl)}&quote=${encodeURIComponent(shareText)}`;
+
+  return (
+    <div className="space-y-2">
+      <div className="flex flex-wrap gap-2">
+        <a
+          href={mapUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 text-xs font-medium hover:bg-blue-100"
+        >
+          <MapPin className="w-3.5 h-3.5" />
+          Open on Map
+        </a>
+        <a
+          href={whatsappUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 text-xs font-medium hover:bg-emerald-100"
+        >
+          <MessageCircle className="w-3.5 h-3.5" />
+          WhatsApp
+        </a>
+        <a
+          href={facebookUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 text-xs font-medium hover:bg-indigo-100"
+        >
+          <Share2 className="w-3.5 h-3.5" />
+          Facebook
+        </a>
+      </div>
+      <p className="text-[11px] text-muted-foreground break-words">
+        Location: <span className="font-medium text-foreground">{locationQuery}</span>
+      </p>
+    </div>
+  );
 }
 
 function DetailItem({ label, value, icon }: { label: string; value: unknown; icon?: ReactNode }) {
@@ -82,6 +156,10 @@ function ResultTable({ title, rows }: { title: string; rows: any[] }) {
               <DetailItem label="City" value={row.city} icon={<Landmark className="w-3.5 h-3.5" />} />
               <DetailItem label="Province" value={row.province} icon={<Info className="w-3.5 h-3.5" />} />
             </div>
+
+            <div className="mt-3">
+              <ResultActions row={row} />
+            </div>
           </article>
         ))}
       </div>
@@ -98,6 +176,7 @@ function ResultTable({ title, rows }: { title: string; rows: any[] }) {
                 <th className="text-left px-4 py-3 font-semibold">Address</th>
                 <th className="text-left px-4 py-3 font-semibold">City</th>
                 <th className="text-left px-4 py-3 font-semibold">Province</th>
+                <th className="text-left px-4 py-3 font-semibold">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -110,6 +189,9 @@ function ResultTable({ title, rows }: { title: string; rows: any[] }) {
                   <td className="px-4 py-3">{toText(row.address)}</td>
                   <td className="px-4 py-3">{toText(row.city)}</td>
                   <td className="px-4 py-3">{toText(row.province)}</td>
+                  <td className="px-4 py-3 align-top min-w-[260px]">
+                    <ResultActions row={row} />
+                  </td>
                 </tr>
               ))}
             </tbody>
