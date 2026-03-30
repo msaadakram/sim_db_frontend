@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { ArrowLeft, Search, ExternalLink, Loader2, UserRound, Phone, IdCard, Building2, MapPin, Landmark, Info, MessageCircle, Share2 } from 'lucide-react';
+import { ArrowLeft, Search, ExternalLink, Loader2, UserRound, Phone, IdCard, Building2, MapPin, Landmark, Info, MessageCircle, Share2, FileText } from 'lucide-react';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 
 interface SearchResultsPageProps {
@@ -46,64 +46,68 @@ function getMapUrl(locationQuery: string): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(locationQuery)}`;
 }
 
-function getShareText(row: any, locationQuery: string): string {
-  const name = toText(row?.name);
-  const number = toText(row?.number);
-  const cnic = toText(row?.cnic);
-  const company = toText(row?.company);
-  const location = locationQuery || 'Location not available';
-  return `SIM Finder Result\nName: ${name}\nNumber: ${number}\nCNIC: ${cnic}\nCompany: ${company}\nLocation: ${location}`;
+function getPhoneDigits(row: any): string {
+  return String(row?.number ?? '').replace(/\D/g, '');
 }
 
 function ResultActions({ row }: { row: any }) {
   const locationQuery = getLocationQuery(row);
-  if (!locationQuery) {
+  const phoneDigits = getPhoneDigits(row);
+
+  if (!locationQuery && !phoneDigits) {
     return (
       <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
-        Location is not available for this record.
+        Location and phone number are not available for this record.
       </div>
     );
   }
 
-  const mapUrl = getMapUrl(locationQuery);
-  const shareText = getShareText(row, locationQuery);
-  const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`${shareText}\n${mapUrl}`)}`;
-  const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(mapUrl)}&quote=${encodeURIComponent(shareText)}`;
+  const mapUrl = locationQuery ? getMapUrl(locationQuery) : '';
+  const whatsappUrl = phoneDigits ? `https://wa.me/${phoneDigits}` : '';
+  const facebookUrl = phoneDigits ? `https://www.facebook.com/search/top/?q=${encodeURIComponent(phoneDigits)}` : '';
 
   return (
     <div className="space-y-2">
       <div className="flex flex-wrap gap-2">
-        <a
-          href={mapUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 text-xs font-medium hover:bg-blue-100"
-        >
-          <MapPin className="w-3.5 h-3.5" />
-          Open on Map
-        </a>
-        <a
-          href={whatsappUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 text-xs font-medium hover:bg-emerald-100"
-        >
-          <MessageCircle className="w-3.5 h-3.5" />
-          WhatsApp
-        </a>
-        <a
-          href={facebookUrl}
-          target="_blank"
-          rel="noreferrer"
-          className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 text-xs font-medium hover:bg-indigo-100"
-        >
-          <Share2 className="w-3.5 h-3.5" />
-          Facebook
-        </a>
+        {mapUrl ? (
+          <a
+            href={mapUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 text-xs font-medium hover:bg-blue-100"
+          >
+            <MapPin className="w-3.5 h-3.5" />
+            Open on Map
+          </a>
+        ) : null}
+        {whatsappUrl ? (
+          <a
+            href={whatsappUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 text-xs font-medium hover:bg-emerald-100"
+          >
+            <MessageCircle className="w-3.5 h-3.5" />
+            WhatsApp Number
+          </a>
+        ) : null}
+        {facebookUrl ? (
+          <a
+            href={facebookUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 text-xs font-medium hover:bg-indigo-100"
+          >
+            <Share2 className="w-3.5 h-3.5" />
+            Facebook by Number
+          </a>
+        ) : null}
       </div>
-      <p className="text-[11px] text-muted-foreground break-words">
-        Location: <span className="font-medium text-foreground">{locationQuery}</span>
-      </p>
+      {locationQuery ? (
+        <p className="text-[11px] text-muted-foreground break-words">
+          Location: <span className="font-medium text-foreground">{locationQuery}</span>
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -267,6 +271,114 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const resultData = response?.result || null;
   const numberData = Array.isArray(resultData?.numberData) ? resultData.numberData : [];
   const cnicData = Array.isArray(resultData?.data) ? resultData.data : [];
+  const allRecords = useMemo(() => ([
+    ...numberData.map((row: any) => ({ section: 'Number Results', row })),
+    ...cnicData.map((row: any) => ({ section: numberData.length > 0 ? 'Linked CNIC Results' : 'Results', row })),
+  ]), [numberData, cnicData]);
+
+  const createPdfReport = () => {
+    if (allRecords.length === 0 || typeof window === 'undefined') return;
+
+    const rowsHtml = allRecords
+      .map(({ section, row }, idx) => {
+        const location = getLocationQuery(row);
+        return `
+          <tr>
+            <td>${idx + 1}</td>
+            <td>${section}</td>
+            <td>${toText(row?.name)}</td>
+            <td>${toText(row?.cnic)}</td>
+            <td>${toText(row?.number)}</td>
+            <td>${toText(row?.company)}</td>
+            <td>${toText(row?.address)}</td>
+            <td>${toText(row?.city)}</td>
+            <td>${toText(row?.province)}</td>
+            <td>${toText(location)}</td>
+          </tr>
+        `;
+      })
+      .join('');
+
+    const html = `
+      <!doctype html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <title>SIM Finder Report</title>
+        <style>
+          body { font-family: Arial, sans-serif; padding: 20px; color: #111827; }
+          h1 { margin: 0 0 6px; font-size: 22px; }
+          p { margin: 0 0 10px; color: #4b5563; }
+          table { width: 100%; border-collapse: collapse; font-size: 12px; }
+          th, td { border: 1px solid #d1d5db; padding: 6px; text-align: left; vertical-align: top; }
+          th { background: #f3f4f6; font-weight: 700; }
+          .meta { margin-bottom: 14px; }
+        </style>
+      </head>
+      <body>
+        <h1>SIM Finder Search Report</h1>
+        <div class="meta">
+          <p>Query: ${cleanedQuery} (${searchType.toUpperCase()})</p>
+          <p>Total Records: ${allRecords.length}</p>
+          <p>Generated: ${new Date().toLocaleString()}</p>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Section</th>
+              <th>Name</th>
+              <th>CNIC</th>
+              <th>Number</th>
+              <th>Company</th>
+              <th>Address</th>
+              <th>City</th>
+              <th>Province</th>
+              <th>Location</th>
+            </tr>
+          </thead>
+          <tbody>${rowsHtml}</tbody>
+        </table>
+      </body>
+      </html>
+    `;
+
+    const reportWindow = window.open('', '_blank', 'noopener,noreferrer,width=1100,height=800');
+    if (!reportWindow) return;
+    reportWindow.document.open();
+    reportWindow.document.write(html);
+    reportWindow.document.close();
+    setTimeout(() => {
+      reportWindow.focus();
+      reportWindow.print();
+    }, 300);
+  };
+
+  const shareReport = async () => {
+    if (typeof window === 'undefined') return;
+    const text = `SIM Finder Report\nQuery: ${cleanedQuery} (${searchType.toUpperCase()})\nTotal Records: ${allRecords.length}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'SIM Finder Report',
+          text,
+          url: window.location.href,
+        });
+        return;
+      } catch {
+        // user can cancel sharing; fall through to clipboard fallback
+      }
+    }
+
+    if (navigator.clipboard?.writeText) {
+      try {
+        await navigator.clipboard.writeText(`${text}\n${window.location.href}`);
+      } catch {
+        // no-op fallback
+      }
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white via-muted/10 to-white pt-16 sm:pt-20 md:pt-24 pb-8 sm:pb-12 md:pb-16">
@@ -391,6 +503,30 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
                 <UserRound className="w-4 h-4 mt-0.5 text-accent" />
                 <p>
                   For privacy and accuracy, always verify important records from official sources before taking action.
+                </p>
+              </div>
+            )}
+
+            {allRecords.length > 0 && (
+              <div className="mt-4 rounded-2xl border border-border/60 bg-white p-4 sm:p-5 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  onClick={createPdfReport}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 text-sm font-semibold hover:bg-rose-100"
+                >
+                  <FileText className="w-4 h-4" />
+                  Create PDF File
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { void shareReport(); }}
+                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-indigo-200 bg-indigo-50 text-indigo-700 text-sm font-semibold hover:bg-indigo-100"
+                >
+                  <Share2 className="w-4 h-4" />
+                  Share Report
+                </button>
+                <p className="text-xs text-muted-foreground">
+                  PDF opens in a print view. Choose <span className="font-semibold">Save as PDF</span> to download.
                 </p>
               </div>
             )}
