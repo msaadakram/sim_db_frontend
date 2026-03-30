@@ -304,6 +304,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const remainingFreeSearches = Math.max(freeLimit - currentSearchCount, 0);
   const normalizedProvider = String(response?.provider || '').toLowerCase().replace(/[^a-z0-9]/g, '');
   const providerGuideUrl = SHORTLINK_VIDEO_GUIDES[normalizedProvider];
+  const isApiNoRecordState = Boolean(response?.success) && numberData.length === 0 && cnicData.length === 0;
 
   const shareReport = async () => {
     if (typeof window === 'undefined') return;
@@ -494,10 +495,26 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
             {numberData.length > 0 && <ResultTable title="Number Results" rows={numberData} />}
             {cnicData.length > 0 && <ResultTable title={numberData.length > 0 ? 'Linked CNIC Results' : 'Results'} rows={cnicData} />}
 
-            {numberData.length === 0 && cnicData.length === 0 && (
-              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-amber-800 flex items-start gap-3">
-                <Search className="w-5 h-5 mt-0.5" />
-                <p>No records found for this query.</p>
+            {isApiNoRecordState && (
+              <div className="relative overflow-hidden rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 via-fuchsia-50 to-sky-50 p-6 sm:p-8 shadow-sm">
+                <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-violet-200/30 blur-2xl" />
+                <div className="absolute -left-10 -bottom-10 h-28 w-28 rounded-full bg-sky-200/30 blur-2xl" />
+
+                <div className="relative flex items-start gap-4">
+                  <div className="shrink-0 rounded-2xl border border-violet-200 bg-white/80 p-3">
+                    <Search className="w-6 h-6 text-violet-600" />
+                  </div>
+
+                  <div>
+                    <p className="text-lg sm:text-xl font-semibold text-violet-900">No records found right now</p>
+                    <p className="mt-1 text-sm sm:text-base text-violet-800/90">
+                      This query is not available in current results yet.
+                    </p>
+                    <p className="mt-3 inline-flex items-center rounded-xl border border-violet-200 bg-white/75 px-3 py-2 text-sm font-semibold text-violet-700">
+                      Coming soon in next month 🚀
+                    </p>
+                  </div>
+                </div>
               </div>
             )}
 
