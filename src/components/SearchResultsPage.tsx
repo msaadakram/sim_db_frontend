@@ -500,19 +500,47 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
                 <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full bg-violet-200/30 blur-2xl" />
                 <div className="absolute -left-10 -bottom-10 h-28 w-28 rounded-full bg-sky-200/30 blur-2xl" />
 
-                <div className="relative flex items-start gap-4">
-                  <div className="shrink-0 rounded-2xl border border-violet-200 bg-white/80 p-3">
-                    <Search className="w-6 h-6 text-violet-600" />
+                <div className="relative">
+                  <div className="flex items-start gap-4">
+                    <div className="shrink-0 rounded-2xl border border-violet-200 bg-white/80 p-3">
+                      <Search className="w-6 h-6 text-violet-600" />
+                    </div>
+
+                    <div>
+                      <p className="text-lg sm:text-xl font-semibold text-violet-900">No records found right now</p>
+                      <p className="mt-1 text-sm sm:text-base text-violet-800/90">
+                        Your query is saved. We are expanding the data index and user detail coverage.
+                      </p>
+
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <span className="inline-flex items-center rounded-xl border border-violet-200 bg-white/80 px-3 py-1.5 text-xs sm:text-sm font-semibold text-violet-700">
+                          2026 User Detail Update
+                        </span>
+                        <span className="inline-flex items-center rounded-xl border border-sky-200 bg-white/80 px-3 py-1.5 text-xs sm:text-sm font-semibold text-sky-700">
+                          Coming next month 🚀
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
-                  <div>
-                    <p className="text-lg sm:text-xl font-semibold text-violet-900">No records found right now</p>
-                    <p className="mt-1 text-sm sm:text-base text-violet-800/90">
-                      This query is not available in current results yet.
-                    </p>
-                    <p className="mt-3 inline-flex items-center rounded-xl border border-violet-200 bg-white/75 px-3 py-2 text-sm font-semibold text-violet-700">
-                      Coming soon in next month 🚀
-                    </p>
+                  <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="rounded-xl border border-violet-200/80 bg-white/75 p-3">
+                      <p className="text-xs uppercase tracking-wide text-violet-700/80 font-semibold">Planned user details in 2026</p>
+                      <ul className="mt-2 space-y-1.5 text-sm text-violet-900">
+                        <li className="flex items-start gap-2"><span className="mt-1 h-1.5 w-1.5 rounded-full bg-violet-500" />Enhanced profile matching</li>
+                        <li className="flex items-start gap-2"><span className="mt-1 h-1.5 w-1.5 rounded-full bg-violet-500" />Faster city-level lookup results</li>
+                        <li className="flex items-start gap-2"><span className="mt-1 h-1.5 w-1.5 rounded-full bg-violet-500" />Improved multi-source data sync</li>
+                      </ul>
+                    </div>
+
+                    <div className="rounded-xl border border-sky-200/80 bg-white/75 p-3">
+                      <p className="text-xs uppercase tracking-wide text-sky-700/80 font-semibold">Request snapshot</p>
+                      <div className="mt-2 space-y-2 text-sm text-slate-700">
+                        <p><span className="font-semibold text-slate-900">Query:</span> {cleanedQuery}</p>
+                        <p><span className="font-semibold text-slate-900">Type:</span> {searchType.toUpperCase()}</p>
+                        <p><span className="font-semibold text-slate-900">Status:</span> Queued for upcoming index updates</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
