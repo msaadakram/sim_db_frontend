@@ -352,23 +352,20 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
             </div>
 
             {response?.meta ? (
-              <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="rounded-xl border border-border/60 bg-gradient-to-br from-white to-muted/20 p-3.5">
-                  <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1">Current Search</p>
-                  <p className="text-2xl font-bold text-primary">#{currentSearchCount}</p>
-                  <p className="text-xs text-muted-foreground mt-1">This visitor session</p>
+              <div className="mt-3 flex flex-wrap items-center gap-2.5 text-xs sm:text-sm">
+                <div className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-border/60 bg-muted/10">
+                  <span className="text-muted-foreground">Current</span>
+                  <span className="font-semibold text-primary">#{currentSearchCount}</span>
                 </div>
 
-                <div className="rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-3.5">
-                  <p className="text-[11px] uppercase tracking-wide text-emerald-700 mb-1">Free Limit</p>
-                  <p className="text-2xl font-bold text-emerald-700">{freeLimit}</p>
-                  <p className="text-xs text-emerald-700/80 mt-1">Searches before gate</p>
+                <div className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50">
+                  <span className="text-emerald-700">Free Limit</span>
+                  <span className="font-semibold text-emerald-700">{freeLimit}</span>
                 </div>
 
-                <div className="rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50 to-white p-3.5">
-                  <p className="text-[11px] uppercase tracking-wide text-blue-700 mb-1">Remaining Free</p>
-                  <p className="text-2xl font-bold text-blue-700">{remainingFreeSearches}</p>
-                  <p className="text-xs text-blue-700/80 mt-1">Before short-link step</p>
+                <div className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-blue-200 bg-blue-50">
+                  <span className="text-blue-700">Remaining</span>
+                  <span className="font-semibold text-blue-700">{remainingFreeSearches}</span>
                 </div>
               </div>
             ) : null}
