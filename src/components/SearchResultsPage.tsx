@@ -405,6 +405,33 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
               ) : null}
             </div>
 
+            <div className="mt-4 bg-white/80 border border-blue-100 rounded-xl p-4">
+              <p className="text-sm font-semibold text-blue-900">How to unlock search:</p>
+              <ol className="mt-2 space-y-1.5 text-sm text-blue-900/90 list-decimal list-inside">
+                <li>Click <span className="font-semibold">Open Short Link</span>.</li>
+                <li>Wait for the shortener page to fully load once.</li>
+                <li>Return to this tab.</li>
+                <li>Click <span className="font-semibold">I Completed, Check Again</span>.</li>
+              </ol>
+
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => window.location.reload()}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 text-white text-sm font-semibold hover:bg-blue-700"
+                >
+                  I Completed, Check Again
+                </button>
+                <button
+                  type="button"
+                  onClick={onBack}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-blue-200 bg-white text-blue-700 text-sm font-semibold hover:bg-blue-50"
+                >
+                  Back to Search
+                </button>
+              </div>
+            </div>
+
             {response.meta?.attemptedProviders?.length || response.attemptedProviders?.length ? (
               <div className="mt-4 bg-white/70 border border-blue-100 rounded-xl p-3">
                 <p className="text-xs font-semibold text-blue-900/80 mb-2">Provider attempts</p>
