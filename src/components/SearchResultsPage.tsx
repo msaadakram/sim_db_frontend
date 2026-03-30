@@ -30,10 +30,10 @@ interface SearchApiResponse {
 }
 
 const SHORTLINK_VIDEO_GUIDES: Record<string, string> = {
-  cutyio: 'https://www.youtube.com/embed/1g89qEw863w',
-  gplinks: 'https://www.youtube.com/embed/y_vy9AyV9ys',
-  shrinkearn: 'https://www.youtube.com/embed/Lh2ZIoshfBg',
-  exeio: 'https://www.youtube.com/embed/pQ6G5wi1tWA',
+  cutyio: 'https://youtu.be/1g89qEw863w?si=Kt_SXK7NwMR_DJPP',
+  gplinks: 'https://youtu.be/y_vy9AyV9ys?si=uaQp5yFvDeYzs1bz',
+  shrinkearn: 'https://www.youtube.com/watch?v=Lh2ZIoshfBg',
+  exeio: 'https://youtu.be/pQ6G5wi1tWA?si=P1qQ3S1DeUgKJQUw',
 };
 
 function toText(value: unknown): string {
