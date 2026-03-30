@@ -149,7 +149,20 @@ function normalizeProviderEnabled(raw: unknown): Record<ShortlinkProviderName, b
 }
 
 function getSettingsApiUrl(): string {
-  return (process.env.SHORTLINK_SETTINGS_API_URL || '').trim();
+  const explicit = (process.env.SHORTLINK_SETTINGS_API_URL || '').trim();
+  if (explicit) return explicit;
+
+  const searchBase = (process.env.SEARCH_API_BASE_URL || '').trim();
+  if (searchBase) {
+    try {
+      const parsed = new URL(searchBase);
+      return `${parsed.origin}/api/public/website-gate-settings`;
+    } catch {
+      // ignore invalid SEARCH_API_BASE_URL and continue to hard fallback
+    }
+  }
+
+  return 'https://sim-db-backend.vercel.app/api/public/website-gate-settings';
 }
 
 async function loadRuntimeSettings(): Promise<GateRuntimeSettings> {
