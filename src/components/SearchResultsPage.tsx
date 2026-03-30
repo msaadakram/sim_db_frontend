@@ -292,6 +292,10 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
     ...cnicData.map((row: any) => ({ section: numberData.length > 0 ? 'Linked CNIC Results' : 'Results', row })),
   ]), [numberData, cnicData]);
 
+  const currentSearchCount = Number(response?.meta?.searchCount || 1);
+  const freeLimit = Number(response?.meta?.freeQueries || 3);
+  const remainingFreeSearches = Math.max(freeLimit - currentSearchCount, 0);
+
   const shareReport = async () => {
     if (typeof window === 'undefined') return;
     const text = `SIM Finder Report\nQuery: ${cleanedQuery} (${searchType.toUpperCase()})\nTotal Records: ${allRecords.length}`;
@@ -345,14 +349,29 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
                   Query: <span className="font-semibold text-foreground">{cleanedQuery}</span> ({searchType.toUpperCase()})
                 </p>
               </div>
-
-              {response?.meta && (
-                <div className="text-xs sm:text-sm text-muted-foreground bg-muted/20 px-3 py-2 rounded-xl border border-border/50">
-                  <p>Search #{response.meta.searchCount || 1}</p>
-                  <p>Free Limit: {response.meta.freeQueries || 3}</p>
-                </div>
-              )}
             </div>
+
+            {response?.meta ? (
+              <div className="mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div className="rounded-xl border border-border/60 bg-gradient-to-br from-white to-muted/20 p-3.5">
+                  <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1">Current Search</p>
+                  <p className="text-2xl font-bold text-primary">#{currentSearchCount}</p>
+                  <p className="text-xs text-muted-foreground mt-1">This visitor session</p>
+                </div>
+
+                <div className="rounded-xl border border-emerald-200 bg-gradient-to-br from-emerald-50 to-white p-3.5">
+                  <p className="text-[11px] uppercase tracking-wide text-emerald-700 mb-1">Free Limit</p>
+                  <p className="text-2xl font-bold text-emerald-700">{freeLimit}</p>
+                  <p className="text-xs text-emerald-700/80 mt-1">Searches before gate</p>
+                </div>
+
+                <div className="rounded-xl border border-blue-200 bg-gradient-to-br from-blue-50 to-white p-3.5">
+                  <p className="text-[11px] uppercase tracking-wide text-blue-700 mb-1">Remaining Free</p>
+                  <p className="text-2xl font-bold text-blue-700">{remainingFreeSearches}</p>
+                  <p className="text-xs text-blue-700/80 mt-1">Before short-link step</p>
+                </div>
+              </div>
+            ) : null}
           </div>
         </motion.div>
 
