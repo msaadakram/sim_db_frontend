@@ -179,9 +179,25 @@ async function loadRuntimeSettings(): Promise<GateRuntimeSettings> {
     return base;
   }
 
+  const settingsRequestUrl = (() => {
+    const stamp = String(Math.floor(now / SETTINGS_CACHE_TTL_MS));
+    try {
+      const url = new URL(settingsApiUrl);
+      url.searchParams.set('_ts', stamp);
+      return url.toString();
+    } catch {
+      const separator = settingsApiUrl.includes('?') ? '&' : '?';
+      return `${settingsApiUrl}${separator}_ts=${encodeURIComponent(stamp)}`;
+    }
+  })();
+
   try {
-    const res = await fetch(settingsApiUrl, {
+    const res = await fetch(settingsRequestUrl, {
       cache: 'no-store',
+      headers: {
+        'cache-control': 'no-cache',
+        pragma: 'no-cache',
+      },
       signal: AbortSignal.timeout(getProviderTimeoutMs()),
     });
 
