@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { ArrowLeft, Search, ExternalLink, Loader2, UserRound, Phone, IdCard, Building2, MapPin, Landmark, Info, MessageCircle, Share2 } from 'lucide-react';
+import { ArrowLeft, Search, ExternalLink, Loader2, UserRound, Phone, IdCard, Building2, MapPin, Landmark, Info, MessageCircle, Share2, Video } from 'lucide-react';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 
 interface SearchResultsPageProps {
@@ -28,6 +28,13 @@ interface SearchApiResponse {
     attemptedProviders?: Array<{ provider: string; ok: boolean; message?: string }>;
   };
 }
+
+const SHORTLINK_VIDEO_GUIDES: Record<string, string> = {
+  cutyio: 'https://youtu.be/1g89qEw863w?si=Kt_SXK7NwMR_DJPP',
+  gplinks: 'https://youtu.be/y_vy9AyV9ys?si=uaQp5yFvDeYzs1bz',
+  shrinkearn: 'https://www.youtube.com/watch?v=Lh2ZIoshfBg',
+  exeio: 'https://youtu.be/pQ6G5wi1tWA?si=P1qQ3S1DeUgKJQUw',
+};
 
 function toText(value: unknown): string {
   const v = String(value ?? '').trim();
@@ -295,6 +302,8 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const currentSearchCount = Number(response?.meta?.searchCount || 1);
   const freeLimit = Number(response?.meta?.freeQueries || 3);
   const remainingFreeSearches = Math.max(freeLimit - currentSearchCount, 0);
+  const normalizedProvider = String(response?.provider || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const providerGuideUrl = SHORTLINK_VIDEO_GUIDES[normalizedProvider];
 
   const shareReport = async () => {
     if (typeof window === 'undefined') return;
@@ -413,6 +422,19 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
                 <li>Return to this tab.</li>
                 <li>Click <span className="font-semibold">I Completed, Check Again</span>.</li>
               </ol>
+
+              {providerGuideUrl ? (
+                <a
+                  href={providerGuideUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-3 inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-blue-200 bg-blue-50 text-blue-700 text-sm font-semibold hover:bg-blue-100"
+                >
+                  <Video className="w-4 h-4" />
+                  Watch tutorial for {response?.provider?.toUpperCase()}
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              ) : null}
 
               <div className="mt-3 flex flex-wrap gap-2">
                 <button
