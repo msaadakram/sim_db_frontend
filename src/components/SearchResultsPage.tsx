@@ -1,8 +1,8 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { ArrowLeft, Search, ExternalLink, Loader2 } from 'lucide-react';
-import { useEffect, useMemo, useState } from 'react';
+import { ArrowLeft, Search, ExternalLink, Loader2, UserRound, Phone, IdCard, Building2, MapPin, Landmark, Info } from 'lucide-react';
+import { type ReactNode, useEffect, useMemo, useState } from 'react';
 
 interface SearchResultsPageProps {
   searchQuery: string;
@@ -29,43 +29,94 @@ interface SearchApiResponse {
   };
 }
 
+function toText(value: unknown): string {
+  const v = String(value ?? '').trim();
+  return v.length ? v : '-';
+}
+
+function DetailItem({ label, value, icon }: { label: string; value: unknown; icon?: ReactNode }) {
+  return (
+    <div className="rounded-xl border border-border/50 bg-muted/10 p-3">
+      <p className="text-[11px] uppercase tracking-wide text-muted-foreground mb-1 flex items-center gap-1.5">
+        {icon}
+        {label}
+      </p>
+      <p className="text-sm text-foreground break-words leading-relaxed">{toText(value)}</p>
+    </div>
+  );
+}
+
 function ResultTable({ title, rows }: { title: string; rows: any[] }) {
   if (!rows || rows.length === 0) return null;
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-border/60 overflow-hidden mt-6">
-      <div className="px-5 py-4 border-b border-border/60 bg-muted/20">
-        <h3 className="text-lg text-primary font-semibold">{title}</h3>
+    <section className="mt-6 space-y-3">
+      <div className="flex items-center justify-between gap-3 px-1">
+        <h3 className="text-lg sm:text-xl text-primary font-semibold">{title}</h3>
+        <span className="text-xs sm:text-sm text-muted-foreground px-2.5 py-1 rounded-full bg-muted/20 border border-border/50">
+          {rows.length} record{rows.length > 1 ? 's' : ''}
+        </span>
       </div>
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm min-w-[780px]">
-          <thead className="bg-muted/10">
-            <tr>
-              <th className="text-left px-4 py-3">Name</th>
-              <th className="text-left px-4 py-3">CNIC</th>
-              <th className="text-left px-4 py-3">Number</th>
-              <th className="text-left px-4 py-3">Company</th>
-              <th className="text-left px-4 py-3">Address</th>
-              <th className="text-left px-4 py-3">City</th>
-              <th className="text-left px-4 py-3">Province</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.map((row, idx) => (
-              <tr key={`${row.cnic || row.number || idx}-${idx}`} className="border-t border-border/40 hover:bg-muted/10">
-                <td className="px-4 py-3">{row.name || '-'}</td>
-                <td className="px-4 py-3">{row.cnic || '-'}</td>
-                <td className="px-4 py-3">{row.number || '-'}</td>
-                <td className="px-4 py-3">{row.company || '-'}</td>
-                <td className="px-4 py-3">{row.address || '-'}</td>
-                <td className="px-4 py-3">{row.city || '-'}</td>
-                <td className="px-4 py-3">{row.province || '-'}</td>
+
+      <div className="lg:hidden grid grid-cols-1 gap-3">
+        {rows.map((row, idx) => (
+          <article
+            key={`${row.cnic || row.number || idx}-${idx}`}
+            className="rounded-2xl border border-border/60 bg-white p-4 shadow-sm"
+          >
+            <div className="flex items-start justify-between gap-3 mb-3">
+              <div>
+                <p className="text-base font-semibold text-primary leading-snug break-words">{toText(row.name)}</p>
+                <p className="text-xs text-muted-foreground mt-1">Record #{idx + 1}</p>
+              </div>
+              <span className="text-[10px] uppercase tracking-wide px-2 py-1 rounded-lg border border-border/50 bg-muted/20 text-muted-foreground">
+                Verified
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+              <DetailItem label="CNIC" value={row.cnic} icon={<IdCard className="w-3.5 h-3.5" />} />
+              <DetailItem label="Number" value={row.number} icon={<Phone className="w-3.5 h-3.5" />} />
+              <DetailItem label="Company" value={row.company} icon={<Building2 className="w-3.5 h-3.5" />} />
+              <DetailItem label="Address" value={row.address} icon={<MapPin className="w-3.5 h-3.5" />} />
+              <DetailItem label="City" value={row.city} icon={<Landmark className="w-3.5 h-3.5" />} />
+              <DetailItem label="Province" value={row.province} icon={<Info className="w-3.5 h-3.5" />} />
+            </div>
+          </article>
+        ))}
+      </div>
+
+      <div className="hidden lg:block bg-white rounded-2xl shadow-sm border border-border/60 overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm min-w-[900px]">
+            <thead className="bg-muted/15">
+              <tr>
+                <th className="text-left px-4 py-3 font-semibold">Name</th>
+                <th className="text-left px-4 py-3 font-semibold">CNIC</th>
+                <th className="text-left px-4 py-3 font-semibold">Number</th>
+                <th className="text-left px-4 py-3 font-semibold">Company</th>
+                <th className="text-left px-4 py-3 font-semibold">Address</th>
+                <th className="text-left px-4 py-3 font-semibold">City</th>
+                <th className="text-left px-4 py-3 font-semibold">Province</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {rows.map((row, idx) => (
+                <tr key={`${row.cnic || row.number || idx}-${idx}`} className="border-t border-border/40 hover:bg-muted/10">
+                  <td className="px-4 py-3 font-medium">{toText(row.name)}</td>
+                  <td className="px-4 py-3">{toText(row.cnic)}</td>
+                  <td className="px-4 py-3">{toText(row.number)}</td>
+                  <td className="px-4 py-3">{toText(row.company)}</td>
+                  <td className="px-4 py-3">{toText(row.address)}</td>
+                  <td className="px-4 py-3">{toText(row.city)}</td>
+                  <td className="px-4 py-3">{toText(row.province)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -154,7 +205,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
 
           <div className="bg-white rounded-2xl border border-border/60 p-4 sm:p-6 shadow-sm">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
+              <div className="space-y-1">
                 <h2 className="text-2xl sm:text-3xl text-primary" style={{ fontFamily: "'Playfair Display', serif" }}>
                   Search Results
                 </h2>
@@ -164,8 +215,9 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
               </div>
 
               {response?.meta && (
-                <div className="text-xs sm:text-sm text-muted-foreground bg-muted/20 px-3 py-2 rounded-xl">
-                  Search #{response.meta.searchCount || 1} • Free {response.meta.freeQueries || 3}
+                <div className="text-xs sm:text-sm text-muted-foreground bg-muted/20 px-3 py-2 rounded-xl border border-border/50">
+                  <p>Search #{response.meta.searchCount || 1}</p>
+                  <p>Free Limit: {response.meta.freeQueries || 3}</p>
                 </div>
               )}
             </div>
@@ -249,6 +301,15 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
               <div className="bg-amber-50 border border-amber-200 rounded-2xl p-6 text-amber-800 flex items-start gap-3">
                 <Search className="w-5 h-5 mt-0.5" />
                 <p>No records found for this query.</p>
+              </div>
+            )}
+
+            {(numberData.length > 0 || cnicData.length > 0) && (
+              <div className="mt-6 text-xs sm:text-sm text-muted-foreground bg-white border border-border/60 rounded-xl p-3.5 flex items-start gap-2">
+                <UserRound className="w-4 h-4 mt-0.5 text-accent" />
+                <p>
+                  For privacy and accuracy, always verify important records from official sources before taking action.
+                </p>
               </div>
             )}
           </>
