@@ -165,6 +165,12 @@ function getSettingsApiUrl(): string {
   return 'https://sim-db-backend.vercel.app/api/public/website-gate-settings';
 }
 
+function toDateOrNull(value: unknown): Date | null {
+  if (!value) return null;
+  const d = new Date(String(value));
+  return Number.isNaN(d.getTime()) ? null : d;
+}
+
 async function loadRuntimeSettings(): Promise<GateRuntimeSettings> {
   const now = Date.now();
   if (gateSettingsCache && gateSettingsCache.expiresAt > now) {
@@ -486,8 +492,14 @@ export async function GET(request: NextRequest) {
         searchCount = 1;
         resetAt = nextResetAt;
       } else {
-        const existingResetAt = existing.resetAt ? new Date(existing.resetAt) : null;
-        const shouldReset = !existingResetAt || existingResetAt.getTime() <= now.getTime();
+        const existingResetAt = toDateOrNull(existing.resetAt);
+        const windowStartedAt =
+          toDateOrNull(existing.windowStartedAt) ||
+          toDateOrNull(existing.createdAt) ||
+          now;
+
+        const effectiveResetAt = new Date(windowStartedAt.getTime() + gateSettings.resetWindowMs);
+        const shouldReset = effectiveResetAt.getTime() <= now.getTime();
 
         if (shouldReset) {
           await collection.updateOne(
@@ -508,13 +520,18 @@ export async function GET(request: NextRequest) {
           const updated = await collection.findOneAndUpdate(
             { token: cookieToken },
             {
-              $set: { updatedAt: now, ip },
+              $set: {
+                updatedAt: now,
+                ip,
+                windowStartedAt,
+                resetAt: effectiveResetAt,
+              },
               $inc: { searchCount: 1 },
             },
             { returnDocument: 'after' }
           );
           searchCount = Number(updated?.searchCount || 1);
-          resetAt = updated?.resetAt ? new Date(updated.resetAt) : existingResetAt;
+          resetAt = toDateOrNull(updated?.resetAt) || effectiveResetAt || existingResetAt;
         }
       }
     }
