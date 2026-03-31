@@ -39,8 +39,6 @@ const SHORTLINK_VIDEO_GUIDES: Record<string, string> = {
 };
 
 const ADSTERRA_SEARCH_RESULTS_AD_SCRIPT_SRC = 'https://pl29023950.profitablecpmratenetwork.com/e9/16/bc/e916bcc84635e25aa4cd4b692f26a06c.js';
-const MONETAG_SEARCH_RESULTS_AD_SCRIPT_SRC = 'https://quge5.com/88/tag.min.js';
-const MONETAG_ZONE_ID = '225222';
 const AD_SCRIPT_READY_TIMEOUT_MS = 5000;
 
 function getResultUnlockStorageKey(searchQuery: string, searchType: 'mobile' | 'cnic', searchCount: number): string {
@@ -376,9 +374,6 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const freeLimit = Number(response?.meta?.freeQueries || 3);
   const remainingFreeSearches = Math.max(freeLimit - currentSearchCount, 0);
   const isGateEnabled = response?.meta?.gateEnabled !== false;
-  const activeAdNetwork: 'adsterra' | 'monetag' = currentSearchCount % 2 === 0 ? 'monetag' : 'adsterra';
-  const activeAdScriptId = activeAdNetwork === 'adsterra' ? 'search-results-adsterra-script' : 'search-results-monetag-script';
-  const activeAdScriptSrc = activeAdNetwork === 'adsterra' ? ADSTERRA_SEARCH_RESULTS_AD_SCRIPT_SRC : MONETAG_SEARCH_RESULTS_AD_SCRIPT_SRC;
   const unlockStorageKey = useMemo(
     () => getResultUnlockStorageKey(cleanedQuery, searchType, currentSearchCount),
     [cleanedQuery, searchType, currentSearchCount]
@@ -402,7 +397,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [hasSearchResults, adScriptReady, adScriptFailed, activeAdNetwork]);
+  }, [hasSearchResults, adScriptReady, adScriptFailed]);
 
   useEffect(() => {
     if (!hasSearchResults || typeof window === 'undefined') return;
@@ -615,11 +610,9 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
             {hasSearchResults ? (
               <>
                 <Script
-                  id={activeAdScriptId}
-                  src={activeAdScriptSrc}
+                  id="search-results-adsterra-script"
+                  src={ADSTERRA_SEARCH_RESULTS_AD_SCRIPT_SRC}
                   strategy="afterInteractive"
-                  data-zone={activeAdNetwork === 'monetag' ? MONETAG_ZONE_ID : undefined}
-                  data-cfasync={activeAdNetwork === 'monetag' ? 'false' : undefined}
                   onReady={() => {
                     setAdScriptReady(true);
                     setAdScriptFailed(false);
