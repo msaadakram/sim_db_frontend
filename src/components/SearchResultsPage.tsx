@@ -38,8 +38,14 @@ const SHORTLINK_VIDEO_GUIDES: Record<string, string> = {
   exeio: 'https://youtu.be/pQ6G5wi1tWA?si=P1qQ3S1DeUgKJQUw',
 };
 
-const SEARCH_RESULTS_AD_SCRIPT_SRC = 'https://pl29023950.profitablecpmratenetwork.com/e9/16/bc/e916bcc84635e25aa4cd4b692f26a06c.js';
+const ADSTERRA_SEARCH_RESULTS_AD_SCRIPT_SRC = 'https://pl29023950.profitablecpmratenetwork.com/e9/16/bc/e916bcc84635e25aa4cd4b692f26a06c.js';
+const MONETAG_SEARCH_RESULTS_AD_SCRIPT_SRC = 'https://quge5.com/88/tag.min.js';
+const MONETAG_ZONE_ID = '225222';
 const AD_SCRIPT_READY_TIMEOUT_MS = 5000;
+
+function getResultUnlockStorageKey(searchQuery: string, searchType: 'mobile' | 'cnic', searchCount: number): string {
+  return `sf_result_unlock:${searchType}:${searchQuery}:${searchCount}`;
+}
 
 function toText(value: unknown): string {
   const v = String(value ?? '').trim();
@@ -300,6 +306,8 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
 
   useEffect(() => {
     setIsResultsUnlocked(false);
+    setAdScriptReady(false);
+    setAdScriptFailed(false);
     setAdScriptTimedOut(false);
 
     if (!cleanedQuery) {
@@ -368,6 +376,13 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const freeLimit = Number(response?.meta?.freeQueries || 3);
   const remainingFreeSearches = Math.max(freeLimit - currentSearchCount, 0);
   const isGateEnabled = response?.meta?.gateEnabled !== false;
+  const activeAdNetwork: 'adsterra' | 'monetag' = currentSearchCount % 2 === 0 ? 'monetag' : 'adsterra';
+  const activeAdScriptId = activeAdNetwork === 'adsterra' ? 'search-results-adsterra-script' : 'search-results-monetag-script';
+  const activeAdScriptSrc = activeAdNetwork === 'adsterra' ? ADSTERRA_SEARCH_RESULTS_AD_SCRIPT_SRC : MONETAG_SEARCH_RESULTS_AD_SCRIPT_SRC;
+  const unlockStorageKey = useMemo(
+    () => getResultUnlockStorageKey(cleanedQuery, searchType, currentSearchCount),
+    [cleanedQuery, searchType, currentSearchCount]
+  );
   const normalizedProvider = String(response?.provider || '').toLowerCase().replace(/[^a-z0-9]/g, '');
   const providerGuideUrl = SHORTLINK_VIDEO_GUIDES[normalizedProvider];
   const isApiNoRecordState = Boolean(response?.success) && numberData.length === 0 && cnicData.length === 0;
@@ -387,7 +402,15 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [hasSearchResults, adScriptReady, adScriptFailed]);
+  }, [hasSearchResults, adScriptReady, adScriptFailed, activeAdNetwork]);
+
+  useEffect(() => {
+    if (!hasSearchResults || typeof window === 'undefined') return;
+    const persistedUnlock = window.sessionStorage.getItem(unlockStorageKey) === '1';
+    if (persistedUnlock) {
+      setIsResultsUnlocked(true);
+    }
+  }, [hasSearchResults, unlockStorageKey]);
 
   const shareReport = async () => {
     if (typeof window === 'undefined') return;
@@ -417,6 +440,9 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
 
   const handleUnlockResults = () => {
     if (!canUnlockResults) return;
+    if (typeof window !== 'undefined') {
+      window.sessionStorage.setItem(unlockStorageKey, '1');
+    }
     setIsResultsUnlocked(true);
   };
 
@@ -589,9 +615,11 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
             {hasSearchResults ? (
               <>
                 <Script
-                  id="search-results-ad-script"
-                  src={SEARCH_RESULTS_AD_SCRIPT_SRC}
+                  id={activeAdScriptId}
+                  src={activeAdScriptSrc}
                   strategy="afterInteractive"
+                  data-zone={activeAdNetwork === 'monetag' ? MONETAG_ZONE_ID : undefined}
+                  data-cfasync={activeAdNetwork === 'monetag' ? 'false' : undefined}
                   onReady={() => {
                     setAdScriptReady(true);
                     setAdScriptFailed(false);
