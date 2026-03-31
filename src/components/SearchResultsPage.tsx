@@ -38,6 +38,9 @@ const SHORTLINK_VIDEO_GUIDES: Record<string, string> = {
   exeio: 'https://youtu.be/pQ6G5wi1tWA?si=P1qQ3S1DeUgKJQUw',
 };
 
+const SEARCH_RESULTS_AD_SCRIPT_SRC = 'https://pl29023950.profitablecpmratenetwork.com/e9/16/bc/e916bcc84635e25aa4cd4b692f26a06c.js';
+const AD_SCRIPT_READY_TIMEOUT_MS = 5000;
+
 function toText(value: unknown): string {
   const v = String(value ?? '').trim();
   return v.length ? v : '-';
@@ -289,11 +292,15 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const [error, setError] = useState('');
   const [response, setResponse] = useState<SearchApiResponse | null>(null);
   const [isResultsUnlocked, setIsResultsUnlocked] = useState(false);
+  const [adScriptReady, setAdScriptReady] = useState(false);
+  const [adScriptFailed, setAdScriptFailed] = useState(false);
+  const [adScriptTimedOut, setAdScriptTimedOut] = useState(false);
 
   const cleanedQuery = useMemo(() => searchQuery.trim().replace(/[^0-9]/g, ''), [searchQuery]);
 
   useEffect(() => {
     setIsResultsUnlocked(false);
+    setAdScriptTimedOut(false);
 
     if (!cleanedQuery) {
       setLoading(false);
@@ -367,6 +374,19 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const isNoRecordErrorState = Boolean(error) && /(no\s*record|not\s*found|no\s*data|not\s*available)/i.test(noRecordText);
   const showComingSoonCard = isApiNoRecordState || isNoRecordErrorState;
   const hasSearchResults = numberData.length > 0 || cnicData.length > 0;
+  const canUnlockResults = adScriptReady || adScriptFailed || adScriptTimedOut;
+
+  useEffect(() => {
+    if (!hasSearchResults || adScriptReady || adScriptFailed) return;
+
+    const timeoutId = window.setTimeout(() => {
+      setAdScriptTimedOut(true);
+    }, AD_SCRIPT_READY_TIMEOUT_MS);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [hasSearchResults, adScriptReady, adScriptFailed]);
 
   const shareReport = async () => {
     if (typeof window === 'undefined') return;
@@ -392,6 +412,11 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
         // no-op fallback
       }
     }
+  };
+
+  const handleUnlockResults = () => {
+    if (!canUnlockResults) return;
+    setIsResultsUnlocked(true);
   };
 
   return (
@@ -563,8 +588,16 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
               <>
                 <Script
                   id="search-results-ad-script"
-                  src="https://pl29023950.profitablecpmratenetwork.com/e9/16/bc/e916bcc84635e25aa4cd4b692f26a06c.js"
+                  src={SEARCH_RESULTS_AD_SCRIPT_SRC}
                   strategy="afterInteractive"
+                  onReady={() => {
+                    setAdScriptReady(true);
+                    setAdScriptFailed(false);
+                    setAdScriptTimedOut(false);
+                  }}
+                  onError={() => {
+                    setAdScriptFailed(true);
+                  }}
                 />
 
                 <div className="relative mt-2">
@@ -598,15 +631,25 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
                       <div className="max-w-sm mx-4 rounded-2xl border border-border/60 bg-white/95 p-5 text-center shadow-lg">
                         <p className="text-base font-semibold text-primary">Results are ready</p>
                         <p className="mt-1 text-sm text-muted-foreground">
-                          Click below to view full details.
+                          {canUnlockResults
+                            ? 'Tap below to view full details.'
+                            : 'Preparing ad check… please wait 1–2 seconds.'}
                         </p>
                         <button
                           type="button"
-                          onClick={() => setIsResultsUnlocked(true)}
-                          className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary/90"
+                          onClick={handleUnlockResults}
+                          disabled={!canUnlockResults}
+                          className={`mt-4 inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold text-white ${
+                            canUnlockResults ? 'bg-primary hover:bg-primary/90' : 'bg-primary/60 cursor-not-allowed'
+                          }`}
                         >
-                          View Now
+                          {canUnlockResults ? 'View Now' : 'Preparing…'}
                         </button>
+                        {(adScriptFailed || adScriptTimedOut) && (
+                          <p className="mt-2 text-xs text-amber-700">
+                            If Chrome blocks pop-ups, allow pop-ups for this site and tap again.
+                          </p>
+                        )}
                       </div>
                     </div>
                   )}
