@@ -37,9 +37,16 @@ const SHORTLINK_VIDEO_GUIDES: Record<string, string> = {
   exeio: 'https://youtu.be/pQ6G5wi1tWA?si=P1qQ3S1DeUgKJQUw',
 };
 
-const SEARCH_RESULTS_POPUNDER_SCRIPT_SRC = 'https://al5sm.com/tag.min.js';
-const SEARCH_RESULTS_POPUNDER_ZONE_ID = '10812009';
+type SearchResultsPopunderProvider = 'adsterra' | 'monetag';
+
+const ADSTERRA_SEARCH_RESULTS_POPUNDER_SCRIPT_SRC = 'https://pl29023950.profitablecpmratenetwork.com/e9/16/bc/e916bcc84635e25aa4cd4b692f26a06c.js';
+const MONETAG_SEARCH_RESULTS_POPUNDER_SCRIPT_SRC = 'https://al5sm.com/tag.min.js';
+const MONETAG_SEARCH_RESULTS_POPUNDER_ZONE_ID = '10812009';
 const AD_SCRIPT_READY_TIMEOUT_MS = 5000;
+
+function getSearchResultsPopunderProvider(searchCount: number): SearchResultsPopunderProvider {
+  return searchCount % 2 === 1 ? 'adsterra' : 'monetag';
+}
 
 function getResultUnlockStorageKey(searchQuery: string, searchType: 'mobile' | 'cnic', searchCount: number): string {
   return `sf_result_unlock:${searchType}:${searchQuery}:${searchCount}`;
@@ -374,6 +381,11 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const freeLimit = Number(response?.meta?.freeQueries || 3);
   const remainingFreeSearches = Math.max(freeLimit - currentSearchCount, 0);
   const isGateEnabled = response?.meta?.gateEnabled !== false;
+  const popunderProvider = useMemo(() => getSearchResultsPopunderProvider(currentSearchCount), [currentSearchCount]);
+  const popunderScriptSrc =
+    popunderProvider === 'adsterra'
+      ? ADSTERRA_SEARCH_RESULTS_POPUNDER_SCRIPT_SRC
+      : MONETAG_SEARCH_RESULTS_POPUNDER_SCRIPT_SRC;
   const unlockStorageKey = useMemo(
     () => getResultUnlockStorageKey(cleanedQuery, searchType, currentSearchCount),
     [cleanedQuery, searchType, currentSearchCount]
@@ -390,10 +402,16 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   useEffect(() => {
     if (!hasSearchResults || typeof document === 'undefined') return;
 
+    setAdScriptReady(false);
+    setAdScriptFailed(false);
+    setAdScriptTimedOut(false);
+
     const adScript = document.createElement('script');
     adScript.id = 'search-results-popunder-script';
-    adScript.dataset.zone = SEARCH_RESULTS_POPUNDER_ZONE_ID;
-    adScript.src = SEARCH_RESULTS_POPUNDER_SCRIPT_SRC;
+    adScript.src = popunderScriptSrc;
+    if (popunderProvider === 'monetag') {
+      adScript.dataset.zone = MONETAG_SEARCH_RESULTS_POPUNDER_ZONE_ID;
+    }
 
     const handleAdScriptLoad = () => {
       setAdScriptReady(true);
@@ -416,7 +434,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
         adScript.parentNode.removeChild(adScript);
       }
     };
-  }, [hasSearchResults]);
+  }, [hasSearchResults, popunderProvider, popunderScriptSrc]);
 
   useEffect(() => {
     if (!hasSearchResults || adScriptReady || adScriptFailed) return;
