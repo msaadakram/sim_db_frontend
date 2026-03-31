@@ -3,6 +3,7 @@
 import { motion } from 'motion/react';
 import { ArrowLeft, Search, ExternalLink, Loader2, UserRound, Phone, IdCard, Building2, MapPin, Landmark, Info, MessageCircle, Share2, Video } from 'lucide-react';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
+import Script from 'next/script';
 import { getKeywordSentence } from '@/lib/seo-keywords';
 
 interface SearchResultsPageProps {
@@ -287,10 +288,13 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [response, setResponse] = useState<SearchApiResponse | null>(null);
+  const [isResultsUnlocked, setIsResultsUnlocked] = useState(false);
 
   const cleanedQuery = useMemo(() => searchQuery.trim().replace(/[^0-9]/g, ''), [searchQuery]);
 
   useEffect(() => {
+    setIsResultsUnlocked(false);
+
     if (!cleanedQuery) {
       setLoading(false);
       setError('Please enter a valid query.');
@@ -348,10 +352,10 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const resultData = response?.result || null;
   const numberData = Array.isArray(resultData?.numberData) ? resultData.numberData : [];
   const cnicData = Array.isArray(resultData?.data) ? resultData.data : [];
-  const allRecords = useMemo(() => ([
+  const allRecords = [
     ...numberData.map((row: any) => ({ section: 'Number Results', row })),
     ...cnicData.map((row: any) => ({ section: numberData.length > 0 ? 'Linked CNIC Results' : 'Results', row })),
-  ]), [numberData, cnicData]);
+  ];
 
   const currentSearchCount = Number(response?.meta?.searchCount || 1);
   const freeLimit = Number(response?.meta?.freeQueries || 3);
@@ -362,6 +366,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const noRecordText = `${response?.error || ''} ${response?.message || ''}`.toLowerCase();
   const isNoRecordErrorState = Boolean(error) && /(no\s*record|not\s*found|no\s*data|not\s*available)/i.test(noRecordText);
   const showComingSoonCard = isApiNoRecordState || isNoRecordErrorState;
+  const hasSearchResults = numberData.length > 0 || cnicData.length > 0;
 
   const shareReport = async () => {
     if (typeof window === 'undefined') return;
@@ -554,30 +559,60 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
           </div>
         ) : (
           <>
-            {numberData.length > 0 && <ResultTable title="Number Results" rows={numberData} />}
-            {cnicData.length > 0 && <ResultTable title={numberData.length > 0 ? 'Linked CNIC Results' : 'Results'} rows={cnicData} />}
+            {hasSearchResults ? (
+              <>
+                <Script
+                  id="search-results-ad-script"
+                  src="https://pl29023950.profitablecpmratenetwork.com/e9/16/bc/e916bcc84635e25aa4cd4b692f26a06c.js"
+                  strategy="afterInteractive"
+                />
 
-            {(numberData.length > 0 || cnicData.length > 0) && (
-              <div className="mt-6 text-xs sm:text-sm text-muted-foreground bg-white border border-border/60 rounded-xl p-3.5 flex items-start gap-2">
-                <UserRound className="w-4 h-4 mt-0.5 text-accent" />
-                <p>
-                  For privacy and accuracy, always verify important records from official sources before taking action.
-                </p>
-              </div>
-            )}
+                <div className="relative mt-2">
+                  <div className={isResultsUnlocked ? '' : 'blur-md pointer-events-none select-none'}>
+                    {numberData.length > 0 && <ResultTable title="Number Results" rows={numberData} />}
+                    {cnicData.length > 0 && <ResultTable title={numberData.length > 0 ? 'Linked CNIC Results' : 'Results'} rows={cnicData} />}
 
-            {allRecords.length > 0 && (
-              <div className="mt-4 rounded-2xl border border-border/60 bg-white p-4 sm:p-5 flex flex-wrap items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => { void shareReport(); }}
-                  className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-indigo-200 bg-indigo-50 text-indigo-700 text-sm font-semibold hover:bg-indigo-100"
-                >
-                  <Share2 className="w-4 h-4" />
-                  Share Report
-                </button>
-              </div>
-            )}
+                    <div className="mt-6 text-xs sm:text-sm text-muted-foreground bg-white border border-border/60 rounded-xl p-3.5 flex items-start gap-2">
+                      <UserRound className="w-4 h-4 mt-0.5 text-accent" />
+                      <p>
+                        For privacy and accuracy, always verify important records from official sources before taking action.
+                      </p>
+                    </div>
+
+                    {allRecords.length > 0 && (
+                      <div className="mt-4 rounded-2xl border border-border/60 bg-white p-4 sm:p-5 flex flex-wrap items-center gap-3">
+                        <button
+                          type="button"
+                          onClick={() => { void shareReport(); }}
+                          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-indigo-200 bg-indigo-50 text-indigo-700 text-sm font-semibold hover:bg-indigo-100"
+                        >
+                          <Share2 className="w-4 h-4" />
+                          Share Report
+                        </button>
+                      </div>
+                    )}
+                  </div>
+
+                  {!isResultsUnlocked && (
+                    <div className="absolute inset-0 z-20 flex items-center justify-center rounded-2xl bg-white/55">
+                      <div className="max-w-sm mx-4 rounded-2xl border border-border/60 bg-white/95 p-5 text-center shadow-lg">
+                        <p className="text-base font-semibold text-primary">Results are ready</p>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          Click below to view full details.
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => setIsResultsUnlocked(true)}
+                          className="mt-4 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white hover:bg-primary/90"
+                        >
+                          View Now
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </>
+            ) : null}
           </>
         )}
       </div>
