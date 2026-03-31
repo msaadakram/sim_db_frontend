@@ -5,13 +5,15 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { withSeoAlt } from '@/lib/seo-keywords';
 
 import { StickySearchBar } from './StickySearchBar';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const router = useRouter();
   const pathname = usePathname();
   const isHomePage = pathname === '/';
 
@@ -38,6 +40,18 @@ export function Header() {
   // Close mobile menu when clicking on a link
   const handleLinkClick = () => {
     setMobileMenuOpen(false);
+  };
+
+  // Ensure Get Started always takes users to home page
+  const handleGetStartedClick = () => {
+    setMobileMenuOpen(false);
+
+    if (pathname === '/') {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    router.push('/');
   };
 
   // Handle mobile menu toggle with scroll
@@ -100,7 +114,7 @@ export function Header() {
                 <div className="w-9 h-9 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-xl overflow-hidden shadow-lg ring-1 ring-border/60 bg-white/90 group-hover:shadow-xl transition-shadow">
                   <Image
                     src="/app-logo.png"
-                    alt="SIM Finder Logo"
+                    alt={withSeoAlt('SIM Finder Logo')}
                     width={48}
                     height={48}
                     priority
@@ -141,6 +155,7 @@ export function Header() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={handleGetStartedClick}
                 className="px-5 lg:px-8 py-2.5 lg:py-3 bg-gradient-to-r from-primary to-accent text-white rounded-full hover:shadow-xl transition-all duration-300 text-sm lg:text-base font-medium whitespace-nowrap"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
@@ -235,7 +250,7 @@ export function Header() {
                   <motion.button
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    onClick={handleLinkClick}
+                    onClick={handleGetStartedClick}
                     className="mt-4 px-6 py-4 bg-gradient-to-r from-primary to-accent text-white rounded-2xl hover:shadow-xl transition-all duration-300 font-semibold text-center"
                     style={{ fontFamily: "'Inter', sans-serif" }}
                   >

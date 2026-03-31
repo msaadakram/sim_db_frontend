@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Mail, Phone, MessageCircle, MapPin, Send, Clock, HeadphonesIcon, CheckCircle2, ArrowRight } from 'lucide-react';
+import { Mail, MessageCircle, MapPin, Send, Clock, HeadphonesIcon, CheckCircle2, ArrowRight } from 'lucide-react';
 import { useState, useEffect, useRef } from 'react';
 
 export function ContactPage() {
@@ -79,46 +79,36 @@ export function ContactPage() {
       icon: <Mail className="w-6 h-6" />,
       title: 'Email Us',
       description: 'Send us an email anytime',
-      contact: 'support@simfinder.com',
-      link: 'mailto:support@simfinder.com',
+      contact: 'msaadakram786@gmail.com',
+      link: 'mailto:msaadakram786@gmail.com',
       color: 'from-blue-500 to-cyan-500'
     },
     {
       icon: <MessageCircle className="w-6 h-6" />,
       title: 'WhatsApp',
-      description: 'Chat with us on WhatsApp',
-      contact: '+1 (234) 567-8900',
-      link: 'https://wa.me/1234567890',
+      description: 'WhatsApp only (no call support)',
+      contact: '+923460047018',
+      link: 'https://wa.me/923460047018',
       color: 'from-green-500 to-emerald-500'
-    },
-    {
-      icon: <Phone className="w-6 h-6" />,
-      title: 'Call Us',
-      description: 'Mon-Fri from 9am to 6pm',
-      contact: '+1 (234) 567-8900',
-      link: 'tel:+1234567890',
-      color: 'from-purple-500 to-pink-500'
     }
   ];
 
   const officeHours = [
-    { day: 'Monday - Friday', hours: '9:00 AM - 6:00 PM' },
-    { day: 'Saturday', hours: '10:00 AM - 4:00 PM' },
-    { day: 'Sunday', hours: 'Closed' }
+    { day: 'Monday - Sunday', hours: '24 Hours Online' }
   ];
 
   const faqs = [
     {
       question: 'How quickly will I get a response?',
-      answer: 'We typically respond to all inquiries within 24 hours during business days. For urgent matters, please call us directly.'
+      answer: 'We typically respond quickly through WhatsApp and email. Our support channel is online 24/7.'
     },
     {
-      question: 'Can I schedule a call?',
-      answer: 'Yes! You can request a callback by filling out the contact form and mentioning your preferred time in the message.'
+      question: 'Can I get support on WhatsApp?',
+      answer: 'Yes! WhatsApp is our primary support channel. Message us anytime and our team will assist you online.'
     },
     {
       question: 'Do you offer 24/7 support?',
-      answer: 'Our email and WhatsApp support are available 24/7. Phone support is available during business hours (Mon-Fri, 9am-6pm).'
+      answer: 'Yes. We provide 24/7 online support through WhatsApp and email.'
     }
   ];
 
@@ -171,7 +161,7 @@ export function ContactPage() {
       {/* Contact Methods */}
       <section className="relative py-12 sm:py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid sm:grid-cols-3 gap-6 lg:gap-8">
+          <div className="grid sm:grid-cols-2 gap-6 lg:gap-8">
             {contactMethods.map((method, index) => (
               <motion.a
                 key={index}
@@ -517,7 +507,7 @@ export function ContactPage() {
           </motion.p>
 
           <motion.a
-            href="https://wa.me/1234567890"
+            href="https://wa.me/923460047018"
             target="_blank"
             rel="noopener noreferrer"
             initial={{ opacity: 0, y: 30 }}

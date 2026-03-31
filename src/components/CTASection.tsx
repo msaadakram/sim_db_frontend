@@ -3,6 +3,7 @@
 import { motion } from 'motion/react';
 import { ArrowRight, Shield } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { getKeywordSentence } from '@/lib/seo-keywords';
 
 export function CTASection() {
   const [isVisible, setIsVisible] = useState(false);
@@ -58,11 +59,12 @@ export function CTASection() {
                     className="text-3xl sm:text-4xl md:text-5xl mb-4 sm:mb-6 leading-tight"
                     style={{ fontFamily: "'Playfair Display', serif" }}
                   >
-                    Ready to find what you're looking for?
+                    Ready for SIM owner lookup and SIM detail checker results?
                   </h2>
                   <p className="text-base sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-8" style={{ fontFamily: "'Inter', sans-serif" }}>
-                    Start tracking SIM details instantly with our advanced verification system. 
+                    Start tracking SIM details instantly with our advanced verification system.
                     Get accurate results in seconds with complete privacy and security.
+                    Keyword coverage includes: {getKeywordSentence(48, 14)}.
                   </p>
 
                   <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center lg:justify-start">

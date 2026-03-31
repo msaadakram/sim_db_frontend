@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { getSiteUrl } from '@/lib/site-url';
+import { SIM_OWNER_SEO_KEYWORDS, getKeywordSentence } from '@/lib/seo-keywords';
 
 const SITE_URL = getSiteUrl();
 
@@ -11,29 +12,20 @@ export const metadata: Metadata = {
     template: '%s | SIM Finder',
   },
   description:
-    'SIM Finder helps you perform SIM details check in Pakistan, including SIM owner details, CNIC details check, and mobile number verification with fast and secure results.',
-  keywords: [
-    'SIM details check',
-    'SIM owner details',
-    'Pakistan SIM details',
-    'CNIC details check',
-    'CNIC SIM check Pakistan',
-    'mobile number details Pakistan',
-    'SIM registration details',
-    'SIM information Pakistan',
-  ],
+    'SIM Finder helps you perform SIM details check in Pakistan, including sim owner details pakistan, sim data check, sim details by number, pta sim check, and mobile number details pakistan with fast and secure results.',
+  keywords: [...SIM_OWNER_SEO_KEYWORDS],
   openGraph: {
     type: 'website',
     siteName: 'SIM Finder',
     locale: 'en_US',
     title: 'SIM Finder Pakistan - SIM Details Check & CNIC Owner Details',
     description:
-      'Check SIM details, SIM owner details, and CNIC-linked mobile information in Pakistan with fast and secure online lookup tools.',
+      `Check SIM details, SIM owner details, and CNIC-linked mobile information in Pakistan with fast online lookup tools: ${getKeywordSentence(0, 10)}.`,
   },
   twitter: {
     card: 'summary_large_image',
     title: 'SIM Finder Pakistan - SIM Details Check',
-    description: 'Pakistan SIM details check, CNIC details lookup, and SIM owner verification in one place.',
+    description: `Pakistan SIM details check and SIM owner verification in one place: ${getKeywordSentence(10, 8)}.`,
   },
   robots: {
     index: true,

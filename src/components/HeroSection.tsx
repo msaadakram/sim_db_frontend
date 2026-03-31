@@ -3,6 +3,7 @@
 import { motion } from 'motion/react';
 import { Search, Shield, MapPin, Phone, CreditCard, User } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
+import { getKeywordSentence } from '@/lib/seo-keywords';
 
 interface HeroSectionProps {
   onSearch?: (query: string, type: 'mobile' | 'cnic') => void;
@@ -78,16 +79,23 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
                 transition={{ delay: 0.3 }}
                 className="text-xs sm:text-sm uppercase tracking-wider mb-3 sm:mb-4 text-white/90"
               >
-                Pakistan SIM Details Check Platform
+                SIM Owner Detail, SIM Owner Details Pakistan & PTA SIM Check Platform
               </motion.p>
               <h1
                 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl mb-4 sm:mb-6 leading-tight"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
-                SIM Details Check & CNIC Owner Details in Pakistan
+                SIM Owner Detail & SIM Details Check in Pakistan
               </h1>
+              <h2 className="text-lg sm:text-xl md:text-2xl mb-4 text-white/90" style={{ fontFamily: "'Inter', sans-serif" }}>
+                SIM owner details by number, SIM info by number, and SIM verification system
+              </h2>
               <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-white/90 max-w-xl mx-auto lg:mx-0" style={{ fontFamily: "'Inter', sans-serif" }}>
-                Run a fast SIM details check for Pakistan mobile numbers. Verify SIM owner details, perform CNIC details check, and review number registration insights in one secure dashboard.
+                Run a fast sim data check for Pakistan mobile numbers. Verify sim owner name check results,
+                perform sim registration check, review pta sim information, and complete sim detail verification in one secure dashboard.
+              </p>
+              <p className="text-xs sm:text-sm md:text-base mb-6 sm:mb-8 text-white/85 max-w-2xl mx-auto lg:mx-0 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+                Popular search terms: {getKeywordSentence(0, 18)}.
               </p>
             </motion.div>
 

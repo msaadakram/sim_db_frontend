@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { PortableText, PortableTextComponents } from '@portabletext/react';
 import { NewsletterSubscribeSection } from './NewsletterSubscribeSection';
+import { withSeoAlt } from '@/lib/seo-keywords';
 
 interface PostData {
   title: string;
@@ -405,7 +406,7 @@ const createPortableTextComponents = (): PortableTextComponents => ({
           <div className="rounded-2xl overflow-hidden shadow-lg">
             <Image
               src={imageUrl}
-              alt={value?.alt || 'Blog image'}
+              alt={withSeoAlt(value?.alt || 'Blog image')}
               width={1200}
               height={675}
               sizes="(max-width: 768px) 100vw, 1200px"
@@ -612,7 +613,7 @@ export function BlogPostDetail({ post, relatedPosts }: BlogPostDetailProps) {
                 <div className="absolute inset-0 bg-gradient-to-t from-primary/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 z-10"></div>
                 <Image
                   src={post.image}
-                  alt={post.title}
+                  alt={withSeoAlt(post.title)}
                   width={1200}
                   height={600}
                   priority
@@ -797,7 +798,7 @@ export function BlogPostDetail({ post, relatedPosts }: BlogPostDetailProps) {
                             {relatedPost.image ? (
                               <Image
                                 src={relatedPost.image}
-                                alt={relatedPost.title}
+                                alt={withSeoAlt(relatedPost.title)}
                                 width={400}
                                 height={192}
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"

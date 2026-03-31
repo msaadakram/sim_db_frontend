@@ -2,9 +2,11 @@
 
 import { Phone, Mail, MapPin, Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 import { motion } from 'motion/react';
+import { getKeywordParagraphs, getKeywordSentence } from '@/lib/seo-keywords';
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const keywordParagraphs = getKeywordParagraphs(11);
 
   return (
     <footer className="bg-primary text-white">
@@ -135,6 +137,26 @@ export function Footer() {
                 </span>
               </li>
             </ul>
+          </div>
+        </div>
+
+        <div className="mb-8 sm:mb-12 rounded-2xl border border-white/15 bg-white/5 p-5 sm:p-6">
+          <h3 className="text-lg sm:text-xl mb-3" style={{ fontFamily: "'Playfair Display', serif" }}>
+            SIM owner details Pakistan search keywords
+          </h3>
+          <p className="text-white/85 text-sm sm:text-base mb-3 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+            Popular keyword phrases used across our website for sim owner detail coverage include: {getKeywordSentence(0, 14)}.
+          </p>
+          <div className="space-y-2">
+            {keywordParagraphs.map((paragraph, index) => (
+              <p
+                key={`keyword-paragraph-${index}`}
+                className="text-white/75 text-xs sm:text-sm leading-relaxed"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                {paragraph}
+              </p>
+            ))}
           </div>
         </div>
 

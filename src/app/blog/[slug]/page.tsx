@@ -7,6 +7,7 @@ import { BlogSection } from '@/components/BlogSection';
 import { getBlogPostBySlug, getRelatedBlogPosts } from '@/lib/blog';
 import { notFound } from 'next/navigation';
 import { getSiteUrl } from '@/lib/site-url';
+import { SIM_OWNER_SEO_KEYWORDS, getKeywordSentence } from '@/lib/seo-keywords';
 
 export const revalidate = 60;
 
@@ -39,12 +40,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     return {
         title,
         description,
+        keywords: [post.title, post.category, ...SIM_OWNER_SEO_KEYWORDS.slice(0, 30)],
         alternates: {
             canonical: canonicalUrl,
         },
         openGraph: {
             title,
-            description,
+            description: `${description} Keywords: ${getKeywordSentence(54, 8)}.`,
             url: canonicalUrl,
             siteName: 'SIM Finder',
             images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: post.title }] : [],

@@ -3,6 +3,7 @@
 import { motion } from 'motion/react';
 import { ArrowLeft, Search, ExternalLink, Loader2, UserRound, Phone, IdCard, Building2, MapPin, Landmark, Info, MessageCircle, Share2, Video } from 'lucide-react';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
+import { getKeywordSentence } from '@/lib/seo-keywords';
 
 interface SearchResultsPageProps {
   searchQuery: string;
@@ -409,10 +410,13 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div className="space-y-1">
                 <h2 className="text-2xl sm:text-3xl text-primary" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Search Results
+                  SIM detail checker results
                 </h2>
                 <p className="text-muted-foreground mt-1 text-sm sm:text-base">
                   Query: <span className="font-semibold text-foreground">{cleanedQuery}</span> ({searchType.toUpperCase()})
+                </p>
+                <p className="text-muted-foreground mt-1 text-xs sm:text-sm leading-relaxed">
+                  Related search terms: {getKeywordSentence(74, 10)}.
                 </p>
               </div>
             </div>

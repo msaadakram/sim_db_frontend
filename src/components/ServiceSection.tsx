@@ -3,6 +3,7 @@
 import { motion } from 'motion/react';
 import { CheckCircle, ArrowRight } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+import { getKeywordSentence } from '@/lib/seo-keywords';
 
 export function ServiceSection() {
   const [isVisible, setIsVisible] = useState(false);
@@ -60,6 +61,9 @@ export function ServiceSection() {
               Our platform is built for Pakistan SIM details check use cases, helping you find SIM owner details,
               validate CNIC-linked numbers, and review registration records in seconds.
               Get reliable results with privacy-focused, secure search workflows.
+            </p>
+            <p className="text-muted-foreground text-sm sm:text-base mb-6 sm:mb-8 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
+              More search intent phrases covered here: {getKeywordSentence(34, 14)}.
             </p>
 
             <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">

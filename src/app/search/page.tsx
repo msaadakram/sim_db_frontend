@@ -1,10 +1,12 @@
 'use client';
 
-import { Suspense } from 'react';
+import { Suspense, lazy } from 'react';
 import { Header } from '@/components/Header';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { SearchResultsPage } from '@/components/SearchResultsPage';
 import { useSearchParams, useRouter } from 'next/navigation';
+
+const Footer = lazy(() => import('@/components/Footer').then(m => ({ default: m.Footer })));
 
 function SectionLoader() {
     return (
@@ -43,6 +45,9 @@ export default function SearchPage() {
             <main className="w-full">
                 <Suspense fallback={<SectionLoader />}>
                     <SearchContent />
+                </Suspense>
+                <Suspense fallback={<SectionLoader />}>
+                    <Footer />
                 </Suspense>
             </main>
             <ScrollToTop />

@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { NewsletterSubscribeSection } from './NewsletterSubscribeSection';
+import { getKeywordSentence } from '@/lib/seo-keywords';
 interface BlogPost {
   id: string | number;
   slug: string;
@@ -98,14 +99,15 @@ export function BlogPage({ posts }: BlogPageProps) {
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-primary mb-4 sm:mb-6 leading-[1.05] px-4 font-black tracking-tight drop-shadow-sm"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              Insights &{' '}
+              SIM info insights &{' '}
               <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
-                Knowledge Hub
+                SIM owner detail knowledge hub
               </span>
             </h1>
 
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto px-4 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-              Explore expert articles, comprehensive guides, and the latest trends in SIM tracking technology
+              Explore expert articles, comprehensive guides, and the latest trends in SIM tracking technology.
+              Search intent coverage: {getKeywordSentence(62, 12)}.
             </p>
           </motion.div>
 
