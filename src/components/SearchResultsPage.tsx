@@ -4,6 +4,14 @@ import { motion } from 'motion/react';
 import { ArrowLeft, Search, ExternalLink, Loader2, UserRound, Phone, IdCard, Building2, MapPin, Landmark, Info, MessageCircle, Share2, Video } from 'lucide-react';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 
+declare global {
+  interface Window {
+    __sfOriginalWindowOpen?: Window['open'];
+    __sfSearchPopunderOpenGuardInstalled?: boolean;
+    __sfAllowSearchPopunderOpen?: boolean;
+  }
+}
+
 interface SearchResultsPageProps {
   searchQuery: string;
   searchType: 'mobile' | 'cnic';
@@ -46,6 +54,38 @@ const AD_SCRIPT_READY_TIMEOUT_MS = 5000;
 
 function getSearchResultsPopunderProvider(searchCount: number): SearchResultsPopunderProvider {
   return searchCount % 2 === 1 ? 'adsterra' : 'monetag';
+}
+
+function ensureSearchPopunderOpenGuard() {
+  if (typeof window === 'undefined' || window.__sfSearchPopunderOpenGuardInstalled) return;
+
+  window.__sfOriginalWindowOpen = window.open.bind(window) as Window['open'];
+
+  const guardedOpen: Window['open'] = (...args) => {
+    const isSearchRoute = window.location.pathname.startsWith('/search');
+    const allowPopunder = window.__sfAllowSearchPopunderOpen === true && isSearchRoute;
+
+    if (!allowPopunder) {
+      const maybeUrl = typeof args[0] === 'string' ? args[0].toLowerCase() : '';
+      const isLikelyPopunderTarget =
+        !maybeUrl ||
+        maybeUrl === 'about:blank' ||
+        maybeUrl.includes('al5sm.com') ||
+        maybeUrl.includes('profitablecpmratenetwork.com') ||
+        maybeUrl.includes('adsterra') ||
+        maybeUrl.includes('monetag');
+
+      if (isLikelyPopunderTarget) {
+        return null;
+      }
+    }
+
+    const originalOpen = window.__sfOriginalWindowOpen;
+    return originalOpen ? originalOpen(...args) : null;
+  };
+
+  window.open = guardedOpen;
+  window.__sfSearchPopunderOpenGuardInstalled = true;
 }
 
 function getResultUnlockStorageKey(searchQuery: string, searchType: 'mobile' | 'cnic', searchCount: number): string {
@@ -397,10 +437,22 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const isNoRecordErrorState = Boolean(error) && /(no\s*record|not\s*found|no\s*data|not\s*available)/i.test(noRecordText);
   const showComingSoonCard = isApiNoRecordState || isNoRecordErrorState;
   const hasSearchResults = numberData.length > 0 || cnicData.length > 0;
+  const shouldAllowPopunderOpen = hasSearchResults && !isResultsUnlocked;
   const canUnlockResults = adScriptReady || adScriptFailed || adScriptTimedOut;
 
   useEffect(() => {
-    if (!hasSearchResults || typeof document === 'undefined') return;
+    if (typeof window === 'undefined') return;
+
+    ensureSearchPopunderOpenGuard();
+    window.__sfAllowSearchPopunderOpen = shouldAllowPopunderOpen;
+
+    return () => {
+      window.__sfAllowSearchPopunderOpen = false;
+    };
+  }, [shouldAllowPopunderOpen]);
+
+  useEffect(() => {
+    if (!hasSearchResults || isResultsUnlocked || typeof document === 'undefined') return;
 
     setAdScriptReady(false);
     setAdScriptFailed(false);
@@ -434,10 +486,10 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
         adScript.parentNode.removeChild(adScript);
       }
     };
-  }, [hasSearchResults, popunderProvider, popunderScriptSrc]);
+  }, [hasSearchResults, isResultsUnlocked, popunderProvider, popunderScriptSrc]);
 
   useEffect(() => {
-    if (!hasSearchResults || adScriptReady || adScriptFailed) return;
+    if (!hasSearchResults || isResultsUnlocked || adScriptReady || adScriptFailed) return;
 
     const timeoutId = window.setTimeout(() => {
       setAdScriptTimedOut(true);
@@ -446,7 +498,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [hasSearchResults, adScriptReady, adScriptFailed]);
+  }, [hasSearchResults, isResultsUnlocked, adScriptReady, adScriptFailed]);
 
   useEffect(() => {
     if (!hasSearchResults || typeof window === 'undefined') return;
