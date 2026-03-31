@@ -38,8 +38,22 @@ function getFreeQueries(): number {
   return Number.isFinite(parsed) && parsed >= 0 ? parsed : DEFAULT_FREE_QUERIES;
 }
 
+function parseBoolean(value: unknown, fallback: boolean): boolean {
+  if (value === undefined || value === null) return fallback;
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'number') return value !== 0;
+
+  if (typeof value === 'string') {
+    const normalized = value.trim().toLowerCase();
+    if (['true', '1', 'yes', 'y', 'on'].includes(normalized)) return true;
+    if (['false', '0', 'no', 'n', 'off', ''].includes(normalized)) return false;
+  }
+
+  return fallback;
+}
+
 function isGateEnabled(): boolean {
-  return (process.env.SHORTLINK_GATE_ENABLED || 'true').toLowerCase() !== 'false';
+  return parseBoolean(process.env.SHORTLINK_GATE_ENABLED, true);
 }
 
 function getUnlockSecret(): string {
@@ -141,7 +155,7 @@ function normalizeProviderEnabled(raw: unknown): Record<ShortlinkProviderName, b
   const source = raw as Record<string, unknown>;
   for (const provider of PROVIDER_ROTATION) {
     if (source[provider] !== undefined) {
-      defaults[provider] = Boolean(source[provider]);
+      defaults[provider] = parseBoolean(source[provider], defaults[provider]);
     }
   }
 
@@ -187,7 +201,7 @@ async function loadRuntimeSettings(): Promise<GateRuntimeSettings> {
       gplinks: true,
       shrinkearn: true,
     },
-    failoverEnabled: (process.env.SHORTLINK_GATE_FAILOVER_ENABLED || 'true').toLowerCase() !== 'false',
+    failoverEnabled: parseBoolean(process.env.SHORTLINK_GATE_FAILOVER_ENABLED, true),
     unlockTtlMs: getUnlockTtlMs(),
     resetWindowMs: getResetWindowMs(),
   };
@@ -227,15 +241,14 @@ async function loadRuntimeSettings(): Promise<GateRuntimeSettings> {
 
     const data = (await res.json()) as Record<string, unknown>;
     const merged: GateRuntimeSettings = {
-      gateEnabled: data.websiteGateEnabled === undefined ? base.gateEnabled : Boolean(data.websiteGateEnabled),
+      gateEnabled: parseBoolean(data.websiteGateEnabled, base.gateEnabled),
       freeQueries: (() => {
         const parsed = Number.parseInt(String(data.websiteGateFreeQueries ?? ''), 10);
         return Number.isFinite(parsed) && parsed >= 0 ? parsed : base.freeQueries;
       })(),
       providerRotation: normalizeProviderRotation(data.websiteGateProviderRotation),
       providerEnabled: normalizeProviderEnabled(data.websiteGateProviderEnabled),
-      failoverEnabled:
-        data.websiteGateFailoverEnabled === undefined ? base.failoverEnabled : Boolean(data.websiteGateFailoverEnabled),
+      failoverEnabled: parseBoolean(data.websiteGateFailoverEnabled, base.failoverEnabled),
       unlockTtlMs: (() => {
         const parsed = Number.parseInt(String(data.websiteGateUnlockTtlMinutes ?? ''), 10);
         if (!Number.isFinite(parsed) || parsed < 1) return base.unlockTtlMs;
