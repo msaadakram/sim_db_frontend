@@ -4,7 +4,6 @@ import { motion } from 'motion/react';
 import { ArrowLeft, Search, ExternalLink, Loader2, UserRound, Phone, IdCard, Building2, MapPin, Landmark, Info, MessageCircle, Share2, Video } from 'lucide-react';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import Script from 'next/script';
-import { getKeywordSentence } from '@/lib/seo-keywords';
 
 interface SearchResultsPageProps {
   searchQuery: string;
@@ -25,6 +24,7 @@ interface SearchApiResponse {
   meta?: {
     searchCount?: number;
     freeQueries?: number;
+    gateEnabled?: boolean;
     unlockedByToken?: boolean;
     fallbackUsed?: boolean;
     attemptedProviders?: Array<{ provider: string; ok: boolean; message?: string }>;
@@ -367,6 +367,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const currentSearchCount = Number(response?.meta?.searchCount || 1);
   const freeLimit = Number(response?.meta?.freeQueries || 3);
   const remainingFreeSearches = Math.max(freeLimit - currentSearchCount, 0);
+  const isGateEnabled = response?.meta?.gateEnabled !== false;
   const normalizedProvider = String(response?.provider || '').toLowerCase().replace(/[^a-z0-9]/g, '');
   const providerGuideUrl = SHORTLINK_VIDEO_GUIDES[normalizedProvider];
   const isApiNoRecordState = Boolean(response?.success) && numberData.length === 0 && cnicData.length === 0;
@@ -445,9 +446,6 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
                 <p className="text-muted-foreground mt-1 text-sm sm:text-base">
                   Query: <span className="font-semibold text-foreground">{cleanedQuery}</span> ({searchType.toUpperCase()})
                 </p>
-                <p className="text-muted-foreground mt-1 text-xs sm:text-sm leading-relaxed">
-                  Related search terms: {getKeywordSentence(74, 10)}.
-                </p>
               </div>
             </div>
 
@@ -458,15 +456,19 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
                   <span className="font-semibold text-primary">#{currentSearchCount}</span>
                 </div>
 
-                <div className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50">
-                  <span className="text-emerald-700">Free Limit</span>
-                  <span className="font-semibold text-emerald-700">{freeLimit}</span>
-                </div>
+                {isGateEnabled ? (
+                  <>
+                    <div className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-emerald-200 bg-emerald-50">
+                      <span className="text-emerald-700">Free Limit</span>
+                      <span className="font-semibold text-emerald-700">{freeLimit}</span>
+                    </div>
 
-                <div className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-blue-200 bg-blue-50">
-                  <span className="text-blue-700">Remaining</span>
-                  <span className="font-semibold text-blue-700">{remainingFreeSearches}</span>
-                </div>
+                    <div className="inline-flex items-center gap-2 px-2.5 py-1.5 rounded-lg border border-blue-200 bg-blue-50">
+                      <span className="text-blue-700">Remaining</span>
+                      <span className="font-semibold text-blue-700">{remainingFreeSearches}</span>
+                    </div>
+                  </>
+                ) : null}
               </div>
             ) : null}
           </div>

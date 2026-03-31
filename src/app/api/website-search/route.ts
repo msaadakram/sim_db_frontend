@@ -599,6 +599,7 @@ export async function GET(request: NextRequest) {
               meta: {
                 searchCount,
                 freeQueries,
+                gateEnabled: gateSettings.gateEnabled,
                 attemptedProviders: attempts,
                 fallbackUsed: provider !== primaryProvider,
                 resetAt: resetAt?.toISOString(),
@@ -646,6 +647,7 @@ export async function GET(request: NextRequest) {
           meta: {
             searchCount,
             freeQueries,
+            gateEnabled: gateSettings.gateEnabled,
             resetAt: resetAt?.toISOString(),
           },
         },
@@ -662,6 +664,7 @@ export async function GET(request: NextRequest) {
         meta: {
           searchCount,
           freeQueries,
+          gateEnabled: gateSettings.gateEnabled,
           unlockedByToken,
           resetAt: resetAt?.toISOString(),
         },
