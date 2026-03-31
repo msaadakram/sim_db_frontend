@@ -31,12 +31,12 @@ export function ServiceSection() {
   }, []);
 
   const services = [
-    'Real-time location tracking with GPS accuracy',
-    'Complete CNIC verification and validation',
-    'Owner identity confirmation',
-    'Network provider information',
-    'SIM activation and registration details',
-    'Comprehensive security analysis'
+    'Pakistan SIM details check by mobile number',
+    'CNIC details verification and linked SIM lookup',
+    'SIM owner details and identity match checks',
+    'Network provider and SIM status information',
+    'SIM activation and registration insights',
+    'Secure number intelligence and risk analysis'
   ];
 
   return (
@@ -49,17 +49,17 @@ export function ServiceSection() {
             animate={isVisible ? { opacity: 1, x: 0 } : {}}
             transition={{ duration: 0.8 }}
           >
-            <p className="text-accent text-xs sm:text-sm uppercase tracking-wider mb-2 sm:mb-3">Why Choose Us</p>
+            <p className="text-accent text-xs sm:text-sm uppercase tracking-wider mb-2 sm:mb-3">Trusted in Pakistan</p>
             <h2 
               className="text-3xl sm:text-4xl md:text-5xl text-primary mb-4 sm:mb-6 leading-tight"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
-              Get accurate results with lightning speed
+              Fast SIM details check with verified owner and CNIC data
             </h2>
             <p className="text-muted-foreground text-base sm:text-lg mb-6 sm:mb-8 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-              Our advanced verification system provides comprehensive SIM card details with unmatched accuracy. 
-              Whether you need location tracking, CNIC verification, or owner information, we deliver instant 
-              and reliable results every time.
+              Our platform is built for Pakistan SIM details check use cases, helping you find SIM owner details,
+              validate CNIC-linked numbers, and review registration records in seconds.
+              Get reliable results with privacy-focused, secure search workflows.
             </p>
 
             <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
@@ -82,7 +82,7 @@ export function ServiceSection() {
               whileTap={{ scale: 0.95 }}
               className="px-6 sm:px-8 py-3 sm:py-4 bg-primary text-white rounded-full hover:bg-accent transition-all duration-300 flex items-center gap-2 shadow-lg hover:shadow-xl text-sm sm:text-base"
             >
-              <span>Learn More</span>
+              <span>Explore SIM Check Features</span>
               <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
             </motion.button>
           </motion.div>

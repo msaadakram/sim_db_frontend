@@ -97,8 +97,8 @@ export function HomeContent({ blogPosts }: HomeContentProps) {
                 <BlogSection initialPosts={blogPosts} />
 
                 <NewsletterSubscribeSection
-                    title="Get SIM & Security Updates"
-                    description="Join our newsletter for the latest guides, tips, and tracking insights."
+                    title="Get Pakistan SIM Check Updates"
+                    description="Receive the latest guides on SIM details check, SIM owner details, CNIC verification, and mobile number security in Pakistan."
                 />
 
                 <Suspense fallback={<SectionLoader />}>

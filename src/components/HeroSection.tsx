@@ -78,16 +78,16 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
                 transition={{ delay: 0.3 }}
                 className="text-xs sm:text-sm uppercase tracking-wider mb-3 sm:mb-4 text-white/90"
               >
-                Advanced SIM Tracking System
+                Pakistan SIM Details Check Platform
               </motion.p>
               <h1
                 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl mb-4 sm:mb-6 leading-tight"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
-                Find any SIM card details instantly
+                SIM Details Check & CNIC Owner Details in Pakistan
               </h1>
               <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-white/90 max-w-xl mx-auto lg:mx-0" style={{ fontFamily: "'Inter', sans-serif" }}>
-                Discover comprehensive information about any SIM card including live location tracking, CNIC details, owner information, and complete number analysis.
+                Run a fast SIM details check for Pakistan mobile numbers. Verify SIM owner details, perform CNIC details check, and review number registration insights in one secure dashboard.
               </p>
             </motion.div>
 
@@ -142,8 +142,8 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder={
                         activeTab === 'number'
-                          ? 'Enter mobile number (e.g., 03001234567)'
-                          : 'Enter CNIC (e.g., 12345-1234567-1)'
+                          ? 'Enter mobile number for SIM details check (e.g., 03001234567)'
+                          : 'Enter CNIC for owner details check (e.g., 12345-1234567-1)'
                       }
                       className="w-full pl-12 pr-4 py-4 sm:py-5 text-foreground bg-muted/50 rounded-2xl outline-none border-2 border-transparent focus:border-accent transition-all duration-300 text-sm sm:text-base"
                       style={{ fontFamily: "'Inter', sans-serif" }}
@@ -156,8 +156,8 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
                     <User className="w-4 h-4 flex-shrink-0 mt-0.5" />
                     <p style={{ fontFamily: "'Inter', sans-serif" }}>
                       {activeTab === 'number'
-                        ? 'Enter a valid Pakistani mobile number to track'
-                        : 'Enter a valid 13-digit CNIC number'}
+                        ? 'Enter a valid Pakistani mobile number to check SIM owner details'
+                        : 'Enter a valid 13-digit CNIC to check linked SIM details'}
                     </p>
                   </div>
 
@@ -170,7 +170,7 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
                   >
                     <Search className="w-5 h-5 group-hover:scale-110 transition-transform" />
                     <span style={{ fontFamily: "'Inter', sans-serif" }}>
-                      Search Now
+                      Check SIM Details
                     </span>
                   </motion.button>
                 </div>
@@ -212,7 +212,7 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
               </div>
               <div className="text-center">
                 <h3 className="text-2xl sm:text-3xl mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>5M+</h3>
-                <p className="text-xs sm:text-sm text-white/80">Searches</p>
+                <p className="text-xs sm:text-sm text-white/80">SIM Checks</p>
               </div>
               <div className="text-center">
                 <h3 className="text-2xl sm:text-3xl mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>24/7</h3>

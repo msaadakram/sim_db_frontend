@@ -7,17 +7,33 @@ const SITE_URL = getSiteUrl();
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: 'SIM Finder - Advanced SIM Tracking System',
+    default: 'SIM Finder Pakistan - SIM Details Check & CNIC Owner Details',
     template: '%s | SIM Finder',
   },
-  description: "Discover comprehensive information about any SIM card including live location tracking, CNIC details, owner information, and complete number analysis.",
+  description:
+    'SIM Finder helps you perform SIM details check in Pakistan, including SIM owner details, CNIC details check, and mobile number verification with fast and secure results.',
+  keywords: [
+    'SIM details check',
+    'SIM owner details',
+    'Pakistan SIM details',
+    'CNIC details check',
+    'CNIC SIM check Pakistan',
+    'mobile number details Pakistan',
+    'SIM registration details',
+    'SIM information Pakistan',
+  ],
   openGraph: {
     type: 'website',
     siteName: 'SIM Finder',
     locale: 'en_US',
+    title: 'SIM Finder Pakistan - SIM Details Check & CNIC Owner Details',
+    description:
+      'Check SIM details, SIM owner details, and CNIC-linked mobile information in Pakistan with fast and secure online lookup tools.',
   },
   twitter: {
     card: 'summary_large_image',
+    title: 'SIM Finder Pakistan - SIM Details Check',
+    description: 'Pakistan SIM details check, CNIC details lookup, and SIM owner verification in one place.',
   },
   robots: {
     index: true,

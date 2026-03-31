@@ -8,25 +8,25 @@ const features = [
   {
     icon: MapPin,
     title: 'Live Location Tracking',
-    description: 'Track real-time location of any mobile number with precise GPS coordinates and area details.',
+    description: 'Track real-time location insights for Pakistani mobile numbers with precise area and map details.',
     color: '#7DB9BC'
   },
   {
     icon: Shield,
     title: 'CNIC Verification',
-    description: 'Instantly verify CNIC details linked to any SIM card with complete owner information.',
+    description: 'Run a CNIC details check and verify linked SIM registration records with owner information.',
     color: '#5A9EA1'
   },
   {
     icon: Phone,
-    title: 'Number Details',
-    description: 'Get comprehensive information about any phone number including carrier, status, and registration date.',
+    title: 'Pakistan Number Details',
+    description: 'Get Pakistan mobile number details including carrier, SIM status, and registration timeline.',
     color: '#7DB9BC'
   },
   {
     icon: UserCheck,
     title: 'Owner Information',
-    description: 'Access verified owner details with complete identity verification and authenticity checks.',
+    description: 'Find SIM owner details with verified identity checks and CNIC-linked records.',
     color: '#5A9EA1'
   },
   {
@@ -44,13 +44,13 @@ const features = [
   {
     icon: Search,
     title: 'Advanced Search',
-    description: 'Multiple search options including number, CNIC, or owner name with instant results.',
+    description: 'Use flexible SIM details check options by mobile number, CNIC, or owner name with instant results.',
     color: '#7DB9BC'
   },
   {
     icon: FileText,
     title: 'Detailed Reports',
-    description: 'Generate comprehensive PDF reports with all information for official documentation.',
+    description: 'Generate detailed SIM and CNIC lookup reports for record keeping and documentation.',
     color: '#5A9EA1'
   }
 ];
@@ -91,15 +91,15 @@ export function FeaturesSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12 sm:mb-16"
         >
-          <p className="text-accent text-xs sm:text-sm uppercase tracking-wider mb-2 sm:mb-3">Our Services</p>
+          <p className="text-accent text-xs sm:text-sm uppercase tracking-wider mb-2 sm:mb-3">Pakistan SIM Check Services</p>
           <h2 
             className="text-3xl sm:text-4xl md:text-5xl text-primary mb-3 sm:mb-4 px-4"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            Powerful features at your fingertips
+            Everything for SIM details check and CNIC verification
           </h2>
           <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto px-4" style={{ fontFamily: "'Inter', sans-serif" }}>
-            Comprehensive SIM card tracking and verification services designed for accuracy and reliability
+            Check SIM owner details, mobile number registration information, and CNIC-linked SIM records across Pakistan with fast, accurate results.
           </p>
         </motion.div>
 
