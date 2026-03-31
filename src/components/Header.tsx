@@ -4,6 +4,7 @@ import { Menu, X, Phone, Shield, Smartphone, Home, Star, BookOpen, Mail } from '
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 import { StickySearchBar } from './StickySearchBar';
@@ -96,8 +97,15 @@ export function Header() {
                 transition={{ delay: 0.2 }}
                 className="flex items-center gap-2 sm:gap-3 flex-shrink-0 group cursor-pointer"
               >
-                <div className="w-9 h-9 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-full bg-gradient-to-br from-[#7DB9BC] to-[#5A9EA1] flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow">
-                  <Phone className="w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-white" />
+                <div className="w-9 h-9 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-xl overflow-hidden shadow-lg ring-1 ring-border/60 bg-white/90 group-hover:shadow-xl transition-shadow">
+                  <Image
+                    src="/app-logo.png"
+                    alt="SIM Finder Logo"
+                    width={48}
+                    height={48}
+                    priority
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <span className="text-xl sm:text-2xl lg:text-3xl text-primary whitespace-nowrap font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
                   SIM Finder
