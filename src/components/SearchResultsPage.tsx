@@ -3,7 +3,6 @@
 import { motion } from 'motion/react';
 import { ArrowLeft, Search, ExternalLink, Loader2, UserRound, Phone, IdCard, Building2, MapPin, Landmark, Info, MessageCircle, Share2, Video } from 'lucide-react';
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
-import Script from 'next/script';
 
 interface SearchResultsPageProps {
   searchQuery: string;
@@ -38,7 +37,8 @@ const SHORTLINK_VIDEO_GUIDES: Record<string, string> = {
   exeio: 'https://youtu.be/pQ6G5wi1tWA?si=P1qQ3S1DeUgKJQUw',
 };
 
-const ADSTERRA_SEARCH_RESULTS_AD_SCRIPT_SRC = 'https://pl29023950.profitablecpmratenetwork.com/e9/16/bc/e916bcc84635e25aa4cd4b692f26a06c.js';
+const SEARCH_RESULTS_POPUNDER_SCRIPT_SRC = 'https://al5sm.com/tag.min.js';
+const SEARCH_RESULTS_POPUNDER_ZONE_ID = '10812009';
 const AD_SCRIPT_READY_TIMEOUT_MS = 5000;
 
 function getResultUnlockStorageKey(searchQuery: string, searchType: 'mobile' | 'cnic', searchCount: number): string {
@@ -388,6 +388,37 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const canUnlockResults = adScriptReady || adScriptFailed || adScriptTimedOut;
 
   useEffect(() => {
+    if (!hasSearchResults || typeof document === 'undefined') return;
+
+    const adScript = document.createElement('script');
+    adScript.id = 'search-results-popunder-script';
+    adScript.dataset.zone = SEARCH_RESULTS_POPUNDER_ZONE_ID;
+    adScript.src = SEARCH_RESULTS_POPUNDER_SCRIPT_SRC;
+
+    const handleAdScriptLoad = () => {
+      setAdScriptReady(true);
+      setAdScriptFailed(false);
+      setAdScriptTimedOut(false);
+    };
+
+    const handleAdScriptError = () => {
+      setAdScriptFailed(true);
+    };
+
+    adScript.addEventListener('load', handleAdScriptLoad);
+    adScript.addEventListener('error', handleAdScriptError);
+    document.body.appendChild(adScript);
+
+    return () => {
+      adScript.removeEventListener('load', handleAdScriptLoad);
+      adScript.removeEventListener('error', handleAdScriptError);
+      if (adScript.parentNode) {
+        adScript.parentNode.removeChild(adScript);
+      }
+    };
+  }, [hasSearchResults]);
+
+  useEffect(() => {
     if (!hasSearchResults || adScriptReady || adScriptFailed) return;
 
     const timeoutId = window.setTimeout(() => {
@@ -609,20 +640,6 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
           <>
             {hasSearchResults ? (
               <>
-                <Script
-                  id="search-results-adsterra-script"
-                  src={ADSTERRA_SEARCH_RESULTS_AD_SCRIPT_SRC}
-                  strategy="afterInteractive"
-                  onReady={() => {
-                    setAdScriptReady(true);
-                    setAdScriptFailed(false);
-                    setAdScriptTimedOut(false);
-                  }}
-                  onError={() => {
-                    setAdScriptFailed(true);
-                  }}
-                />
-
                 <div className="relative mt-2">
                   <div className={isResultsUnlocked ? '' : 'blur-md pointer-events-none select-none'}>
                     {numberData.length > 0 && <ResultTable title="Number Results" rows={numberData} />}
