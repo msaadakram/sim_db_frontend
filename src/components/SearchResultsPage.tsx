@@ -2,7 +2,7 @@
 
 import { motion } from 'motion/react';
 import { ArrowLeft, Search, ExternalLink, Loader2, UserRound, Phone, IdCard, Building2, MapPin, Landmark, Info, MessageCircle, Share2, Video } from 'lucide-react';
-import { type MouseEvent, type ReactNode, useEffect, useMemo, useState } from 'react';
+import { type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 
 declare global {
   interface Window {
@@ -45,17 +45,17 @@ const SHORTLINK_VIDEO_GUIDES: Record<string, string> = {
   exeio: 'https://youtu.be/pQ6G5wi1tWA?si=P1qQ3S1DeUgKJQUw',
 };
 
-type SearchResultsPopunderProvider = 'popads' | 'monetag';
-
-const POPADS_SEARCH_RESULTS_POPUNDER_INLINE_SCRIPT = `(function(){var c=window,q="bcee860f58611f493f516518f39dc2dc",r=[["siteId",558+156*834+5158328],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],l=["d3d3LmNkbjRhZHMuY29tL0dOL3NrZXJuaW5nLm1pbi5qcw==","ZDNnNW92Zm5nanc5YncuY2xvdWRmcm9udC5uZXQvR1dSL0lqaFEvdm11aS5taW4uY3Nz"],h=-1,y,m,e=function(){clearTimeout(m);h++;if(l[h]&&!(1800992878000<(new Date).getTime()&&1<h)){y=c.document.createElement("script");y.type="text/javascript";y.async=!0;var a=c.document.getElementsByTagName("script")[0];y.src="https://"+atob(l[h]);y.crossOrigin="anonymous";y.onerror=e;y.onload=function(){clearTimeout(m);c[q.slice(0,16)+q.slice(0,16)]||e()};m=setTimeout(e,5E3);a.parentNode.insertBefore(y,a)}};if(!c[q]){try{Object.freeze(c[q]=r)}catch(e){}e()}})();`;
-const MONETAG_SEARCH_RESULTS_POPUNDER_SCRIPT_SRC = 'https://al5sm.com/tag.min.js';
-const MONETAG_SEARCH_RESULTS_POPUNDER_ZONE_ID = '10812009';
+const POPADS_SEARCH_RESULTS_POPUNDER_INLINE_SCRIPT = `(function(){var m=window,t="bcee860f58611f493f516518f39dc2dc",v=[["siteId",947*363-600+4945829],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],n=["d3d3LmNkbjRhZHMuY29tL3MvZ2tlcm5pbmcubWluLmpz","ZDNnNW92Zm5nanc5YncuY2xvdWRmcm9udC5uZXQvYUtmZndCL0hhcEtlL3dtdWkubWluLmNzcw=="],p=-1,u,l,i=function(){clearTimeout(l);p++;if(n[p]&&!(1801154546000<(new Date).getTime()&&1<p)){u=m.document.createElement("script");u.type="text/javascript";u.async=!0;var y=m.document.getElementsByTagName("script")[0];u.src="https://"+atob(n[p]);u.crossOrigin="anonymous";u.onerror=i;u.onload=function(){clearTimeout(l);m[t.slice(0,16)+t.slice(0,16)]||i()};l=setTimeout(i,5E3);y.parentNode.insertBefore(u,y)}};if(!m[t]){try{Object.freeze(m[t]=v)}catch(e){}i()}})();`;
+const MONETAG_SEARCH_RESULTS_SCRIPT_SRC = (process.env.NEXT_PUBLIC_MONETAG_SCRIPT_SRC || 'https://quge5.com/88/tag.min.js').trim();
+const MONETAG_SEARCH_RESULTS_POPUNDER_ZONE_ID = (process.env.NEXT_PUBLIC_MONETAG_POPUNDER_ZONE_ID || '226194').trim();
+const MONETAG_SEARCH_RESULTS_BANNER_ZONE_ID = (process.env.NEXT_PUBLIC_MONETAG_BANNER_ZONE_ID || '').trim();
 const AD_SCRIPT_READY_TIMEOUT_MS = 5000;
 const POPADS_ANDROID_DIRECT_URL = (
   process.env.NEXT_PUBLIC_POPADS_ANDROID_DIRECT_URL ||
   process.env.NEXT_PUBLIC_ADSTERRA_ANDROID_DIRECT_URL ||
   ''
 ).trim();
+const MONETAG_ANDROID_DIRECT_URL = (process.env.NEXT_PUBLIC_MONETAG_ANDROID_DIRECT_URL || '').trim();
 const KNOWN_SHORTENER_HOST_FRAGMENTS = ['bit.ly', 'tinyurl.com', 'cuty.io', 'exe.io', 'gplinks', 'shrinkearn'];
 
 function isAndroidChromeOrSamsungBrowser(): boolean {
@@ -70,11 +70,11 @@ function isAndroidChromeOrSamsungBrowser(): boolean {
   return isAndroid && isMobile && (isChrome || isSamsung);
 }
 
-function getExactPopadsAndroidDirectUrl(): string | null {
-  if (!POPADS_ANDROID_DIRECT_URL) return null;
+function getExactAndroidDirectUrl(rawUrl: string): string | null {
+  if (!rawUrl) return null;
 
   try {
-    const parsed = new URL(POPADS_ANDROID_DIRECT_URL);
+    const parsed = new URL(rawUrl);
 
     if (parsed.protocol !== 'https:') {
       return null;
@@ -91,10 +91,6 @@ function getExactPopadsAndroidDirectUrl(): string | null {
   } catch {
     return null;
   }
-}
-
-function getSearchResultsPopunderProvider(searchCount: number): SearchResultsPopunderProvider {
-  return searchCount % 2 === 1 ? 'popads' : 'monetag';
 }
 
 function ensureSearchPopunderOpenGuard() {
@@ -390,6 +386,9 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const [adScriptReady, setAdScriptReady] = useState(false);
   const [adScriptFailed, setAdScriptFailed] = useState(false);
   const [adScriptTimedOut, setAdScriptTimedOut] = useState(false);
+  const [monetagBannerReady, setMonetagBannerReady] = useState(false);
+  const [monetagBannerFailed, setMonetagBannerFailed] = useState(false);
+  const monetagBannerContainerRef = useRef<HTMLDivElement | null>(null);
 
   const cleanedQuery = useMemo(() => searchQuery.trim().replace(/[^0-9]/g, ''), [searchQuery]);
 
@@ -465,13 +464,13 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const freeLimit = Number(response?.meta?.freeQueries || 3);
   const remainingFreeSearches = Math.max(freeLimit - currentSearchCount, 0);
   const isGateEnabled = response?.meta?.gateEnabled !== false;
-  const popunderProvider = useMemo(() => getSearchResultsPopunderProvider(currentSearchCount), [currentSearchCount]);
-  const monetagPopunderScriptSrc =
-    popunderProvider === 'monetag'
-      ? MONETAG_SEARCH_RESULTS_POPUNDER_SCRIPT_SRC
-      : '';
   const isAndroidChromeOrSamsung = useMemo(() => isAndroidChromeOrSamsungBrowser(), []);
-  const popadsAndroidDirectUrl = useMemo(() => getExactPopadsAndroidDirectUrl(), []);
+  const popadsAndroidDirectUrl = useMemo(() => getExactAndroidDirectUrl(POPADS_ANDROID_DIRECT_URL), []);
+  const monetagAndroidDirectUrl = useMemo(() => getExactAndroidDirectUrl(MONETAG_ANDROID_DIRECT_URL), []);
+  const androidDirectSponsorUrls = useMemo(
+    () => [popadsAndroidDirectUrl, monetagAndroidDirectUrl].filter((url): url is string => Boolean(url)),
+    [popadsAndroidDirectUrl, monetagAndroidDirectUrl]
+  );
   const unlockStorageKey = useMemo(
     () => getResultUnlockStorageKey(cleanedQuery, searchType, currentSearchCount),
     [cleanedQuery, searchType, currentSearchCount]
@@ -483,14 +482,13 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const isNoRecordErrorState = Boolean(error) && /(no\s*record|not\s*found|no\s*data|not\s*available)/i.test(noRecordText);
   const showComingSoonCard = isApiNoRecordState || isNoRecordErrorState;
   const hasSearchResults = numberData.length > 0 || cnicData.length > 0;
-  const shouldUseAndroidPopadsDirectFlow =
+  const shouldUseAndroidDirectSponsorFlow =
     isAndroidChromeOrSamsung &&
-    popunderProvider === 'popads' &&
     hasSearchResults &&
     !isResultsUnlocked &&
-    Boolean(popadsAndroidDirectUrl);
-  const shouldAllowPopunderOpen = hasSearchResults && !isResultsUnlocked && !shouldUseAndroidPopadsDirectFlow;
-  const canUnlockResults = shouldUseAndroidPopadsDirectFlow || adScriptReady || adScriptFailed || adScriptTimedOut;
+    androidDirectSponsorUrls.length > 0;
+  const shouldAllowPopunderOpen = hasSearchResults && !isResultsUnlocked && !shouldUseAndroidDirectSponsorFlow;
+  const canUnlockResults = shouldUseAndroidDirectSponsorFlow || adScriptReady || adScriptFailed || adScriptTimedOut;
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -504,55 +502,95 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   }, [shouldAllowPopunderOpen]);
 
   useEffect(() => {
-    if (!hasSearchResults || isResultsUnlocked || shouldUseAndroidPopadsDirectFlow || typeof document === 'undefined') return;
+    if (!hasSearchResults || isResultsUnlocked || shouldUseAndroidDirectSponsorFlow || typeof document === 'undefined') return;
 
     setAdScriptReady(false);
     setAdScriptFailed(false);
     setAdScriptTimedOut(false);
 
-    const adScript = document.createElement('script');
-    adScript.id = 'search-results-popunder-script';
-    if (popunderProvider === 'popads') {
-      adScript.type = 'text/javascript';
-      adScript.async = true;
-      adScript.setAttribute('data-cfasync', 'false');
-      adScript.text = POPADS_SEARCH_RESULTS_POPUNDER_INLINE_SCRIPT;
-    } else {
-      adScript.src = monetagPopunderScriptSrc;
-      adScript.dataset.zone = MONETAG_SEARCH_RESULTS_POPUNDER_ZONE_ID;
-    }
+    const popadsScript = document.createElement('script');
+    popadsScript.id = 'search-results-popads-script';
+    popadsScript.type = 'text/javascript';
+    popadsScript.async = true;
+    popadsScript.setAttribute('data-cfasync', 'false');
+    popadsScript.text = POPADS_SEARCH_RESULTS_POPUNDER_INLINE_SCRIPT;
 
-    const handleAdScriptLoad = () => {
-      setAdScriptReady(true);
-      setAdScriptFailed(false);
-      setAdScriptTimedOut(false);
-    };
+    const monetagPopunderScript = document.createElement('script');
+    monetagPopunderScript.id = 'search-results-monetag-popunder-script';
+    monetagPopunderScript.src = MONETAG_SEARCH_RESULTS_SCRIPT_SRC;
+    monetagPopunderScript.async = true;
+    monetagPopunderScript.setAttribute('data-cfasync', 'false');
+    monetagPopunderScript.dataset.zone = MONETAG_SEARCH_RESULTS_POPUNDER_ZONE_ID;
 
-    const handleAdScriptError = () => {
+    const handleMonetagPopunderError = () => {
       setAdScriptFailed(true);
     };
 
-    adScript.addEventListener('load', handleAdScriptLoad);
-    adScript.addEventListener('error', handleAdScriptError);
-    document.body.appendChild(adScript);
+    monetagPopunderScript.addEventListener('error', handleMonetagPopunderError);
 
-    if (popunderProvider === 'popads') {
-      setAdScriptReady(true);
-      setAdScriptFailed(false);
-      setAdScriptTimedOut(false);
+    document.body.appendChild(popadsScript);
+
+    if (MONETAG_SEARCH_RESULTS_POPUNDER_ZONE_ID) {
+      document.body.appendChild(monetagPopunderScript);
     }
 
+    setAdScriptReady(true);
+
     return () => {
-      adScript.removeEventListener('load', handleAdScriptLoad);
-      adScript.removeEventListener('error', handleAdScriptError);
-      if (adScript.parentNode) {
-        adScript.parentNode.removeChild(adScript);
+      monetagPopunderScript.removeEventListener('error', handleMonetagPopunderError);
+      if (popadsScript.parentNode) {
+        popadsScript.parentNode.removeChild(popadsScript);
+      }
+      if (monetagPopunderScript.parentNode) {
+        monetagPopunderScript.parentNode.removeChild(monetagPopunderScript);
       }
     };
-  }, [hasSearchResults, isResultsUnlocked, popunderProvider, monetagPopunderScriptSrc, shouldUseAndroidPopadsDirectFlow]);
+  }, [hasSearchResults, isResultsUnlocked, shouldUseAndroidDirectSponsorFlow]);
 
   useEffect(() => {
-    if (!hasSearchResults || isResultsUnlocked || shouldUseAndroidPopadsDirectFlow || adScriptReady || adScriptFailed) return;
+    setMonetagBannerReady(false);
+    setMonetagBannerFailed(false);
+
+    if (!hasSearchResults || !MONETAG_SEARCH_RESULTS_BANNER_ZONE_ID || typeof document === 'undefined') return;
+
+    const container = monetagBannerContainerRef.current;
+    if (!container) return;
+
+    container.innerHTML = '';
+
+    const monetagBannerScript = document.createElement('script');
+    monetagBannerScript.id = 'search-results-monetag-banner-script';
+    monetagBannerScript.src = MONETAG_SEARCH_RESULTS_SCRIPT_SRC;
+    monetagBannerScript.async = true;
+    monetagBannerScript.setAttribute('data-cfasync', 'false');
+    monetagBannerScript.dataset.zone = MONETAG_SEARCH_RESULTS_BANNER_ZONE_ID;
+
+    const handleBannerLoad = () => {
+      setMonetagBannerReady(true);
+      setMonetagBannerFailed(false);
+    };
+
+    const handleBannerError = () => {
+      setMonetagBannerFailed(true);
+      setMonetagBannerReady(false);
+    };
+
+    monetagBannerScript.addEventListener('load', handleBannerLoad);
+    monetagBannerScript.addEventListener('error', handleBannerError);
+    container.appendChild(monetagBannerScript);
+
+    return () => {
+      monetagBannerScript.removeEventListener('load', handleBannerLoad);
+      monetagBannerScript.removeEventListener('error', handleBannerError);
+      if (monetagBannerScript.parentNode) {
+        monetagBannerScript.parentNode.removeChild(monetagBannerScript);
+      }
+      container.innerHTML = '';
+    };
+  }, [hasSearchResults]);
+
+  useEffect(() => {
+    if (!hasSearchResults || isResultsUnlocked || shouldUseAndroidDirectSponsorFlow || adScriptReady || adScriptFailed) return;
 
     const timeoutId = window.setTimeout(() => {
       setAdScriptTimedOut(true);
@@ -561,7 +599,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [hasSearchResults, isResultsUnlocked, shouldUseAndroidPopadsDirectFlow, adScriptReady, adScriptFailed]);
+  }, [hasSearchResults, isResultsUnlocked, shouldUseAndroidDirectSponsorFlow, adScriptReady, adScriptFailed]);
 
   useEffect(() => {
     if (!hasSearchResults || typeof window === 'undefined') return;
@@ -603,11 +641,19 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
     // Ensure ad opens only from a real human interaction.
     if (!event.isTrusted) return;
 
-    if (shouldUseAndroidPopadsDirectFlow && popadsAndroidDirectUrl) {
+    if (shouldUseAndroidDirectSponsorFlow && androidDirectSponsorUrls.length > 0) {
       // Keep this synchronous in the click handler to preserve browser trust.
-      const openedWindow = window.open(popadsAndroidDirectUrl, '_blank', 'noopener,noreferrer');
-      if (!openedWindow) {
-        window.location.assign(popadsAndroidDirectUrl);
+      let openedAnyWindow = false;
+
+      for (const sponsorUrl of androidDirectSponsorUrls) {
+        const openedWindow = window.open(sponsorUrl, '_blank', 'noopener,noreferrer');
+        if (openedWindow) {
+          openedAnyWindow = true;
+        }
+      }
+
+      if (!openedAnyWindow) {
+        window.location.assign(androidDirectSponsorUrls[0]);
         return;
       }
     }
@@ -786,6 +832,27 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
           <>
             {hasSearchResults ? (
               <>
+                {MONETAG_SEARCH_RESULTS_BANNER_ZONE_ID ? (
+                  <div className="mt-2 rounded-2xl border border-border/60 bg-white p-4 sm:p-5 shadow-sm">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-[11px] uppercase tracking-[0.08em] text-muted-foreground font-semibold">Sponsored</p>
+                      <span className="text-[11px] px-2 py-1 rounded-lg border border-amber-200 bg-amber-50 text-amber-700 font-semibold">
+                        Monetag Banner
+                      </span>
+                    </div>
+                    <div
+                      ref={monetagBannerContainerRef}
+                      className="mt-3 min-h-[100px] rounded-xl border border-dashed border-border/70 bg-muted/10"
+                    />
+                    {!monetagBannerReady && !monetagBannerFailed ? (
+                      <p className="mt-2 text-xs text-muted-foreground">Loading sponsor banner…</p>
+                    ) : null}
+                    {monetagBannerFailed ? (
+                      <p className="mt-2 text-xs text-amber-700">Monetag banner could not load right now. Please refresh and try again.</p>
+                    ) : null}
+                  </div>
+                ) : null}
+
                 <div className="relative mt-2">
                   <div className={isResultsUnlocked ? '' : 'blur-md pointer-events-none select-none'}>
                     {numberData.length > 0 && <ResultTable title="Number Results" rows={numberData} />}
@@ -818,8 +885,8 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
                         <p className="text-base font-semibold text-primary">Results are ready</p>
                         <p className="mt-1 text-sm text-muted-foreground">
                           {canUnlockResults
-                            ? shouldUseAndroidPopadsDirectFlow
-                              ? 'Tap below to open the sponsor link once, then view full details.'
+                            ? shouldUseAndroidDirectSponsorFlow
+                              ? 'Tap below to open sponsor link(s) once, then view full details.'
                               : 'Tap below to view full details.'
                             : 'Preparing ad check… please wait 1–2 seconds.'}
                         </p>
@@ -832,8 +899,8 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
                           }`}
                         >
                           {canUnlockResults
-                            ? shouldUseAndroidPopadsDirectFlow
-                              ? 'Open Sponsor Link'
+                            ? shouldUseAndroidDirectSponsorFlow
+                              ? 'Open Sponsor Link(s)'
                               : 'View Now'
                             : 'Preparing…'}
                         </button>
