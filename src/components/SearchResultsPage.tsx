@@ -488,7 +488,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const monetagAndroidDirectUrl = useMemo(() => getExactAndroidDirectUrl(MONETAG_ANDROID_DIRECT_URL), []);
   const profitableCpmAndroidDirectUrl = useMemo(() => getExactAndroidDirectUrl(PROFITABLECPM_ANDROID_DIRECT_URL), []);
   const androidDirectSponsorUrls = useMemo(
-    () => [popadsAndroidDirectUrl, monetagAndroidDirectUrl, profitableCpmAndroidDirectUrl].filter((url): url is string => Boolean(url)),
+    () => Array.from(new Set([popadsAndroidDirectUrl, monetagAndroidDirectUrl, profitableCpmAndroidDirectUrl].filter((url): url is string => Boolean(url)))),
     [popadsAndroidDirectUrl, monetagAndroidDirectUrl, profitableCpmAndroidDirectUrl]
   );
   const unlockStorageKey = useMemo(
