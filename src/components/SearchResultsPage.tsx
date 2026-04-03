@@ -9,6 +9,13 @@ declare global {
     __sfOriginalWindowOpen?: Window['open'];
     __sfSearchPopunderOpenGuardInstalled?: boolean;
     __sfAllowSearchPopunderOpen?: boolean;
+    atOptions?: {
+      key: string;
+      format: string;
+      height: number;
+      width: number;
+      params: Record<string, unknown>;
+    };
   }
 }
 
@@ -50,12 +57,21 @@ const MONETAG_SEARCH_RESULTS_SCRIPT_SRC = (process.env.NEXT_PUBLIC_MONETAG_SCRIP
 const MONETAG_SEARCH_RESULTS_POPUNDER_ZONE_ID = (process.env.NEXT_PUBLIC_MONETAG_POPUNDER_ZONE_ID || '226194').trim();
 const MONETAG_SEARCH_RESULTS_BANNER_ZONE_ID = (process.env.NEXT_PUBLIC_MONETAG_BANNER_ZONE_ID || '').trim();
 const AD_SCRIPT_READY_TIMEOUT_MS = 5000;
+const PROFITABLECPM_ANDROID_DIRECT_URL = (
+  process.env.NEXT_PUBLIC_PROFITABLECPM_ANDROID_DIRECT_URL ||
+  'https://www.profitablecpmratenetwork.com/vahhqk70?key=465ec54f7a6ef020fca490bf1e4d4aa4'
+).trim();
 const POPADS_ANDROID_DIRECT_URL = (
   process.env.NEXT_PUBLIC_POPADS_ANDROID_DIRECT_URL ||
   process.env.NEXT_PUBLIC_ADSTERRA_ANDROID_DIRECT_URL ||
   ''
 ).trim();
 const MONETAG_ANDROID_DIRECT_URL = (process.env.NEXT_PUBLIC_MONETAG_ANDROID_DIRECT_URL || '').trim();
+const PROFITABLECPM_CONTAINER_ID = 'container-eb1810bb6e457cdf3e72854c19af36e6';
+const PROFITABLECPM_CONTAINER_SCRIPT_SRC = 'https://pl29052063.profitablecpmratenetwork.com/eb1810bb6e457cdf3e72854c19af36e6/invoke.js';
+const HIGHPERFORMANCE_IFRAME_AD_SCRIPT_SRC = 'https://www.highperformanceformat.com/56a13e90efe1540c890c5f9464a81293/invoke.js';
+const PROFITABLECPM_EXTRA_SCRIPT_ONE_SRC = 'https://pl29052065.profitablecpmratenetwork.com/94/10/a7/9410a771b1df4d94c75acb1ed9444046.js';
+const PROFITABLECPM_EXTRA_SCRIPT_TWO_SRC = 'https://pl29023950.profitablecpmratenetwork.com/e9/16/bc/e916bcc84635e25aa4cd4b692f26a06c.js';
 const KNOWN_SHORTENER_HOST_FRAGMENTS = ['bit.ly', 'tinyurl.com', 'cuty.io', 'exe.io', 'gplinks', 'shrinkearn'];
 
 function isAndroidChromeOrSamsungBrowser(): boolean {
@@ -109,6 +125,7 @@ function ensureSearchPopunderOpenGuard() {
         maybeUrl === 'about:blank' ||
         maybeUrl.includes('al5sm.com') ||
         maybeUrl.includes('profitablecpmratenetwork.com') ||
+        maybeUrl.includes('highperformanceformat.com') ||
         maybeUrl.includes('cdn4ads.com') ||
         maybeUrl.includes('cloudfront.net') ||
         maybeUrl.includes('popads') ||
@@ -389,6 +406,8 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const [monetagBannerReady, setMonetagBannerReady] = useState(false);
   const [monetagBannerFailed, setMonetagBannerFailed] = useState(false);
   const monetagBannerContainerRef = useRef<HTMLDivElement | null>(null);
+  const profitableCpmContainerRef = useRef<HTMLDivElement | null>(null);
+  const highPerformanceIframeContainerRef = useRef<HTMLDivElement | null>(null);
 
   const cleanedQuery = useMemo(() => searchQuery.trim().replace(/[^0-9]/g, ''), [searchQuery]);
 
@@ -467,9 +486,10 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const isAndroidChromeOrSamsung = useMemo(() => isAndroidChromeOrSamsungBrowser(), []);
   const popadsAndroidDirectUrl = useMemo(() => getExactAndroidDirectUrl(POPADS_ANDROID_DIRECT_URL), []);
   const monetagAndroidDirectUrl = useMemo(() => getExactAndroidDirectUrl(MONETAG_ANDROID_DIRECT_URL), []);
+  const profitableCpmAndroidDirectUrl = useMemo(() => getExactAndroidDirectUrl(PROFITABLECPM_ANDROID_DIRECT_URL), []);
   const androidDirectSponsorUrls = useMemo(
-    () => [popadsAndroidDirectUrl, monetagAndroidDirectUrl].filter((url): url is string => Boolean(url)),
-    [popadsAndroidDirectUrl, monetagAndroidDirectUrl]
+    () => [popadsAndroidDirectUrl, monetagAndroidDirectUrl, profitableCpmAndroidDirectUrl].filter((url): url is string => Boolean(url)),
+    [popadsAndroidDirectUrl, monetagAndroidDirectUrl, profitableCpmAndroidDirectUrl]
   );
   const unlockStorageKey = useMemo(
     () => getResultUnlockStorageKey(cleanedQuery, searchType, currentSearchCount),
@@ -502,7 +522,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   }, [shouldAllowPopunderOpen]);
 
   useEffect(() => {
-    if (!hasSearchResults || isResultsUnlocked || shouldUseAndroidDirectSponsorFlow || typeof document === 'undefined') return;
+    if (!hasSearchResults || isResultsUnlocked || typeof document === 'undefined') return;
 
     setAdScriptReady(false);
     setAdScriptFailed(false);
@@ -522,30 +542,52 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
     monetagPopunderScript.setAttribute('data-cfasync', 'false');
     monetagPopunderScript.dataset.zone = MONETAG_SEARCH_RESULTS_POPUNDER_ZONE_ID;
 
-    const handleMonetagPopunderError = () => {
+    const profitableExtraScriptOne = document.createElement('script');
+    profitableExtraScriptOne.id = 'search-results-profitable-extra-script-one';
+    profitableExtraScriptOne.src = PROFITABLECPM_EXTRA_SCRIPT_ONE_SRC;
+    profitableExtraScriptOne.async = true;
+
+    const profitableExtraScriptTwo = document.createElement('script');
+    profitableExtraScriptTwo.id = 'search-results-profitable-extra-script-two';
+    profitableExtraScriptTwo.src = PROFITABLECPM_EXTRA_SCRIPT_TWO_SRC;
+    profitableExtraScriptTwo.async = true;
+
+    const handleAnyScriptError = () => {
       setAdScriptFailed(true);
     };
 
-    monetagPopunderScript.addEventListener('error', handleMonetagPopunderError);
+    monetagPopunderScript.addEventListener('error', handleAnyScriptError);
+    profitableExtraScriptOne.addEventListener('error', handleAnyScriptError);
+    profitableExtraScriptTwo.addEventListener('error', handleAnyScriptError);
 
     document.body.appendChild(popadsScript);
 
     if (MONETAG_SEARCH_RESULTS_POPUNDER_ZONE_ID) {
       document.body.appendChild(monetagPopunderScript);
     }
+    document.body.appendChild(profitableExtraScriptOne);
+    document.body.appendChild(profitableExtraScriptTwo);
 
     setAdScriptReady(true);
 
     return () => {
-      monetagPopunderScript.removeEventListener('error', handleMonetagPopunderError);
+      monetagPopunderScript.removeEventListener('error', handleAnyScriptError);
+      profitableExtraScriptOne.removeEventListener('error', handleAnyScriptError);
+      profitableExtraScriptTwo.removeEventListener('error', handleAnyScriptError);
       if (popadsScript.parentNode) {
         popadsScript.parentNode.removeChild(popadsScript);
       }
       if (monetagPopunderScript.parentNode) {
         monetagPopunderScript.parentNode.removeChild(monetagPopunderScript);
       }
+      if (profitableExtraScriptOne.parentNode) {
+        profitableExtraScriptOne.parentNode.removeChild(profitableExtraScriptOne);
+      }
+      if (profitableExtraScriptTwo.parentNode) {
+        profitableExtraScriptTwo.parentNode.removeChild(profitableExtraScriptTwo);
+      }
     };
-  }, [hasSearchResults, isResultsUnlocked, shouldUseAndroidDirectSponsorFlow]);
+  }, [hasSearchResults, isResultsUnlocked]);
 
   useEffect(() => {
     setMonetagBannerReady(false);
@@ -586,6 +628,69 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
         monetagBannerScript.parentNode.removeChild(monetagBannerScript);
       }
       container.innerHTML = '';
+    };
+  }, [hasSearchResults]);
+
+  useEffect(() => {
+    if (!hasSearchResults || typeof document === 'undefined') return;
+
+    const profitableContainer = profitableCpmContainerRef.current;
+    const highPerformanceContainer = highPerformanceIframeContainerRef.current;
+
+    let profitableInvokeScript: HTMLScriptElement | null = null;
+    let highPerformanceScript: HTMLScriptElement | null = null;
+
+    const handleRequestedAdsError = () => {
+      setAdScriptFailed(true);
+    };
+
+    if (profitableContainer) {
+      profitableContainer.innerHTML = '';
+
+      const containerDiv = document.createElement('div');
+      containerDiv.id = PROFITABLECPM_CONTAINER_ID;
+      profitableContainer.appendChild(containerDiv);
+
+      profitableInvokeScript = document.createElement('script');
+      profitableInvokeScript.async = true;
+      profitableInvokeScript.setAttribute('data-cfasync', 'false');
+      profitableInvokeScript.src = PROFITABLECPM_CONTAINER_SCRIPT_SRC;
+      profitableInvokeScript.addEventListener('error', handleRequestedAdsError);
+      profitableContainer.appendChild(profitableInvokeScript);
+    }
+
+    if (highPerformanceContainer) {
+      highPerformanceContainer.innerHTML = '';
+
+      window.atOptions = {
+        key: '56a13e90efe1540c890c5f9464a81293',
+        format: 'iframe',
+        height: 300,
+        width: 160,
+        params: {},
+      };
+
+      highPerformanceScript = document.createElement('script');
+      highPerformanceScript.src = HIGHPERFORMANCE_IFRAME_AD_SCRIPT_SRC;
+      highPerformanceScript.async = true;
+      highPerformanceScript.addEventListener('error', handleRequestedAdsError);
+      highPerformanceContainer.appendChild(highPerformanceScript);
+    }
+
+    return () => {
+      if (profitableInvokeScript) {
+        profitableInvokeScript.removeEventListener('error', handleRequestedAdsError);
+      }
+      if (highPerformanceScript) {
+        highPerformanceScript.removeEventListener('error', handleRequestedAdsError);
+      }
+      if (profitableContainer) {
+        profitableContainer.innerHTML = '';
+      }
+      if (highPerformanceContainer) {
+        highPerformanceContainer.innerHTML = '';
+      }
+      delete window.atOptions;
     };
   }, [hasSearchResults]);
 
@@ -852,6 +957,34 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
                     ) : null}
                   </div>
                 ) : null}
+
+                <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="rounded-2xl border border-border/60 bg-white p-4 sm:p-5 shadow-sm">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-[11px] uppercase tracking-[0.08em] text-muted-foreground font-semibold">Sponsored</p>
+                      <span className="text-[11px] px-2 py-1 rounded-lg border border-emerald-200 bg-emerald-50 text-emerald-700 font-semibold">
+                        ProfitableCPM Display
+                      </span>
+                    </div>
+                    <div
+                      ref={profitableCpmContainerRef}
+                      className="mt-3 min-h-[120px] rounded-xl border border-dashed border-border/70 bg-muted/10"
+                    />
+                  </div>
+
+                  <div className="rounded-2xl border border-border/60 bg-white p-4 sm:p-5 shadow-sm">
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-[11px] uppercase tracking-[0.08em] text-muted-foreground font-semibold">Sponsored</p>
+                      <span className="text-[11px] px-2 py-1 rounded-lg border border-indigo-200 bg-indigo-50 text-indigo-700 font-semibold">
+                        HighPerformance 160x300
+                      </span>
+                    </div>
+                    <div
+                      ref={highPerformanceIframeContainerRef}
+                      className="mt-3 min-h-[320px] rounded-xl border border-dashed border-border/70 bg-muted/10 flex items-center justify-center"
+                    />
+                  </div>
+                </div>
 
                 <div className="relative mt-2">
                   <div className={isResultsUnlocked ? '' : 'blur-md pointer-events-none select-none'}>
