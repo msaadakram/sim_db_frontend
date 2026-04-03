@@ -48,11 +48,8 @@ Use these variables locally and in Vercel:
 - `SHORTLINK_CUTY_API_KEY`, `SHORTLINK_EXE_API_KEY`, `SHORTLINK_GPLINKS_API_KEY`, `SHORTLINK_SHRINKEARN_API_KEY`: API keys for short-link providers.
 - `NEXT_PUBLIC_MONETAG_SCRIPT_SRC` (optional): Monetag script source URL (default `https://quge5.com/88/tag.min.js`).
 - `NEXT_PUBLIC_MONETAG_POPUNDER_ZONE_ID` (recommended): Monetag zone ID used for popunder/on-click ads on the search results page.
-- `NEXT_PUBLIC_MONETAG_BANNER_ZONE_ID` (optional but recommended): Monetag zone ID used for banner placement on the search results page.
 - `NEXT_PUBLIC_POPADS_ANDROID_DIRECT_URL` (optional): Exact PopAds direct-link URL used on trusted Android taps only; do not use shorteners or redirect wrappers.
-- `NEXT_PUBLIC_MONETAG_ANDROID_DIRECT_URL` (optional): Exact Monetag direct-link URL for Android sponsor tap flow.
 - `NEXT_PUBLIC_PROFITABLECPM_ANDROID_DIRECT_URL` (optional): ProfitableCPM direct-link URL used for Android sponsor tap flow.
-- `NEXT_PUBLIC_ADSTERRA_ANDROID_DIRECT_URL` (legacy alias): Backward-compatible Android direct-link variable still supported in code.
 - `NEXT_PUBLIC_SITE_URL` (recommended): Full site URL used for canonical, sitemap, and robots metadata.
 
 ## Website-only short-link search gate

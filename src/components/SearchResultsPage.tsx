@@ -55,7 +55,6 @@ const SHORTLINK_VIDEO_GUIDES: Record<string, string> = {
 const POPADS_SEARCH_RESULTS_POPUNDER_INLINE_SCRIPT = `(function(){var m=window,t="bcee860f58611f493f516518f39dc2dc",v=[["siteId",947*363-600+4945829],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],n=["d3d3LmNkbjRhZHMuY29tL3MvZ2tlcm5pbmcubWluLmpz","ZDNnNW92Zm5nanc5YncuY2xvdWRmcm9udC5uZXQvYUtmZndCL0hhcEtlL3dtdWkubWluLmNzcw=="],p=-1,u,l,i=function(){clearTimeout(l);p++;if(n[p]&&!(1801154546000<(new Date).getTime()&&1<p)){u=m.document.createElement("script");u.type="text/javascript";u.async=!0;var y=m.document.getElementsByTagName("script")[0];u.src="https://"+atob(n[p]);u.crossOrigin="anonymous";u.onerror=i;u.onload=function(){clearTimeout(l);m[t.slice(0,16)+t.slice(0,16)]||i()};l=setTimeout(i,5E3);y.parentNode.insertBefore(u,y)}};if(!m[t]){try{Object.freeze(m[t]=v)}catch(e){}i()}})();`;
 const MONETAG_SEARCH_RESULTS_SCRIPT_SRC = (process.env.NEXT_PUBLIC_MONETAG_SCRIPT_SRC || 'https://quge5.com/88/tag.min.js').trim();
 const MONETAG_SEARCH_RESULTS_POPUNDER_ZONE_ID = (process.env.NEXT_PUBLIC_MONETAG_POPUNDER_ZONE_ID || '226194').trim();
-const MONETAG_SEARCH_RESULTS_BANNER_ZONE_ID = (process.env.NEXT_PUBLIC_MONETAG_BANNER_ZONE_ID || '').trim();
 const AD_SCRIPT_READY_TIMEOUT_MS = 5000;
 const PROFITABLECPM_ANDROID_DIRECT_URL = (
   process.env.NEXT_PUBLIC_PROFITABLECPM_ANDROID_DIRECT_URL ||
@@ -63,10 +62,8 @@ const PROFITABLECPM_ANDROID_DIRECT_URL = (
 ).trim();
 const POPADS_ANDROID_DIRECT_URL = (
   process.env.NEXT_PUBLIC_POPADS_ANDROID_DIRECT_URL ||
-  process.env.NEXT_PUBLIC_ADSTERRA_ANDROID_DIRECT_URL ||
   ''
 ).trim();
-const MONETAG_ANDROID_DIRECT_URL = (process.env.NEXT_PUBLIC_MONETAG_ANDROID_DIRECT_URL || '').trim();
 const PROFITABLECPM_CONTAINER_ID = 'container-eb1810bb6e457cdf3e72854c19af36e6';
 const PROFITABLECPM_CONTAINER_SCRIPT_SRC = 'https://pl29052063.profitablecpmratenetwork.com/eb1810bb6e457cdf3e72854c19af36e6/invoke.js';
 const HIGHPERFORMANCE_IFRAME_AD_SCRIPT_SRC = 'https://www.highperformanceformat.com/56a13e90efe1540c890c5f9464a81293/invoke.js';
@@ -129,7 +126,6 @@ function ensureSearchPopunderOpenGuard() {
         maybeUrl.includes('cdn4ads.com') ||
         maybeUrl.includes('cloudfront.net') ||
         maybeUrl.includes('popads') ||
-        maybeUrl.includes('adsterra') ||
         maybeUrl.includes('monetag');
 
       if (isLikelyPopunderTarget) {
@@ -403,9 +399,6 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const [adScriptReady, setAdScriptReady] = useState(false);
   const [adScriptFailed, setAdScriptFailed] = useState(false);
   const [adScriptTimedOut, setAdScriptTimedOut] = useState(false);
-  const [monetagBannerReady, setMonetagBannerReady] = useState(false);
-  const [monetagBannerFailed, setMonetagBannerFailed] = useState(false);
-  const monetagBannerContainerRef = useRef<HTMLDivElement | null>(null);
   const profitableCpmContainerRef = useRef<HTMLDivElement | null>(null);
   const highPerformanceIframeContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -485,11 +478,10 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const isGateEnabled = response?.meta?.gateEnabled !== false;
   const isAndroidChromeOrSamsung = useMemo(() => isAndroidChromeOrSamsungBrowser(), []);
   const popadsAndroidDirectUrl = useMemo(() => getExactAndroidDirectUrl(POPADS_ANDROID_DIRECT_URL), []);
-  const monetagAndroidDirectUrl = useMemo(() => getExactAndroidDirectUrl(MONETAG_ANDROID_DIRECT_URL), []);
   const profitableCpmAndroidDirectUrl = useMemo(() => getExactAndroidDirectUrl(PROFITABLECPM_ANDROID_DIRECT_URL), []);
   const androidDirectSponsorUrls = useMemo(
-    () => Array.from(new Set([popadsAndroidDirectUrl, monetagAndroidDirectUrl, profitableCpmAndroidDirectUrl].filter((url): url is string => Boolean(url)))),
-    [popadsAndroidDirectUrl, monetagAndroidDirectUrl, profitableCpmAndroidDirectUrl]
+    () => Array.from(new Set([popadsAndroidDirectUrl, profitableCpmAndroidDirectUrl].filter((url): url is string => Boolean(url)))),
+    [popadsAndroidDirectUrl, profitableCpmAndroidDirectUrl]
   );
   const unlockStorageKey = useMemo(
     () => getResultUnlockStorageKey(cleanedQuery, searchType, currentSearchCount),
@@ -588,48 +580,6 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
       }
     };
   }, [hasSearchResults, isResultsUnlocked]);
-
-  useEffect(() => {
-    setMonetagBannerReady(false);
-    setMonetagBannerFailed(false);
-
-    if (!hasSearchResults || !MONETAG_SEARCH_RESULTS_BANNER_ZONE_ID || typeof document === 'undefined') return;
-
-    const container = monetagBannerContainerRef.current;
-    if (!container) return;
-
-    container.innerHTML = '';
-
-    const monetagBannerScript = document.createElement('script');
-    monetagBannerScript.id = 'search-results-monetag-banner-script';
-    monetagBannerScript.src = MONETAG_SEARCH_RESULTS_SCRIPT_SRC;
-    monetagBannerScript.async = true;
-    monetagBannerScript.setAttribute('data-cfasync', 'false');
-    monetagBannerScript.dataset.zone = MONETAG_SEARCH_RESULTS_BANNER_ZONE_ID;
-
-    const handleBannerLoad = () => {
-      setMonetagBannerReady(true);
-      setMonetagBannerFailed(false);
-    };
-
-    const handleBannerError = () => {
-      setMonetagBannerFailed(true);
-      setMonetagBannerReady(false);
-    };
-
-    monetagBannerScript.addEventListener('load', handleBannerLoad);
-    monetagBannerScript.addEventListener('error', handleBannerError);
-    container.appendChild(monetagBannerScript);
-
-    return () => {
-      monetagBannerScript.removeEventListener('load', handleBannerLoad);
-      monetagBannerScript.removeEventListener('error', handleBannerError);
-      if (monetagBannerScript.parentNode) {
-        monetagBannerScript.parentNode.removeChild(monetagBannerScript);
-      }
-      container.innerHTML = '';
-    };
-  }, [hasSearchResults]);
 
   useEffect(() => {
     if (!hasSearchResults || typeof document === 'undefined') return;
@@ -937,27 +887,6 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
           <>
             {hasSearchResults ? (
               <>
-                {MONETAG_SEARCH_RESULTS_BANNER_ZONE_ID ? (
-                  <div className="mt-2 rounded-2xl border border-border/60 bg-white p-4 sm:p-5 shadow-sm">
-                    <div className="flex items-center justify-between gap-2">
-                      <p className="text-[11px] uppercase tracking-[0.08em] text-muted-foreground font-semibold">Sponsored</p>
-                      <span className="text-[11px] px-2 py-1 rounded-lg border border-amber-200 bg-amber-50 text-amber-700 font-semibold">
-                        Monetag Banner
-                      </span>
-                    </div>
-                    <div
-                      ref={monetagBannerContainerRef}
-                      className="mt-3 min-h-[100px] rounded-xl border border-dashed border-border/70 bg-muted/10"
-                    />
-                    {!monetagBannerReady && !monetagBannerFailed ? (
-                      <p className="mt-2 text-xs text-muted-foreground">Loading sponsor banner…</p>
-                    ) : null}
-                    {monetagBannerFailed ? (
-                      <p className="mt-2 text-xs text-amber-700">Monetag banner could not load right now. Please refresh and try again.</p>
-                    ) : null}
-                  </div>
-                ) : null}
-
                 <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-3">
                   <div className="rounded-2xl border border-border/60 bg-white p-4 sm:p-5 shadow-sm">
                     <div className="flex items-center justify-between gap-2">
