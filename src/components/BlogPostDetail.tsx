@@ -410,6 +410,7 @@ const createPortableTextComponents = (): PortableTextComponents => ({
               width={1200}
               height={675}
               sizes="(max-width: 768px) 100vw, 1200px"
+              quality={60}
               className="w-full h-auto object-cover"
               loading="lazy"
             />
@@ -616,6 +617,8 @@ export function BlogPostDetail({ post, relatedPosts }: BlogPostDetailProps) {
                   alt={withSeoAlt(post.title)}
                   width={1200}
                   height={600}
+                  sizes="(max-width: 640px) 100vw, (max-width: 1280px) 90vw, 1200px"
+                  quality={60}
                   priority
                   className="w-full h-72 sm:h-96 md:h-[440px] lg:h-[520px] xl:h-[600px] object-cover group-hover:scale-105 transition-transform duration-700"
                 />
@@ -774,6 +777,8 @@ export function BlogPostDetail({ post, relatedPosts }: BlogPostDetailProps) {
                                 alt={withSeoAlt(relatedPost.title)}
                                 width={400}
                                 height={192}
+                                sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 400px"
+                                quality={55}
                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                               />
                             ) : (
