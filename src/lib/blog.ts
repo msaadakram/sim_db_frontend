@@ -226,9 +226,14 @@ function appendSeoGuideSections(body: any[], addBlock: (body: any[], options: Bl
   });
 }
 
-function ensureMinimumWordCount(body: any[], addBlock: (body: any[], options: BlockOptions) => void, post: BlogSourcePost): void {
+function ensureMinimumWordCount(
+  body: any[],
+  addBlock: (body: any[], options: BlockOptions) => void,
+  post: BlogSourcePost,
+  targetWordCount = MIN_BLOG_WORD_COUNT
+): void {
   let currentWordCount = countPortableTextWords(body);
-  if (currentWordCount >= MIN_BLOG_WORD_COUNT) {
+  if (currentWordCount >= targetWordCount) {
     return;
   }
 
@@ -243,7 +248,7 @@ function ensureMinimumWordCount(body: any[], addBlock: (body: any[], options: Bl
   ];
 
   let index = 0;
-  while (currentWordCount < MIN_BLOG_WORD_COUNT && index < 12) {
+  while (currentWordCount < targetWordCount && index < 12) {
     if (index % 2 === 0) {
       addBlock(body, { style: 'h3', text: `Implementation note ${Math.floor(index / 2) + 1}` });
     }
@@ -259,14 +264,18 @@ function convertContentToPortableText(post: BlogSourcePost): any[] {
   const body: any[] = [];
   const addBlock = createBlockBuilder();
   const content = post.content;
+  const targetWordCount = post.minimumWordCount ?? MIN_BLOG_WORD_COUNT;
+  const shouldAppendSeoGuide = post.disableAutoSeoExpansion !== true;
 
   if (!content) {
     addBlock(body, {
       style: 'normal',
       text: `${post.excerpt} This guide was generated with a structured SEO framework to ensure clarity, depth, and practical value for readers.`,
     });
-    appendSeoGuideSections(body, addBlock, post);
-    ensureMinimumWordCount(body, addBlock, post);
+    if (shouldAppendSeoGuide) {
+      appendSeoGuideSections(body, addBlock, post);
+    }
+    ensureMinimumWordCount(body, addBlock, post, targetWordCount);
     return body;
   }
 
@@ -305,8 +314,10 @@ function convertContentToPortableText(post: BlogSourcePost): any[] {
     }
   }
 
-  appendSeoGuideSections(body, addBlock, post);
-  ensureMinimumWordCount(body, addBlock, post);
+  if (shouldAppendSeoGuide) {
+    appendSeoGuideSections(body, addBlock, post);
+  }
+  ensureMinimumWordCount(body, addBlock, post, targetWordCount);
 
   return body;
 }

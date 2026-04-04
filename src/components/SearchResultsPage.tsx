@@ -917,8 +917,8 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
                   </div>
 
                   {!isResultsUnlocked && (
-                    <div className="absolute inset-0 z-20 flex items-center justify-center rounded-2xl bg-white/55">
-                      <div className="max-w-sm mx-4 rounded-2xl border border-border/60 bg-white/95 p-5 text-center shadow-lg">
+                    <div className="absolute inset-x-0 top-0 z-20 h-14 sm:inset-0 sm:h-auto flex items-start sm:items-center justify-center rounded-2xl bg-white/55">
+                      <div className="max-w-sm mx-4 mt-1 sm:mt-0 rounded-2xl border border-border/60 bg-white/95 p-5 text-center shadow-lg">
                         <p className="text-base font-semibold text-primary">Results are ready</p>
                         <p className="mt-1 text-sm text-muted-foreground">
                           {canUnlockResults
