@@ -29,7 +29,7 @@ export const blogPosts: BlogPost[] = [
     date: 'February 15, 2026',
     readTime: '8 min read',
     category: 'Guide',
-    image: 'https://images.unsplash.com/photo-1551434678-e076c223a692?w=800&h=500&fit=crop',
+    image: '/blog/how-to-check-sim-details-pakistan-2026-guide.png',
     featured: true,
     content: {
       introduction: "In today's digital age, knowing how to check SIM card information has become essential for security, verification, and personal safety. Whether you're verifying employee credentials, ensuring personal security, or conducting business verification, understanding SIM card tracking is crucial. This comprehensive guide will walk you through everything you need to know about checking SIM card information in Pakistan, including legal methods, verification processes, and advanced tracking techniques.",
@@ -214,7 +214,7 @@ export const blogPosts: BlogPost[] = [
     date: 'February 10, 2026',
     readTime: '7 min read',
     category: 'Technology',
-    image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800&h=500&fit=crop',
+    image: '/blog/live-location-tracking-technology-behind-real-time-sim-tracking.png',
     featured: false,
     content: {
       introduction: 'Live location tracking has revolutionized how we locate mobile devices. This article explores the cutting-edge technology that makes real-time tracking possible.',
