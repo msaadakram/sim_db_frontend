@@ -917,8 +917,8 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
                   </div>
 
                   {!isResultsUnlocked && (
-                    <div className="absolute inset-x-0 top-0 z-20 h-14 sm:inset-0 sm:h-auto flex items-start sm:items-center justify-center rounded-2xl bg-white/55">
-                      <div className="max-w-sm mx-4 mt-1 sm:mt-0 rounded-2xl border border-border/60 bg-white/95 p-5 text-center shadow-lg">
+                    <div className="absolute inset-x-0 top-0 z-20 h-16 sm:inset-0 sm:h-auto flex items-start sm:items-center justify-center rounded-2xl bg-white/45 backdrop-blur-[2px]">
+                      <div className="max-w-md mx-4 mt-1 sm:mt-0 rounded-2xl border border-border/60 bg-white/95 p-5 text-center shadow-lg">
                         <p className="text-base font-semibold text-primary">Results are ready</p>
                         <p className="mt-1 text-sm text-muted-foreground">
                           {canUnlockResults
@@ -930,6 +930,14 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
                         <p className="mt-1.5 text-[11px] text-muted-foreground">
                           Ads active: PopAdsNet + Monetag (Popunder + In-Page Push)
                         </p>
+                        <div className="mt-3 rounded-xl border border-primary/10 bg-primary/5 p-3 text-left">
+                          <p className="text-xs font-semibold text-primary">Quick guide to complete ad:</p>
+                          <ol className="mt-1 list-decimal list-inside space-y-1 text-xs text-muted-foreground">
+                            <li>Tap the button below.</li>
+                            <li>Let the sponsor page load for 2–3 seconds.</li>
+                            <li>Return to this tab and continue with your results.</li>
+                          </ol>
+                        </div>
                         <button
                           type="button"
                           onClick={handleUnlockResults}
@@ -940,8 +948,8 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
                         >
                           {canUnlockResults
                             ? shouldUseAndroidPopadsDirectFlow
-                              ? 'Open Sponsor Link'
-                              : 'View Now'
+                              ? 'Open Ad & View Results'
+                              : 'View Results'
                             : 'Preparing…'}
                         </button>
                         {(adScriptFailed || adScriptTimedOut) && (
