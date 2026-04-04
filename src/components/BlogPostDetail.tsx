@@ -2,7 +2,7 @@
 
 import { motion } from 'motion/react';
 import { Calendar, User, Clock, Facebook, Twitter, Linkedin, ArrowRight, Share2, Bookmark, Heart, Eye, List, Copy, Check, ChevronDown, ChevronUp, MessageCircle, Code } from 'lucide-react';
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PortableText, PortableTextComponents } from '@portabletext/react';
@@ -36,6 +36,7 @@ interface BlogPostDetailProps {
 }
 
 interface TOCItem {
+  key: string;
   id: string;
   text: string;
   level: number;
@@ -49,7 +50,8 @@ function slugify(text: string): string {
     .replace(/[^a-z0-9\s-]/g, '')
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
-    .trim();
+    .trim()
+    .replace(/^-+|-+$/g, '');
 }
 
 // Extract TOC items from Portable Text body with numbering
@@ -59,8 +61,9 @@ function extractTOC(body: any[]): TOCItem[] {
 
   let h2Count = 0;
   let h3Count = 0;
+  const idCounts = new Map<string, number>();
 
-  body.forEach((block) => {
+  body.forEach((block, index) => {
     if (block._type === 'block' && ['h2', 'h3'].includes(block.style)) {
       const text = block.children
         ?.map((child: any) => child.text)
@@ -75,8 +78,15 @@ function extractTOC(body: any[]): TOCItem[] {
           h3Count++;
           number = `${h2Count || 1}.${h3Count}`;
         }
+
+        const baseId = slugify(text) || `section-${items.length + 1}`;
+        const seenCount = (idCounts.get(baseId) ?? 0) + 1;
+        idCounts.set(baseId, seenCount);
+        const uniqueId = seenCount === 1 ? baseId : `${baseId}-${seenCount}`;
+
         items.push({
-          id: slugify(text),
+          key: typeof block._key === 'string' ? block._key : `heading-${index}`,
+          id: uniqueId,
           text: text.trim(),
           level: block.style === 'h2' ? 2 : 3,
           number,
@@ -284,11 +294,13 @@ function CodeBlockRenderer({ value }: { value: { code?: string; language?: strin
 }
 
 // Portable Text rendering components
-const createPortableTextComponents = (): PortableTextComponents => ({
+const createPortableTextComponents = (
+  resolveHeadingId: (value: any, text: string) => string
+): PortableTextComponents => ({
   block: {
     h1: ({ children, value }) => {
       const text = value?.children?.map((c: any) => c.text).join('') || '';
-      const id = slugify(text);
+      const id = resolveHeadingId(value, text);
       return (
         <h1 id={id} className="text-3xl sm:text-4xl md:text-5xl text-primary mt-12 mb-6 leading-tight scroll-mt-24" style={{ fontFamily: "'Playfair Display', serif" }}>
           {children}
@@ -297,7 +309,7 @@ const createPortableTextComponents = (): PortableTextComponents => ({
     },
     h2: ({ children, value }) => {
       const text = value?.children?.map((c: any) => c.text).join('') || '';
-      const id = slugify(text);
+      const id = resolveHeadingId(value, text);
       return (
         <h2
           id={id}
@@ -310,7 +322,7 @@ const createPortableTextComponents = (): PortableTextComponents => ({
     },
     h3: ({ children, value }) => {
       const text = value?.children?.map((c: any) => c.text).join('') || '';
-      const id = slugify(text);
+      const id = resolveHeadingId(value, text);
       return (
         <h3 id={id} className="text-xl sm:text-2xl md:text-3xl text-primary mt-10 mb-4 leading-tight scroll-mt-24" style={{ fontFamily: "'Playfair Display', serif" }}>
           {children}
@@ -435,8 +447,28 @@ export function BlogPostDetail({ post, relatedPosts }: BlogPostDetailProps) {
   const articleRef = useRef<HTMLDivElement>(null);
   const { views, loading: viewsLoading } = useViewCount(post.slug);
 
-  const tocItems = extractTOC(post.body);
-  const portableTextComponents = createPortableTextComponents();
+  const tocItems = useMemo(() => extractTOC(post.body), [post.body]);
+
+  const headingIdMap = useMemo(() => {
+    return new Map(tocItems.map((item) => [item.key, item.id]));
+  }, [tocItems]);
+
+  const resolveHeadingId = useCallback(
+    (value: any, text: string) => {
+      const key = typeof value?._key === 'string' ? value._key : '';
+      if (key && headingIdMap.has(key)) {
+        return headingIdMap.get(key) || slugify(text) || 'section';
+      }
+
+      return slugify(text) || 'section';
+    },
+    [headingIdMap]
+  );
+
+  const portableTextComponents = useMemo(
+    () => createPortableTextComponents(resolveHeadingId),
+    [resolveHeadingId]
+  );
 
   // Scroll-position-based active heading tracking (less flickering than IntersectionObserver)
   useEffect(() => {

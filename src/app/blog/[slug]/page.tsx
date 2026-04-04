@@ -15,6 +15,25 @@ const SITE_URL = getSiteUrl();
 
 const Footer = lazy(() => import('@/components/Footer').then(m => ({ default: m.Footer })));
 
+function countWordsFromBody(body: any[]): number {
+    return body.reduce((total, block) => {
+        if (block?._type !== 'block' || !Array.isArray(block.children)) {
+            return total;
+        }
+
+        const text = block.children
+            .map((child: any) => (typeof child?.text === 'string' ? child.text : ''))
+            .join(' ')
+            .trim();
+
+        if (!text) {
+            return total;
+        }
+
+        return total + text.split(/\s+/).filter(Boolean).length;
+    }, 0);
+}
+
 function SectionLoader() {
     return (
         <div className="w-full min-h-[400px] flex items-center justify-center">
@@ -84,6 +103,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     };
 
     const relatedPosts = getRelatedBlogPosts(slug);
+    const wordCount = countWordsFromBody(postData.body);
 
     // JSON-LD structured data
     const jsonLd = {
@@ -93,6 +113,8 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
         description: postData.excerpt,
         image: postData.image,
         datePublished: post.publishedAt,
+        wordCount,
+        articleSection: postData.category,
         author: {
             '@type': 'Person',
             name: postData.author,
