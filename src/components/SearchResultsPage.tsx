@@ -45,6 +45,7 @@ const MONETAG_SEARCH_RESULTS_SCRIPT_SRC = 'https://quge5.com/88/tag.min.js';
 const MONETAG_SEARCH_RESULTS_ZONE_ID = '226344';
 const SEARCH_RESULTS_POPADS_SCRIPT_ID = 'search-results-popads-head-script';
 const SEARCH_RESULTS_MONETAG_SCRIPT_ID = 'search-results-monetag-head-script';
+const SEARCH_WAIT_SECONDS = 10;
 
 function getResultUnlockStorageKey(searchQuery: string, searchType: 'mobile' | 'cnic', searchCount: number): string {
   return `sf_result_unlock:${searchType}:${searchQuery}:${searchCount}`;
@@ -298,6 +299,7 @@ function ComingSoonCard({ cleanedQuery, searchType }: { cleanedQuery: string; se
 
 export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', onBack }: SearchResultsPageProps) {
   const [loading, setLoading] = useState(true);
+  const [remainingWaitSeconds, setRemainingWaitSeconds] = useState(SEARCH_WAIT_SECONDS);
   const [error, setError] = useState('');
   const [response, setResponse] = useState<SearchApiResponse | null>(null);
   const [isResultsUnlocked, setIsResultsUnlocked] = useState(false);
@@ -311,6 +313,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
 
   useEffect(() => {
     setIsResultsUnlocked(false);
+    setRemainingWaitSeconds(SEARCH_WAIT_SECONDS);
 
     if (!cleanedQuery) {
       setLoading(false);
@@ -322,6 +325,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
 
     const runSearch = async () => {
       setLoading(true);
+      setRemainingWaitSeconds(SEARCH_WAIT_SECONDS);
       setError('');
 
       try {
@@ -365,6 +369,22 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
       active = false;
     };
   }, [cleanedQuery, searchType, unlockToken]);
+
+  useEffect(() => {
+    if (!loading) {
+      return;
+    }
+
+    setRemainingWaitSeconds(SEARCH_WAIT_SECONDS);
+
+    const countdownTimer = window.setInterval(() => {
+      setRemainingWaitSeconds((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => {
+      window.clearInterval(countdownTimer);
+    };
+  }, [loading, cleanedQuery, searchType, unlockToken]);
 
   useEffect(() => {
     return () => {
@@ -611,6 +631,14 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
             <div className="flex flex-col items-center gap-3 text-muted-foreground">
               <Loader2 className="w-10 h-10 animate-spin text-accent" />
               <p>Searching records...</p>
+              <p className="text-sm sm:text-base font-medium text-primary text-center">
+                Wait for {remainingWaitSeconds} second{remainingWaitSeconds === 1 ? '' : 's'}...
+              </p>
+              {remainingWaitSeconds === 0 ? (
+                <p className="text-xs sm:text-sm text-muted-foreground text-center max-w-xs">
+                  Still waiting for backend response. Results will appear automatically once received.
+                </p>
+              ) : null}
             </div>
           </div>
         ) : response?.requireShortlink ? (
