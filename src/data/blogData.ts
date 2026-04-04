@@ -178,7 +178,7 @@ export const blogPosts: BlogPost[] = [
     date: 'February 12, 2026',
     readTime: '6 min read',
     category: 'Security',
-    image: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?w=800&h=500&fit=crop',
+    image: '/blog/understanding-cnic-verification-a-complete-overview.png',
     featured: false,
     content: {
       introduction: 'CNIC verification is a critical component of SIM card registration in Pakistan. This comprehensive guide explains the entire process and its importance for security.',
