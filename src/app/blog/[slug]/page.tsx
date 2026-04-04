@@ -8,31 +8,15 @@ import { getBlogPostBySlug, getRelatedBlogPosts } from '@/lib/blog';
 import { notFound } from 'next/navigation';
 import { getSiteUrl } from '@/lib/site-url';
 import { SIM_OWNER_SEO_KEYWORDS, getKeywordSentence } from '@/lib/seo-keywords';
+import { ArticleJsonLd, BreadcrumbJsonLd } from 'next-seo';
+import { SEO_SITE_NAME, getSeoIdentity } from '@/lib/next-seo';
 
 export const revalidate = 60;
 
 const SITE_URL = getSiteUrl();
+const SEO_IDENTITY = getSeoIdentity();
 
 const Footer = lazy(() => import('@/components/Footer').then(m => ({ default: m.Footer })));
-
-function countWordsFromBody(body: any[]): number {
-    return body.reduce((total, block) => {
-        if (block?._type !== 'block' || !Array.isArray(block.children)) {
-            return total;
-        }
-
-        const text = block.children
-            .map((child: any) => (typeof child?.text === 'string' ? child.text : ''))
-            .join(' ')
-            .trim();
-
-        if (!text) {
-            return total;
-        }
-
-        return total + text.split(/\s+/).filter(Boolean).length;
-    }, 0);
-}
 
 function SectionLoader() {
     return (
@@ -67,7 +51,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             title,
             description: `${description} Keywords: ${getKeywordSentence(54, 8)}.`,
             url: canonicalUrl,
-            siteName: 'SIM Finder',
+            siteName: SEO_SITE_NAME,
             images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: post.title }] : [],
             type: 'article',
             publishedTime: post.publishedAt,
@@ -103,37 +87,36 @@ export default async function BlogPostPage({ params }: { params: Promise<{ slug:
     };
 
     const relatedPosts = getRelatedBlogPosts(slug);
-    const wordCount = countWordsFromBody(postData.body);
-
-    // JSON-LD structured data
-    const jsonLd = {
-        '@context': 'https://schema.org',
-        '@type': 'Article',
-        headline: post.title,
-        description: postData.excerpt,
-        image: postData.image,
-        datePublished: post.publishedAt,
-        wordCount,
-        articleSection: postData.category,
-        author: {
-            '@type': 'Person',
-            name: postData.author,
-        },
-        publisher: {
-            '@type': 'Organization',
-            name: 'SIM Finder',
-        },
-        mainEntityOfPage: {
-            '@type': 'WebPage',
-            '@id': `${SITE_URL}/blog/${slug}`,
-        },
-    };
+    const articleUrl = `${SITE_URL}/blog/${slug}`;
 
     return (
         <div className="min-h-screen overflow-x-hidden">
-            <script
-                type="application/ld+json"
-                dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+            <ArticleJsonLd
+                scriptId={`article-jsonld-${slug}`}
+                type="Article"
+                headline={post.title}
+                description={postData.excerpt}
+                url={articleUrl}
+                image={postData.image ? [postData.image] : undefined}
+                datePublished={post.publishedAt}
+                author={postData.author}
+                publisher={{
+                    name: SEO_IDENTITY.siteName,
+                    url: SEO_IDENTITY.siteUrl,
+                    logo: SEO_IDENTITY.logoUrl,
+                }}
+                mainEntityOfPage={{
+                    '@id': articleUrl,
+                }}
+                isAccessibleForFree={true}
+            />
+            <BreadcrumbJsonLd
+                scriptId={`breadcrumb-jsonld-${slug}`}
+                items={[
+                    { name: 'Home', item: SITE_URL },
+                    { name: 'Blog', item: `${SITE_URL}/blog` },
+                    { name: post.title, item: articleUrl },
+                ]}
             />
             <Header />
             <main className="w-full">

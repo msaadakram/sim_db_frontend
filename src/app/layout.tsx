@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { getSiteUrl } from '@/lib/site-url';
 import { SIM_OWNER_SEO_KEYWORDS, getKeywordSentence } from '@/lib/seo-keywords';
+import { OrganizationJsonLd } from 'next-seo';
+import { SEO_SITE_NAME, getSeoIdentity } from '@/lib/next-seo';
 
 const SITE_URL = getSiteUrl();
+const SEO_IDENTITY = getSeoIdentity();
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -16,7 +19,7 @@ export const metadata: Metadata = {
   keywords: [...SIM_OWNER_SEO_KEYWORDS],
   openGraph: {
     type: 'website',
-    siteName: 'SIM Finder',
+    siteName: SEO_SITE_NAME,
     locale: 'en_US',
     title: 'SIM Finder Pakistan - SIM Details Check & CNIC Owner Details',
     description:
@@ -50,6 +53,22 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="antialiased">
+        <OrganizationJsonLd
+          scriptId="organization-jsonld"
+          name={SEO_IDENTITY.siteName}
+          url={SEO_IDENTITY.siteUrl}
+          logo={SEO_IDENTITY.logoUrl}
+          contactPoint={{
+            contactType: 'customer support',
+            telephone: '+92 300 1234567',
+            email: 'info@simfinder.com',
+          }}
+          address={{
+            streetAddress: 'Karachi, Pakistan',
+            addressLocality: 'Karachi',
+            addressCountry: 'PK',
+          }}
+        />
         {children}
       </body>
     </html>

@@ -7,6 +7,7 @@ import { Footer } from '@/components/Footer';
 import { getAllBlogPosts } from '@/lib/blog';
 import { getSiteUrl } from '@/lib/site-url';
 import { SIM_OWNER_SEO_KEYWORDS, getKeywordSentence } from '@/lib/seo-keywords';
+import { BreadcrumbJsonLd } from 'next-seo';
 
 export const revalidate = 60;
 
@@ -43,9 +44,17 @@ function SectionLoader() {
 
 export default async function BlogListPage() {
     const posts = getAllBlogPosts();
+    const blogUrl = `${SITE_URL}/blog`;
 
     return (
         <div className="min-h-screen overflow-x-hidden">
+            <BreadcrumbJsonLd
+                scriptId="breadcrumb-jsonld-blog"
+                items={[
+                    { name: 'Home', item: SITE_URL },
+                    { name: 'Blog', item: blogUrl },
+                ]}
+            />
             <Header />
             <main className="w-full">
                 <div className="pt-16 sm:pt-20">

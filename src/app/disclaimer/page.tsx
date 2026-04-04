@@ -1,9 +1,23 @@
-'use client';
-
 import { Suspense, lazy } from 'react';
+import type { Metadata } from 'next';
 import { Header } from '@/components/Header';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { DisclaimerPage as DisclaimerPageContent } from '@/components/DisclaimerPage';
+import { getSiteUrl } from '@/lib/site-url';
+
+const SITE_URL = getSiteUrl();
+
+export const metadata: Metadata = {
+    title: 'Disclaimer - SIM Finder',
+    description: 'Read the SIM Finder disclaimer for legal, privacy, and data-usage guidance related to SIM details and verification content.',
+    alternates: {
+        canonical: `${SITE_URL}/disclaimer`,
+    },
+    robots: {
+        index: true,
+        follow: true,
+    },
+};
 
 const Footer = lazy(() => import('@/components/Footer').then(m => ({ default: m.Footer })));
 
