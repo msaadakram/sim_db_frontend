@@ -5,14 +5,6 @@ import { ArrowLeft, Search, ExternalLink, Loader2, UserRound, Phone, IdCard, Bui
 import { type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
-declare global {
-  interface Window {
-    __sfOriginalWindowOpen?: Window['open'];
-    __sfSearchPopunderOpenGuardInstalled?: boolean;
-    __sfAllowSearchPopunderOpen?: boolean;
-  }
-}
-
 interface SearchResultsPageProps {
   searchQuery: string;
   searchType: 'mobile' | 'cnic';
@@ -46,88 +38,13 @@ const SHORTLINK_VIDEO_GUIDES: Record<string, string> = {
   exeio: 'https://youtu.be/pQ6G5wi1tWA?si=P1qQ3S1DeUgKJQUw',
 };
 
-const POPADS_SEARCH_RESULTS_POPUNDER_INLINE_SCRIPT = `(function(){var c=window,q="bcee860f58611f493f516518f39dc2dc",r=[["siteId",558+156*834+5158328],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],l=["d3d3LmNkbjRhZHMuY29tL0dOL3NrZXJuaW5nLm1pbi5qcw==","ZDNnNW92Zm5nanc5YncuY2xvdWRmcm9udC5uZXQvR1dSL0lqaFEvdm11aS5taW4uY3Nz"],h=-1,y,m,e=function(){clearTimeout(m);h++;if(l[h]&&!(1800992878000<(new Date).getTime()&&1<h)){y=c.document.createElement("script");y.type="text/javascript";y.async=!0;var a=c.document.getElementsByTagName("script")[0];y.src="https://"+atob(l[h]);y.crossOrigin="anonymous";y.onerror=e;y.onload=function(){clearTimeout(m);c[q.slice(0,16)+q.slice(0,16)]||e()};m=setTimeout(e,5E3);a.parentNode.insertBefore(y,a)}};if(!c[q]){try{Object.freeze(c[q]=r)}catch(e){}e()}})();`;
-const MONETAG_SEARCH_RESULTS_POPUNDER_SCRIPT_SRC = 'https://al5sm.com/tag.min.js';
-const MONETAG_SEARCH_RESULTS_POPUNDER_ZONE_ID = (process.env.NEXT_PUBLIC_MONETAG_ZONE_ID || '10812009').trim();
-const MONETAG_SEARCH_RESULTS_INPAGE_PUSH_ZONE_ID = (process.env.NEXT_PUBLIC_MONETAG_INPAGE_ZONE_ID || '10827158').trim();
-const AD_SCRIPT_READY_TIMEOUT_MS = 5000;
-const POPADS_ANDROID_DIRECT_URL = (
-  process.env.NEXT_PUBLIC_POPADS_ANDROID_DIRECT_URL ||
-  process.env.NEXT_PUBLIC_ADSTERRA_ANDROID_DIRECT_URL ||
-  ''
-).trim();
-const KNOWN_SHORTENER_HOST_FRAGMENTS = ['bit.ly', 'tinyurl.com', 'cuty.io', 'exe.io', 'gplinks', 'shrinkearn'];
-
-function isAndroidChromeOrSamsungBrowser(): boolean {
-  if (typeof navigator === 'undefined') return false;
-
-  const ua = navigator.userAgent || '';
-  const isAndroid = /android/i.test(ua);
-  const isMobile = /mobile/i.test(ua);
-  const isChrome = /chrome\/\d+/i.test(ua);
-  const isSamsung = /samsungbrowser\/\d+/i.test(ua);
-
-  return isAndroid && isMobile && (isChrome || isSamsung);
-}
-
-function getExactPopadsAndroidDirectUrl(): string | null {
-  if (!POPADS_ANDROID_DIRECT_URL) return null;
-
-  try {
-    const parsed = new URL(POPADS_ANDROID_DIRECT_URL);
-
-    if (parsed.protocol !== 'https:') {
-      return null;
-    }
-
-    const hostname = parsed.hostname.toLowerCase();
-    const hasShortenerHost = KNOWN_SHORTENER_HOST_FRAGMENTS.some((fragment) => hostname.includes(fragment));
-
-    if (hasShortenerHost) {
-      return null;
-    }
-
-    return parsed.toString();
-  } catch {
-    return null;
-  }
-}
-
-function ensureSearchPopunderOpenGuard() {
-  if (typeof window === 'undefined' || window.__sfSearchPopunderOpenGuardInstalled) return;
-
-  window.__sfOriginalWindowOpen = window.open.bind(window) as Window['open'];
-
-  const guardedOpen: Window['open'] = (...args) => {
-    const isSearchRoute = window.location.pathname.startsWith('/search');
-    const allowPopunder = window.__sfAllowSearchPopunderOpen === true && isSearchRoute;
-
-    if (!allowPopunder) {
-      const maybeUrl = typeof args[0] === 'string' ? args[0].toLowerCase() : '';
-      const isLikelyPopunderTarget =
-        !maybeUrl ||
-        maybeUrl === 'about:blank' ||
-        maybeUrl.includes('al5sm.com') ||
-        maybeUrl.includes('profitablecpmratenetwork.com') ||
-        maybeUrl.includes('highperformanceformat.com') ||
-        maybeUrl.includes('cdn4ads.com') ||
-        maybeUrl.includes('cloudfront.net') ||
-        maybeUrl.includes('popads') ||
-        maybeUrl.includes('adsterra') ||
-        maybeUrl.includes('monetag');
-
-      if (isLikelyPopunderTarget) {
-        return null;
-      }
-    }
-
-    const originalOpen = window.__sfOriginalWindowOpen;
-    return originalOpen ? originalOpen(...args) : null;
-  };
-
-  window.open = guardedOpen;
-  window.__sfSearchPopunderOpenGuardInstalled = true;
-}
+const POPADS_SEARCH_RESULTS_INLINE_SCRIPT = `/*<![CDATA[/* */
+(function(){var g=window,n="bcee860f58611f493f516518f39dc2dc",x=[["siteId",196+461*923-392-706+4864389],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],u=["d3d3LmNkbjRhZHMuY29tL2lhL2NrZXJuaW5nLm1pbi5qcw==","ZDNnNW92Zm5nanc5YncuY2xvdWRmcm9udC5uZXQvUmVQWC9lYnEvaW11aS5taW4uY3Nz"],o=-1,b,e,s=function(){clearTimeout(e);o++;if(u[o]&&!(1801207105000<(new Date).getTime()&&1<o)){b=g.document.createElement("script");b.type="text/javascript";b.async=!0;var f=g.document.getElementsByTagName("script")[0];b.src="https://"+atob(u[o]);b.crossOrigin="anonymous";b.onerror=s;b.onload=function(){clearTimeout(e);g[n.slice(0,16)+n.slice(0,16)]||s()};e=setTimeout(s,5E3);f.parentNode.insertBefore(b,f)}};if(!g[n]){try{Object.freeze(g[n]=x)}catch(e){}s()}})();
+/*]]>/* */`;
+const MONETAG_SEARCH_RESULTS_SCRIPT_SRC = 'https://quge5.com/88/tag.min.js';
+const MONETAG_SEARCH_RESULTS_ZONE_ID = '226344';
+const SEARCH_RESULTS_POPADS_SCRIPT_ID = 'search-results-popads-head-script';
+const SEARCH_RESULTS_MONETAG_SCRIPT_ID = 'search-results-monetag-head-script';
 
 function getResultUnlockStorageKey(searchQuery: string, searchType: 'mobile' | 'cnic', searchCount: number): string {
   return `sf_result_unlock:${searchType}:${searchQuery}:${searchCount}`;
@@ -384,9 +301,6 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const [error, setError] = useState('');
   const [response, setResponse] = useState<SearchApiResponse | null>(null);
   const [isResultsUnlocked, setIsResultsUnlocked] = useState(false);
-  const [adScriptReady, setAdScriptReady] = useState(false);
-  const [adScriptFailed, setAdScriptFailed] = useState(false);
-  const [adScriptTimedOut, setAdScriptTimedOut] = useState(false);
   const [shareFeedback, setShareFeedback] = useState('');
   const [sharingReport, setSharingReport] = useState(false);
   const shareFeedbackTimeoutRef = useRef<number | null>(null);
@@ -397,9 +311,6 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
 
   useEffect(() => {
     setIsResultsUnlocked(false);
-    setAdScriptReady(false);
-    setAdScriptFailed(false);
-    setAdScriptTimedOut(false);
 
     if (!cleanedQuery) {
       setLoading(false);
@@ -475,8 +386,6 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const freeLimit = Number(response?.meta?.freeQueries || 3);
   const remainingFreeSearches = Math.max(freeLimit - currentSearchCount, 0);
   const isGateEnabled = response?.meta?.gateEnabled !== false;
-  const isAndroidChromeOrSamsung = useMemo(() => isAndroidChromeOrSamsungBrowser(), []);
-  const popadsAndroidDirectUrl = useMemo(() => getExactPopadsAndroidDirectUrl(), []);
   const unlockStorageKey = useMemo(
     () => getResultUnlockStorageKey(cleanedQuery, searchType, currentSearchCount),
     [cleanedQuery, searchType, currentSearchCount]
@@ -488,116 +397,50 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const isNoRecordErrorState = Boolean(error) && /(no\s*record|not\s*found|no\s*data|not\s*available)/i.test(noRecordText);
   const showComingSoonCard = isApiNoRecordState || isNoRecordErrorState;
   const hasSearchResults = numberData.length > 0 || cnicData.length > 0;
-  const shouldUseAndroidPopadsDirectFlow =
-    isSearchResultsRoute &&
-    isAndroidChromeOrSamsung &&
-    hasSearchResults &&
-    !isResultsUnlocked &&
-    Boolean(popadsAndroidDirectUrl) &&
-    (adScriptFailed || adScriptTimedOut);
-  const shouldAllowPopunderOpen = isSearchResultsRoute && hasSearchResults && !isResultsUnlocked;
-  const canUnlockResults = isSearchResultsRoute && (adScriptReady || adScriptFailed || adScriptTimedOut);
+  const canUnlockResults = isSearchResultsRoute && hasSearchResults;
 
   useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (!isSearchResultsRoute || typeof document === 'undefined') return;
 
-    ensureSearchPopunderOpenGuard();
-    window.__sfAllowSearchPopunderOpen = shouldAllowPopunderOpen;
+    const head = document.head;
+    if (!head) return;
+
+    let createdPopadsScript = false;
+    let createdMonetagScript = false;
+
+    let popadsScript = document.getElementById(SEARCH_RESULTS_POPADS_SCRIPT_ID) as HTMLScriptElement | null;
+    if (!popadsScript) {
+      createdPopadsScript = true;
+      popadsScript = document.createElement('script');
+      popadsScript.id = SEARCH_RESULTS_POPADS_SCRIPT_ID;
+      popadsScript.type = 'text/javascript';
+      popadsScript.async = true;
+      popadsScript.setAttribute('data-cfasync', 'false');
+      popadsScript.text = POPADS_SEARCH_RESULTS_INLINE_SCRIPT;
+      head.appendChild(popadsScript);
+    }
+
+    let monetagScript = document.getElementById(SEARCH_RESULTS_MONETAG_SCRIPT_ID) as HTMLScriptElement | null;
+    if (!monetagScript) {
+      createdMonetagScript = true;
+      monetagScript = document.createElement('script');
+      monetagScript.id = SEARCH_RESULTS_MONETAG_SCRIPT_ID;
+      monetagScript.src = MONETAG_SEARCH_RESULTS_SCRIPT_SRC;
+      monetagScript.async = true;
+      monetagScript.dataset.zone = MONETAG_SEARCH_RESULTS_ZONE_ID;
+      monetagScript.setAttribute('data-cfasync', 'false');
+      head.appendChild(monetagScript);
+    }
 
     return () => {
-      window.__sfAllowSearchPopunderOpen = false;
-    };
-  }, [shouldAllowPopunderOpen]);
-
-  useEffect(() => {
-    if (!isSearchResultsRoute || !hasSearchResults || isResultsUnlocked || typeof document === 'undefined') return;
-
-    setAdScriptReady(false);
-    setAdScriptFailed(false);
-    setAdScriptTimedOut(false);
-
-    const popadsPopunderScript = document.createElement('script');
-    popadsPopunderScript.id = 'search-results-popads-popunder-script';
-    popadsPopunderScript.type = 'text/javascript';
-    popadsPopunderScript.async = true;
-    popadsPopunderScript.setAttribute('data-cfasync', 'false');
-    popadsPopunderScript.text = POPADS_SEARCH_RESULTS_POPUNDER_INLINE_SCRIPT;
-
-    const monetagPopunderScript = document.createElement('script');
-    monetagPopunderScript.id = 'search-results-monetag-popunder-script';
-    monetagPopunderScript.src = MONETAG_SEARCH_RESULTS_POPUNDER_SCRIPT_SRC;
-    monetagPopunderScript.async = true;
-    monetagPopunderScript.setAttribute('data-cfasync', 'false');
-    if (MONETAG_SEARCH_RESULTS_POPUNDER_ZONE_ID) {
-      monetagPopunderScript.dataset.zone = MONETAG_SEARCH_RESULTS_POPUNDER_ZONE_ID;
-    }
-
-    const monetagInPagePushScript = document.createElement('script');
-    monetagInPagePushScript.id = 'search-results-monetag-inpage-push-script';
-    monetagInPagePushScript.src = MONETAG_SEARCH_RESULTS_POPUNDER_SCRIPT_SRC;
-    monetagInPagePushScript.async = true;
-    monetagInPagePushScript.setAttribute('data-cfasync', 'false');
-    if (MONETAG_SEARCH_RESULTS_INPAGE_PUSH_ZONE_ID) {
-      monetagInPagePushScript.dataset.zone = MONETAG_SEARCH_RESULTS_INPAGE_PUSH_ZONE_ID;
-    }
-
-    const handleAdScriptLoad = () => {
-      setAdScriptReady(true);
-      setAdScriptFailed(false);
-      setAdScriptTimedOut(false);
-    };
-
-    const handleAdScriptError = () => {
-      setAdScriptFailed(true);
-    };
-
-    monetagPopunderScript.addEventListener('load', handleAdScriptLoad);
-    monetagPopunderScript.addEventListener('error', handleAdScriptError);
-    monetagInPagePushScript.addEventListener('load', handleAdScriptLoad);
-    monetagInPagePushScript.addEventListener('error', handleAdScriptError);
-
-    document.body.appendChild(popadsPopunderScript);
-    if (MONETAG_SEARCH_RESULTS_POPUNDER_ZONE_ID) {
-      document.body.appendChild(monetagPopunderScript);
-    }
-    if (MONETAG_SEARCH_RESULTS_INPAGE_PUSH_ZONE_ID) {
-      document.body.appendChild(monetagInPagePushScript);
-    }
-
-    // PopAds + Monetag tags are injected together for maximum fill.
-    setAdScriptReady(true);
-    setAdScriptFailed(false);
-    setAdScriptTimedOut(false);
-
-    return () => {
-      monetagPopunderScript.removeEventListener('load', handleAdScriptLoad);
-      monetagPopunderScript.removeEventListener('error', handleAdScriptError);
-      monetagInPagePushScript.removeEventListener('load', handleAdScriptLoad);
-      monetagInPagePushScript.removeEventListener('error', handleAdScriptError);
-
-      if (popadsPopunderScript.parentNode) {
-        popadsPopunderScript.parentNode.removeChild(popadsPopunderScript);
+      if (createdPopadsScript && popadsScript?.parentNode) {
+        popadsScript.parentNode.removeChild(popadsScript);
       }
-      if (monetagPopunderScript.parentNode) {
-        monetagPopunderScript.parentNode.removeChild(monetagPopunderScript);
-      }
-      if (monetagInPagePushScript.parentNode) {
-        monetagInPagePushScript.parentNode.removeChild(monetagInPagePushScript);
+      if (createdMonetagScript && monetagScript?.parentNode) {
+        monetagScript.parentNode.removeChild(monetagScript);
       }
     };
-  }, [isSearchResultsRoute, hasSearchResults, isResultsUnlocked]);
-
-  useEffect(() => {
-    if (!isSearchResultsRoute || !hasSearchResults || isResultsUnlocked || adScriptReady || adScriptFailed) return;
-
-    const timeoutId = window.setTimeout(() => {
-      setAdScriptTimedOut(true);
-    }, AD_SCRIPT_READY_TIMEOUT_MS);
-
-    return () => {
-      window.clearTimeout(timeoutId);
-    };
-  }, [isSearchResultsRoute, hasSearchResults, isResultsUnlocked, adScriptReady, adScriptFailed]);
+  }, [isSearchResultsRoute]);
 
   useEffect(() => {
     if (!isSearchResultsRoute || !hasSearchResults || typeof window === 'undefined') return;
@@ -697,20 +540,11 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   };
 
   const handleUnlockResults = (event: MouseEvent<HTMLButtonElement>) => {
-    if (!isSearchResultsRoute) return;
+    if (!isSearchResultsRoute || !hasSearchResults) return;
     if (!canUnlockResults) return;
 
     // Ensure ad opens only from a real human interaction.
     if (!event.isTrusted) return;
-
-    if (shouldUseAndroidPopadsDirectFlow && popadsAndroidDirectUrl) {
-      // Keep this synchronous in click handler to preserve browser trust on Android.
-      const openedWindow = window.open(popadsAndroidDirectUrl, '_blank', 'noopener,noreferrer');
-      if (!openedWindow) {
-        window.location.assign(popadsAndroidDirectUrl);
-        return;
-      }
-    }
 
     if (typeof window !== 'undefined') {
       window.sessionStorage.setItem(unlockStorageKey, '1');
@@ -922,13 +756,11 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
                         <p className="text-base font-semibold text-primary">Results are ready</p>
                         <p className="mt-1 text-sm text-muted-foreground">
                           {canUnlockResults
-                            ? shouldUseAndroidPopadsDirectFlow
-                              ? 'Tap below to open sponsor link once, then view full details.'
-                              : 'Tap below to view full details.'
+                            ? 'Tap below once and view full details.'
                             : 'Preparing ad check… please wait 1–2 seconds.'}
                         </p>
                         <p className="mt-1.5 text-[11px] text-muted-foreground">
-                          Ads active: PopAdsNet + Monetag (Popunder + In-Page Push)
+                          Ads active: PopAds + Monetag
                         </p>
                         <div className="mt-3 rounded-xl border border-primary/10 bg-primary/5 p-3 text-left">
                           <p className="text-xs font-semibold text-primary">Quick guide to complete ad:</p>
@@ -947,16 +779,9 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
                           }`}
                         >
                           {canUnlockResults
-                            ? shouldUseAndroidPopadsDirectFlow
-                              ? 'Open Ad & View Results'
-                              : 'View Results'
+                            ? 'View Results'
                             : 'Preparing…'}
                         </button>
-                        {(adScriptFailed || adScriptTimedOut) && (
-                          <p className="mt-2 text-xs text-amber-700">
-                            If Chrome blocks pop-ups, allow pop-ups for this site and tap again.
-                          </p>
-                        )}
                       </div>
                     </div>
                   )}
