@@ -46,7 +46,10 @@ Use these variables locally and in Vercel:
 - `SHORTLINK_UNLOCK_SECRET` (required when gate enabled): Secret used to verify short-link return tokens.
 - `SHORTLINK_REDIRECT_BASE_URL` (recommended): Public URL used as short-link destination base (helps providers reject neither localhost nor private URLs).
 - `SHORTLINK_CUTY_API_KEY`, `SHORTLINK_EXE_API_KEY`, `SHORTLINK_GPLINKS_API_KEY`, `SHORTLINK_SHRINKEARN_API_KEY`: API keys for short-link providers.
-- `NEXT_PUBLIC_ADSTERRA_ANDROID_DIRECT_URL` (recommended for Android ad tracking): Exact Adsterra direct-link URL used on trusted tap only; do not use shorteners or redirect wrappers.
+- `NEXT_PUBLIC_POPADS_ANDROID_DIRECT_URL` (recommended for Android fallback): Exact PopAds direct-link URL used on trusted tap fallback only; do not use shorteners or redirect wrappers.
+- `NEXT_PUBLIC_ADSTERRA_ANDROID_DIRECT_URL` (optional legacy fallback): Used only when `NEXT_PUBLIC_POPADS_ANDROID_DIRECT_URL` is not set.
+- `NEXT_PUBLIC_MONETAG_ZONE_ID` (recommended): Monetag popunder zone ID used on the search results page.
+- `NEXT_PUBLIC_MONETAG_INPAGE_ZONE_ID` (recommended): Monetag In-Page Push zone ID used on the search results page (default `10827158`).
 - `NEXT_PUBLIC_SITE_URL` (recommended): Full site URL used for canonical, sitemap, and robots metadata.
 
 ## Website-only short-link search gate
