@@ -3,6 +3,7 @@
 import { motion } from 'motion/react';
 import { ArrowLeft, Search, ExternalLink, Loader2, UserRound, Phone, IdCard, Building2, MapPin, Landmark, Info, MessageCircle, Share2, Video } from 'lucide-react';
 import { type MouseEvent, type ReactNode, useEffect, useMemo, useState } from 'react';
+import { usePathname } from 'next/navigation';
 
 declare global {
   interface Window {
@@ -387,6 +388,8 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const [adScriptFailed, setAdScriptFailed] = useState(false);
   const [adScriptTimedOut, setAdScriptTimedOut] = useState(false);
 
+  const pathname = usePathname();
+  const isSearchResultsRoute = pathname.startsWith('/search');
   const cleanedQuery = useMemo(() => searchQuery.trim().replace(/[^0-9]/g, ''), [searchQuery]);
 
   useEffect(() => {
@@ -475,13 +478,14 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const showComingSoonCard = isApiNoRecordState || isNoRecordErrorState;
   const hasSearchResults = numberData.length > 0 || cnicData.length > 0;
   const shouldUseAndroidPopadsDirectFlow =
+    isSearchResultsRoute &&
     isAndroidChromeOrSamsung &&
     hasSearchResults &&
     !isResultsUnlocked &&
     Boolean(popadsAndroidDirectUrl) &&
     (adScriptFailed || adScriptTimedOut);
-  const shouldAllowPopunderOpen = hasSearchResults && !isResultsUnlocked;
-  const canUnlockResults = adScriptReady || adScriptFailed || adScriptTimedOut;
+  const shouldAllowPopunderOpen = isSearchResultsRoute && hasSearchResults && !isResultsUnlocked;
+  const canUnlockResults = isSearchResultsRoute && (adScriptReady || adScriptFailed || adScriptTimedOut);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -495,7 +499,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   }, [shouldAllowPopunderOpen]);
 
   useEffect(() => {
-    if (!hasSearchResults || isResultsUnlocked || typeof document === 'undefined') return;
+    if (!isSearchResultsRoute || !hasSearchResults || isResultsUnlocked || typeof document === 'undefined') return;
 
     setAdScriptReady(false);
     setAdScriptFailed(false);
@@ -570,10 +574,10 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
         monetagInPagePushScript.parentNode.removeChild(monetagInPagePushScript);
       }
     };
-  }, [hasSearchResults, isResultsUnlocked]);
+  }, [isSearchResultsRoute, hasSearchResults, isResultsUnlocked]);
 
   useEffect(() => {
-    if (!hasSearchResults || isResultsUnlocked || adScriptReady || adScriptFailed) return;
+    if (!isSearchResultsRoute || !hasSearchResults || isResultsUnlocked || adScriptReady || adScriptFailed) return;
 
     const timeoutId = window.setTimeout(() => {
       setAdScriptTimedOut(true);
@@ -582,15 +586,15 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
     return () => {
       window.clearTimeout(timeoutId);
     };
-  }, [hasSearchResults, isResultsUnlocked, adScriptReady, adScriptFailed]);
+  }, [isSearchResultsRoute, hasSearchResults, isResultsUnlocked, adScriptReady, adScriptFailed]);
 
   useEffect(() => {
-    if (!hasSearchResults || typeof window === 'undefined') return;
+    if (!isSearchResultsRoute || !hasSearchResults || typeof window === 'undefined') return;
     const persistedUnlock = window.sessionStorage.getItem(unlockStorageKey) === '1';
     if (persistedUnlock) {
       setIsResultsUnlocked(true);
     }
-  }, [hasSearchResults, unlockStorageKey]);
+  }, [isSearchResultsRoute, hasSearchResults, unlockStorageKey]);
 
   const shareReport = async () => {
     if (typeof window === 'undefined') return;
@@ -619,6 +623,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   };
 
   const handleUnlockResults = (event: MouseEvent<HTMLButtonElement>) => {
+    if (!isSearchResultsRoute) return;
     if (!canUnlockResults) return;
 
     // Ensure ad opens only from a real human interaction.
