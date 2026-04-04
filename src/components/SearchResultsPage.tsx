@@ -2,7 +2,7 @@
 
 import { motion } from 'motion/react';
 import { ArrowLeft, Search, ExternalLink, Loader2, UserRound, Phone, IdCard, Building2, MapPin, Landmark, Info, MessageCircle, Share2, Video } from 'lucide-react';
-import { type MouseEvent, type ReactNode, useEffect, useMemo, useState } from 'react';
+import { type MouseEvent, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 declare global {
@@ -387,6 +387,9 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const [adScriptReady, setAdScriptReady] = useState(false);
   const [adScriptFailed, setAdScriptFailed] = useState(false);
   const [adScriptTimedOut, setAdScriptTimedOut] = useState(false);
+  const [shareFeedback, setShareFeedback] = useState('');
+  const [sharingReport, setSharingReport] = useState(false);
+  const shareFeedbackTimeoutRef = useRef<number | null>(null);
 
   const pathname = usePathname();
   const isSearchResultsRoute = pathname.startsWith('/search');
@@ -451,6 +454,14 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
       active = false;
     };
   }, [cleanedQuery, searchType, unlockToken]);
+
+  useEffect(() => {
+    return () => {
+      if (shareFeedbackTimeoutRef.current !== null) {
+        window.clearTimeout(shareFeedbackTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const resultData = response?.result || null;
   const numberData = Array.isArray(resultData?.numberData) ? resultData.numberData : [];
@@ -597,28 +608,91 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   }, [isSearchResultsRoute, hasSearchResults, unlockStorageKey]);
 
   const shareReport = async () => {
-    if (typeof window === 'undefined') return;
-    const text = `SIM Finder Report\nQuery: ${cleanedQuery} (${searchType.toUpperCase()})\nTotal Records: ${allRecords.length}`;
+    if (typeof window === 'undefined' || sharingReport) return;
 
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'SIM Finder Report',
-          text,
-          url: window.location.href,
-        });
+    setSharingReport(true);
+
+    const showShareFeedback = (message: string) => {
+      setShareFeedback(message);
+
+      if (shareFeedbackTimeoutRef.current !== null) {
+        window.clearTimeout(shareFeedbackTimeoutRef.current);
+      }
+
+      shareFeedbackTimeoutRef.current = window.setTimeout(() => {
+        setShareFeedback('');
+        shareFeedbackTimeoutRef.current = null;
+      }, 3500);
+    };
+
+    const reportText = `SIM Finder Report\nQuery: ${cleanedQuery} (${searchType.toUpperCase()})\nTotal Records: ${allRecords.length}`;
+    const sharePayload = `${reportText}\n${window.location.href}`;
+
+    const copyUsingLegacyFallback = () => {
+      if (typeof document === 'undefined') return false;
+
+      const textarea = document.createElement('textarea');
+      textarea.value = sharePayload;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+
+      document.body.appendChild(textarea);
+      textarea.focus();
+      textarea.select();
+
+      const copied = document.execCommand('copy');
+
+      document.body.removeChild(textarea);
+      return copied;
+    };
+
+    try {
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: 'SIM Finder Report',
+            text: reportText,
+            url: window.location.href,
+          });
+          showShareFeedback('Report shared successfully.');
+          return;
+        } catch (shareError) {
+          if ((shareError as DOMException)?.name === 'AbortError') {
+            showShareFeedback('Share cancelled.');
+            return;
+          }
+        }
+      }
+
+      let copied = false;
+
+      if (navigator.clipboard?.writeText) {
+        try {
+          await navigator.clipboard.writeText(sharePayload);
+          copied = true;
+        } catch {
+          copied = copyUsingLegacyFallback();
+        }
+      } else {
+        copied = copyUsingLegacyFallback();
+      }
+
+      if (copied) {
+        showShareFeedback('Report copied to clipboard.');
         return;
-      } catch {
-        // user can cancel sharing; fall through to clipboard fallback
       }
-    }
 
-    if (navigator.clipboard?.writeText) {
-      try {
-        await navigator.clipboard.writeText(`${text}\n${window.location.href}`);
-      } catch {
-        // no-op fallback
+      const whatsappShareUrl = `https://wa.me/?text=${encodeURIComponent(sharePayload)}`;
+      const openedShareWindow = window.open(whatsappShareUrl, '_blank', 'noopener,noreferrer');
+
+      if (openedShareWindow) {
+        showShareFeedback('Opened share in a new tab.');
+      } else {
+        showShareFeedback('Unable to open share. Please copy the URL manually.');
       }
+    } finally {
+      setSharingReport(false);
     }
   };
 
@@ -829,11 +903,15 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
                         <button
                           type="button"
                           onClick={() => { void shareReport(); }}
-                          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-indigo-200 bg-indigo-50 text-indigo-700 text-sm font-semibold hover:bg-indigo-100"
+                          disabled={sharingReport}
+                          className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border border-indigo-200 bg-indigo-50 text-indigo-700 text-sm font-semibold ${sharingReport ? 'opacity-70 cursor-not-allowed' : 'hover:bg-indigo-100'}`}
                         >
                           <Share2 className="w-4 h-4" />
-                          Share Report
+                          {sharingReport ? 'Sharing...' : 'Share Report'}
                         </button>
+                        {shareFeedback ? (
+                          <p className="text-sm text-muted-foreground">{shareFeedback}</p>
+                        ) : null}
                       </div>
                     )}
                   </div>
