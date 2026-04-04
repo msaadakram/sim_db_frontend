@@ -3,7 +3,6 @@
 import { motion } from 'motion/react';
 import { Search, Shield, MapPin, Phone, CreditCard, User } from 'lucide-react';
 import { useState, useRef, useEffect } from 'react';
-import { getKeywordSentence } from '@/lib/seo-keywords';
 
 interface HeroSectionProps {
   onSearch?: (query: string, type: 'mobile' | 'cnic') => void;
@@ -93,9 +92,6 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
               <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-white/90 max-w-xl mx-auto lg:mx-0" style={{ fontFamily: "'Inter', sans-serif" }}>
                 Run a fast sim data check for Pakistan mobile numbers. Verify sim owner name check results,
                 perform sim registration check, review pta sim information, and complete sim detail verification in one secure dashboard.
-              </p>
-              <p className="text-xs sm:text-sm md:text-base mb-6 sm:mb-8 text-white/85 max-w-2xl mx-auto lg:mx-0 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
-                Popular search terms: {getKeywordSentence(0, 18)}.
               </p>
             </motion.div>
 

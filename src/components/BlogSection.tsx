@@ -37,6 +37,7 @@ export function BlogSection({ initialPosts }: BlogSectionProps) {
   const filteredPosts = selectedCategory === 'All'
     ? posts
     : posts.filter(post => post.category === selectedCategory);
+  const gridPosts = selectedCategory === 'All' ? filteredPosts.slice(1) : filteredPosts;
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -243,8 +244,8 @@ export function BlogSection({ initialPosts }: BlogSectionProps) {
         )}
 
         {/* Blog Grid - Enhanced */}
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {filteredPosts.slice(1).map((post, index) => (
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+          {gridPosts.map((post, index) => (
             <Link key={post.id} href={`/blog/${post.slug}`}>
               <motion.div
                 initial={{ opacity: 0, y: 30 }}

@@ -96,7 +96,7 @@ export function BlogPage({ posts }: BlogPageProps) {
             </motion.div>
 
             <h1
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl text-primary mb-4 sm:mb-6 leading-[1.05] px-4 font-black tracking-tight drop-shadow-sm"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-5xl xl:text-6xl text-primary mb-4 sm:mb-6 leading-[1.05] px-4 font-black tracking-tight drop-shadow-sm max-w-5xl mx-auto"
               style={{ fontFamily: "'Playfair Display', serif" }}
             >
               SIM info insights &{' '}
@@ -199,7 +199,7 @@ export function BlogPage({ posts }: BlogPageProps) {
               </button>
             </motion.div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {filteredPosts.map((post, index) => (
                 <Link key={post.id} href={`/blog/${post.slug}`}>
                   <motion.div
@@ -216,7 +216,7 @@ export function BlogPage({ posts }: BlogPageProps) {
                       <div className="absolute inset-0 bg-gradient-to-br from-accent/10 via-transparent to-primary/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
                       {/* Image Container - Mobile Optimized */}
-                      <div className="relative h-48 sm:h-56 md:h-64 overflow-hidden">
+                      <div className="relative h-48 sm:h-56 lg:h-60 overflow-hidden">
                         <ImageWithFallback
                           src={post.image}
                           alt={post.title}

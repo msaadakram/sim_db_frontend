@@ -547,7 +547,7 @@ export function BlogPostDetail({ post, relatedPosts }: BlogPostDetailProps) {
 
               {/* Title */}
               <h1
-                className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-primary mb-8 leading-tight"
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-primary mb-8 leading-tight"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
                 {post.title}
@@ -617,17 +617,17 @@ export function BlogPostDetail({ post, relatedPosts }: BlogPostDetailProps) {
                   width={1200}
                   height={600}
                   priority
-                  className="w-full h-72 sm:h-96 md:h-[500px] lg:h-[600px] object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="w-full h-72 sm:h-96 md:h-[440px] lg:h-[520px] xl:h-[600px] object-cover group-hover:scale-105 transition-transform duration-700"
                 />
               </motion.div>
             </div>
           )}
 
           {/* Main Content Area with TOC Sidebar */}
-          <div className="flex gap-8 lg:gap-12">
+          <div className="flex gap-6 xl:gap-12">
             {/* TOC Sidebar - Desktop Only */}
             {tocItems.length > 0 && (
-              <aside className="hidden lg:block w-72 flex-shrink-0">
+              <aside className="hidden xl:block w-72 2xl:w-80 flex-shrink-0">
                 <div className="sticky top-24">
                   <TableOfContents items={tocItems} activeId={activeHeading} />
 
@@ -656,7 +656,7 @@ export function BlogPostDetail({ post, relatedPosts }: BlogPostDetailProps) {
             <div className="flex-1 min-w-0 max-w-4xl">
               {/* Mobile TOC */}
               {tocItems.length > 0 && (
-                <div className="lg:hidden mb-8">
+                <div className="xl:hidden mb-8">
                   <TableOfContents items={tocItems} activeId={activeHeading} />
                 </div>
               )}
@@ -784,7 +784,7 @@ export function BlogPostDetail({ post, relatedPosts }: BlogPostDetailProps) {
                     <p className="text-muted-foreground text-lg">Explore more related articles</p>
                   </div>
 
-                  <div className="grid sm:grid-cols-3 gap-8">
+                  <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 lg:gap-8">
                     {relatedPosts.map((relatedPost, index) => (
                       <Link key={relatedPost.id} href={`/blog/${relatedPost.slug}`} scroll>
                         <motion.div
