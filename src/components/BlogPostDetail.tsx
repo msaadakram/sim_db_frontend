@@ -131,7 +131,7 @@ function TableOfContents({ items, activeId }: { items: TOCItem[]; activeId: stri
   };
 
   return (
-    <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-border/50 shadow-lg overflow-hidden">
+    <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-border/50 shadow-lg overflow-hidden max-w-3xl mx-auto">
       <button
         onClick={() => setIsCollapsed(!isCollapsed)}
         className="w-full flex items-center justify-between p-5 hover:bg-muted/30 transition-colors"
@@ -623,43 +623,16 @@ export function BlogPostDetail({ post, relatedPosts }: BlogPostDetailProps) {
             </div>
           )}
 
-          {/* Main Content Area with TOC Sidebar */}
-          <div className="flex gap-6 xl:gap-12">
-            {/* TOC Sidebar - Desktop Only */}
+          {/* Main Content Area */}
+          <div className="max-w-4xl mx-auto">
             {tocItems.length > 0 && (
-              <aside className="hidden xl:block w-72 2xl:w-80 flex-shrink-0">
-                <div className="sticky top-24">
-                  <TableOfContents items={tocItems} activeId={activeHeading} />
-
-                  {/* Article Stats Card */}
-                  <div className="mt-6 bg-gradient-to-br from-accent/10 to-primary/10 rounded-2xl p-5 border border-accent/20">
-                    <div className="flex items-center gap-3 mb-2">
-                      <Eye className="w-5 h-5 text-accent" />
-                      <span className="text-sm font-semibold text-primary">Article Stats</span>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3 mt-3">
-                      <div className="text-center p-3 bg-white rounded-xl shadow-sm">
-                        <p className="text-2xl font-bold text-primary">{viewsLoading ? '...' : formatViews(views)}</p>
-                        <p className="text-xs text-muted-foreground">Views</p>
-                      </div>
-                      <div className="text-center p-3 bg-white rounded-xl shadow-sm">
-                        <p className="text-2xl font-bold text-primary">{post.readTime.split(' ')[0]}</p>
-                        <p className="text-xs text-muted-foreground">Min Read</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </aside>
+              <div className="mb-8 sm:mb-10">
+                <TableOfContents items={tocItems} activeId={activeHeading} />
+              </div>
             )}
 
             {/* Article Content */}
-            <div className="flex-1 min-w-0 max-w-4xl">
-              {/* Mobile TOC */}
-              {tocItems.length > 0 && (
-                <div className="xl:hidden mb-8">
-                  <TableOfContents items={tocItems} activeId={activeHeading} />
-                </div>
-              )}
+            <div className="min-w-0">
 
               {/* Article Body - Portable Text */}
               <motion.div

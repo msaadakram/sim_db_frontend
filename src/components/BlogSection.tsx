@@ -192,7 +192,7 @@ export function BlogSection({ initialPosts }: BlogSectionProps) {
                   </div>
                 </div>
 
-                <div className="p-8 sm:p-10 lg:p-12 flex flex-col justify-center">
+                <div className="p-8 sm:p-10 lg:p-12 flex flex-col justify-center items-center text-center">
                   <motion.span
                     className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-primary/10 to-accent/10 text-primary rounded-full text-sm sm:text-base mb-6 w-fit"
                     whileHover={{ scale: 1.05 }}
@@ -212,7 +212,7 @@ export function BlogSection({ initialPosts }: BlogSectionProps) {
                     {posts[0].excerpt}
                   </p>
 
-                  <div className="flex items-center justify-between flex-wrap gap-6">
+                  <div className="flex flex-col items-center justify-center gap-6 w-full">
                     <div className="flex items-center gap-4">
                       <div className="relative">
                         <div className="absolute inset-0 bg-gradient-to-r from-accent to-primary rounded-full blur-md opacity-50"></div>
@@ -244,9 +244,9 @@ export function BlogSection({ initialPosts }: BlogSectionProps) {
         )}
 
         {/* Blog Grid - Enhanced */}
-        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-8 justify-items-center">
           {gridPosts.map((post, index) => (
-            <Link key={post.id} href={`/blog/${post.slug}`}>
+            <Link key={post.id} href={`/blog/${post.slug}`} className="w-full max-w-[430px]">
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={isVisible ? { opacity: 1, y: 0 } : {}}
@@ -254,7 +254,7 @@ export function BlogSection({ initialPosts }: BlogSectionProps) {
                 whileHover={{ y: -12 }}
                 onHoverStart={() => setHoveredCard(post.id)}
                 onHoverEnd={() => setHoveredCard(null)}
-                className="group cursor-pointer"
+                className="group cursor-pointer w-full"
               >
                 <div className="relative bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-border/50 hover:border-accent/30 h-full flex flex-col">
                   {/* Hover Glow Effect */}
@@ -290,9 +290,9 @@ export function BlogSection({ initialPosts }: BlogSectionProps) {
                   </div>
 
                   {/* Content */}
-                  <div className="p-6 sm:p-7 flex-1 flex flex-col">
+                  <div className="p-6 sm:p-7 flex-1 flex flex-col items-center text-center">
                     {/* Date */}
-                    <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground mb-4">
+                    <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-muted-foreground mb-4">
                       <Calendar className="w-4 h-4 text-accent" />
                       <span>{post.date}</span>
                     </div>
@@ -311,7 +311,7 @@ export function BlogSection({ initialPosts }: BlogSectionProps) {
                     </p>
 
                     {/* Footer */}
-                    <div className="flex items-center justify-between pt-6 border-t border-border/50 mt-auto">
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-6 border-t border-border/50 mt-auto w-full">
                       <div className="flex items-center gap-3">
                         <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#7DB9BC] to-[#5A9EA1] flex items-center justify-center shadow-md">
                           <User className="w-5 h-5 text-white" />

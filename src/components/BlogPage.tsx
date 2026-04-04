@@ -199,9 +199,9 @@ export function BlogPage({ posts }: BlogPageProps) {
               </button>
             </motion.div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 justify-items-center">
               {filteredPosts.map((post, index) => (
-                <Link key={post.id} href={`/blog/${post.slug}`}>
+                <Link key={post.id} href={`/blog/${post.slug}`} className="w-full max-w-[430px]">
                   <motion.div
                     initial={{ opacity: 0, y: 30 }}
                     animate={isVisible ? { opacity: 1, y: 0 } : {}}
@@ -209,7 +209,7 @@ export function BlogPage({ posts }: BlogPageProps) {
                     whileHover={{ y: -8 }}
                     onHoverStart={() => setHoveredCard(post.id)}
                     onHoverEnd={() => setHoveredCard(null)}
-                    className="group cursor-pointer h-full"
+                    className="group cursor-pointer h-full w-full"
                   >
                     <div className="relative bg-white rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-500 border border-border/50 hover:border-accent/30 h-full flex flex-col">
                       {/* Hover Glow Effect */}
@@ -245,9 +245,9 @@ export function BlogPage({ posts }: BlogPageProps) {
                       </div>
 
                       {/* Content - Mobile Optimized */}
-                      <div className="p-4 sm:p-6 lg:p-7 flex-1 flex flex-col">
+                      <div className="p-4 sm:p-6 lg:p-7 flex-1 flex flex-col items-center text-center">
                         {/* Date */}
-                        <div className="flex items-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
+                        <div className="flex items-center justify-center gap-1.5 sm:gap-2 text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4">
                           <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-accent" />
                           <span>{post.date}</span>
                         </div>
@@ -266,12 +266,12 @@ export function BlogPage({ posts }: BlogPageProps) {
                         </p>
 
                         {/* Footer - Mobile Optimized */}
-                        <div className="flex items-center justify-between pt-4 sm:pt-6 border-t border-border/50 mt-auto">
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-4 sm:pt-6 border-t border-border/50 mt-auto w-full">
                           <div className="flex items-center gap-2 sm:gap-3">
                             <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-gradient-to-br from-[#7DB9BC] to-[#5A9EA1] flex items-center justify-center shadow-md">
                               <User className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                             </div>
-                            <span className="text-xs sm:text-sm md:text-base text-primary font-medium truncate max-w-[120px] sm:max-w-none" style={{ fontFamily: "'Inter', sans-serif" }}>{post.author}</span>
+                            <span className="text-xs sm:text-sm md:text-base text-primary font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>{post.author}</span>
                           </div>
 
                           <motion.div
