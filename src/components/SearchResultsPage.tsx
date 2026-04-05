@@ -307,7 +307,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const shareFeedbackTimeoutRef = useRef<number | null>(null);
 
   const pathname = usePathname();
-  const isSearchResultsRoute = pathname.startsWith('/search');
+  const isSearchResultsRoute = pathname === '/search';
   const cleanedQuery = useMemo(() => searchQuery.trim().replace(/[^0-9]/g, ''), [searchQuery]);
 
   useEffect(() => {
@@ -419,7 +419,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   const canUnlockResults = isSearchResultsRoute && hasSearchResults;
 
   useEffect(() => {
-    if (!isSearchResultsRoute || typeof document === 'undefined') return;
+    if (!isSearchResultsRoute || loading || !hasSearchResults || typeof document === 'undefined') return;
 
     const head = document.head;
     if (!head) return;
@@ -459,7 +459,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
         monetagScript.parentNode.removeChild(monetagScript);
       }
     };
-  }, [isSearchResultsRoute]);
+  }, [isSearchResultsRoute, loading, hasSearchResults]);
 
   useEffect(() => {
     if (!isSearchResultsRoute || !hasSearchResults || typeof window === 'undefined') return;
