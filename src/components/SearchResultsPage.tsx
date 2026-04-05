@@ -41,11 +41,10 @@ const SHORTLINK_VIDEO_GUIDES: Record<string, string> = {
 const POPADS_SEARCH_RESULTS_INLINE_SCRIPT = `/*<![CDATA[/* */
 (function(){var g=window,n="bcee860f58611f493f516518f39dc2dc",x=[["siteId",196+461*923-392-706+4864389],["minBid",0],["popundersPerIP","0"],["delayBetween",0],["default",false],["defaultPerDay",0],["topmostLayer","auto"]],u=["d3d3LmNkbjRhZHMuY29tL2lhL2NrZXJuaW5nLm1pbi5qcw==","ZDNnNW92Zm5nanc5YncuY2xvdWRmcm9udC5uZXQvUmVQWC9lYnEvaW11aS5taW4uY3Nz"],o=-1,b,e,s=function(){clearTimeout(e);o++;if(u[o]&&!(1801207105000<(new Date).getTime()&&1<o)){b=g.document.createElement("script");b.type="text/javascript";b.async=!0;var f=g.document.getElementsByTagName("script")[0];b.src="https://"+atob(u[o]);b.crossOrigin="anonymous";b.onerror=s;b.onload=function(){clearTimeout(e);g[n.slice(0,16)+n.slice(0,16)]||s()};e=setTimeout(s,5E3);f.parentNode.insertBefore(b,f)}};if(!g[n]){try{Object.freeze(g[n]=x)}catch(e){}s()}})();
 /*]]>/* */`;
-const MONETAG_SEARCH_RESULTS_SCRIPT_SRC = 'https://quge5.com/88/tag.min.js';
-const MONETAG_SEARCH_RESULTS_ZONE_ID = '226344';
+const MONETAG_SEARCH_RESULTS_INLINE_SCRIPT = `(function(s){s.dataset.zone='10812009',s.src='https://al5sm.com/tag.min.js'})([document.documentElement, document.body].filter(Boolean).pop().appendChild(document.createElement('script')))`;
 const SEARCH_RESULTS_POPADS_SCRIPT_ID = 'search-results-popads-head-script';
 const SEARCH_RESULTS_MONETAG_SCRIPT_ID = 'search-results-monetag-head-script';
-const SEARCH_WAIT_SECONDS = 10;
+const SEARCH_WAIT_SECONDS = 15;
 
 function getResultUnlockStorageKey(searchQuery: string, searchType: 'mobile' | 'cnic', searchCount: number): string {
   return `sf_result_unlock:${searchType}:${searchQuery}:${searchCount}`;
@@ -445,10 +444,10 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
       createdMonetagScript = true;
       monetagScript = document.createElement('script');
       monetagScript.id = SEARCH_RESULTS_MONETAG_SCRIPT_ID;
-      monetagScript.src = MONETAG_SEARCH_RESULTS_SCRIPT_SRC;
+      monetagScript.type = 'text/javascript';
       monetagScript.async = true;
-      monetagScript.dataset.zone = MONETAG_SEARCH_RESULTS_ZONE_ID;
       monetagScript.setAttribute('data-cfasync', 'false');
+      monetagScript.text = MONETAG_SEARCH_RESULTS_INLINE_SCRIPT;
       head.appendChild(monetagScript);
     }
 
