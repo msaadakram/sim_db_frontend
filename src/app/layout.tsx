@@ -17,7 +17,7 @@ export const metadata: Metadata = {
       3,
       96
     ),
-    template: '%s | SIM Finder',
+    template: '%s | sim owner details online check',
   },
   description:
     `SIM Finder helps you perform SIM details checks in Pakistan with practical CNIC-linked verification workflows. High-demand intents from your keyword dataset include: ${getKeywordSentence(0, 8)}.`,

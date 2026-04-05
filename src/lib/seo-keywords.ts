@@ -47,6 +47,7 @@ export const CSV_SEO_KEYWORD_ENTRIES: ReadonlyArray<CsvKeywordEntry> = [
   { phrase: 'check sim owner details', avgMonthlySearches: 50000 },
   { phrase: 'ufone number check code', avgMonthlySearches: 50000 },
   { phrase: 'sim owner details online', avgMonthlySearches: 50000 },
+  { phrase: 'sim card owner details online', avgMonthlySearches: 50000 },
   { phrase: 'sim verification on cnic', avgMonthlySearches: 50000 },
   { phrase: 'sim information with number', avgMonthlySearches: 50000 },
   { phrase: 'sim owner details by number', avgMonthlySearches: 50000 },
@@ -156,9 +157,9 @@ export type SeoSurface = 'home' | 'blog' | 'features' | 'apps' | 'disclaimer' | 
 
 const SEO_SURFACE_HINTS: Record<SeoSurface, string> = {
   home:
-    'sim owner details sim data check sim details by number cnic sim check mobile number details pta sim check',
+    'sim owner details online check sim owner details by number sim owner details online sim card owner details online nadra sim owner details sim data check sim details by number cnic sim check mobile number details pta sim check',
   blog:
-    'sim owner details online sim number details online check cnic details check sim tracker online sim verification',
+    'sim owner details online check sim owner details by number sim owner details online sim card owner details online nadra sim owner details sim number details online check cnic details check sim tracker online sim verification',
   features:
     'sim detail check sim verification on cnic cnic check online sim identity check sim data tracker',
   apps:
@@ -168,8 +169,16 @@ const SEO_SURFACE_HINTS: Record<SeoSurface, string> = {
   search:
     'sim number check check sim owner details mobile number details sim details by number cnic check number',
   article:
-    'sim owner details by number sim number details online check cnic details check pta sim check sim verification',
+    'sim owner details online check sim owner details by number sim owner details online sim card owner details online nadra sim owner details sim number details online check cnic details check pta sim check sim verification',
 };
+
+const SEO_TITLE_PRIORITY_KEYWORDS = [
+  'sim owner details online check',
+  'sim owner details by number',
+  'sim owner details online',
+  'sim card owner details online',
+  'nadra sim owner details',
+] as const;
 
 const STOP_WORDS = new Set([
   'the',
@@ -244,6 +253,40 @@ function rotateArray<T>(items: T[], shift: number): T[] {
 
   const normalizedShift = ((shift % items.length) + items.length) % items.length;
   return [...items.slice(normalizedShift), ...items.slice(0, normalizedShift)];
+}
+
+function prioritizeTitleKeywords(keywords: string[], seed?: string): string[] {
+  const cleanKeywords = keywords.map((keyword) => String(keyword || '').trim()).filter(Boolean);
+  const uniqueSeen = new Set<string>();
+  const uniqueCleanKeywords = cleanKeywords.filter((keyword) => {
+    if (uniqueSeen.has(keyword)) {
+      return false;
+    }
+    uniqueSeen.add(keyword);
+    return true;
+  });
+
+  const availablePriorityKeywords = SEO_TITLE_PRIORITY_KEYWORDS.filter((keyword) =>
+    SIM_OWNER_SEO_KEYWORDS.includes(keyword)
+  );
+
+  const priorityPool = seed
+    ? rotateArray([...availablePriorityKeywords], hashString(seed))
+    : [...availablePriorityKeywords];
+
+  const merged = [...priorityPool, ...uniqueCleanKeywords];
+  const deduped: string[] = [];
+  const mergedSeen = new Set<string>();
+
+  for (const keyword of merged) {
+    if (mergedSeen.has(keyword)) {
+      continue;
+    }
+    deduped.push(keyword);
+    mergedSeen.add(keyword);
+  }
+
+  return deduped;
 }
 
 function buildTitleWithKeywords(baseTitle: string, keywords: string[], maxLength = 95): string {
@@ -346,7 +389,8 @@ export function buildPageSeoTitle(
   maxLength = 95
 ): string {
   const keywords = getRelevantCsvKeywords(SEO_SURFACE_HINTS[surface], keywordCount + 2);
-  return buildTitleWithKeywords(baseTitle, keywords, maxLength);
+  const prioritized = prioritizeTitleKeywords(keywords);
+  return buildTitleWithKeywords(baseTitle, prioritized, maxLength);
 }
 
 interface BlogSeoOptions {
@@ -362,7 +406,8 @@ export function buildBlogSeoTitle(baseTitle: string, options: BlogSeoOptions = {
   const topic = `${baseTitle} ${excerpt} ${category} ${SEO_SURFACE_HINTS.article}`;
   const candidates = getRelevantCsvKeywords(topic, Math.max(keywordCount + 4, 8));
   const rotated = rotateArray(candidates, hashString(`${slug}|${baseTitle}|${category}`));
-  return buildTitleWithKeywords(baseTitle, rotated.slice(0, keywordCount), maxLength);
+  const prioritized = prioritizeTitleKeywords(rotated, `${slug}|${baseTitle}|${category}`);
+  return buildTitleWithKeywords(baseTitle, prioritized.slice(0, Math.max(keywordCount, 3)), maxLength);
 }
 
 export function buildBlogSeoDescription(baseDescription: string, options: BlogSeoOptions = {}): string {
