@@ -1,4 +1,9 @@
 import { blogPosts } from '@/data/blogData';
+import {
+  buildBlogSeoDescription,
+  buildBlogSeoTitle,
+  getRelevantCsvKeywords,
+} from '@/lib/seo-keywords';
 
 export interface BlogListItem {
   id: string;
@@ -17,6 +22,7 @@ export interface BlogDetailItem extends BlogListItem {
   body: any[];
   seoTitle?: string;
   seoDescription?: string;
+  seoKeywords?: string[];
   publishedAt: string;
 }
 
@@ -356,11 +362,27 @@ function toListItem(post: DerivedPost): BlogListItem {
 
 function toDetailItem(post: DerivedPost): BlogDetailItem {
   const listItem = toListItem(post);
+  const seoKeywords = getRelevantCsvKeywords(
+    `${post.source.title} ${post.source.excerpt} ${post.source.category} ${post.slug}`,
+    14
+  );
+
   return {
     ...listItem,
     body: post.body,
-    seoTitle: `${post.source.title} | SIM Finder`,
-    seoDescription: post.source.excerpt,
+    seoTitle: buildBlogSeoTitle(post.source.title, {
+      slug: post.slug,
+      excerpt: post.source.excerpt,
+      category: post.source.category,
+      keywordCount: 3,
+      maxLength: 92,
+    }),
+    seoDescription: buildBlogSeoDescription(post.source.excerpt, {
+      slug: post.slug,
+      excerpt: post.source.excerpt,
+      category: post.source.category,
+    }),
+    seoKeywords,
     publishedAt: post.publishedAt,
   };
 }

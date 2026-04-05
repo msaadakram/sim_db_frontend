@@ -7,7 +7,12 @@ import { BlogSection } from '@/components/BlogSection';
 import { getBlogPostBySlug, getRelatedBlogPosts } from '@/lib/blog';
 import { notFound } from 'next/navigation';
 import { getSiteUrl } from '@/lib/site-url';
-import { SIM_OWNER_SEO_KEYWORDS, getKeywordSentence } from '@/lib/seo-keywords';
+import {
+    buildBlogSeoDescription,
+    buildBlogSeoTitle,
+    getKeywordSentence,
+    getRelevantCsvKeywords,
+} from '@/lib/seo-keywords';
 import { ArticleJsonLd, BreadcrumbJsonLd } from 'next-seo';
 import { SEO_SITE_NAME, getSeoIdentity } from '@/lib/next-seo';
 
@@ -35,21 +40,38 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         return { title: 'Post Not Found' };
     }
 
-    const title = post.seoTitle || post.title;
-    const description = post.seoDescription || post.excerpt;
+    const title =
+        post.seoTitle ||
+        buildBlogSeoTitle(post.title, {
+            slug,
+            excerpt: post.excerpt,
+            category: post.category,
+            keywordCount: 3,
+            maxLength: 94,
+        });
+    const description =
+        post.seoDescription ||
+        buildBlogSeoDescription(post.excerpt, {
+            slug,
+            excerpt: post.excerpt,
+            category: post.category,
+        });
     const imageUrl = post.image || '';
     const canonicalUrl = `${SITE_URL}/blog/${slug}`;
+    const keywordPool = post.seoKeywords?.length
+        ? post.seoKeywords
+        : getRelevantCsvKeywords(`${post.title} ${post.excerpt} ${post.category} ${slug}`, 24);
 
     return {
         title,
         description,
-        keywords: [post.title, post.category, ...SIM_OWNER_SEO_KEYWORDS.slice(0, 30)],
+        keywords: [post.title, post.category, ...keywordPool.slice(0, 30)],
         alternates: {
             canonical: canonicalUrl,
         },
         openGraph: {
             title,
-            description: `${description} Keywords: ${getKeywordSentence(54, 8)}.`,
+            description: `${description} Related search terms: ${getKeywordSentence(54, 8)}.`,
             url: canonicalUrl,
             siteName: SEO_SITE_NAME,
             images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: post.title }] : [],
@@ -62,6 +84,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             title,
             description,
             images: imageUrl ? [imageUrl] : [],
+        },
+        robots: {
+            index: true,
+            follow: true,
         },
     };
 }

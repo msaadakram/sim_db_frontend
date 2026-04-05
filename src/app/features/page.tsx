@@ -4,20 +4,37 @@ import { Header } from '@/components/Header';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { FeaturesPage as FeaturesPageContent } from '@/components/FeaturesPage';
 import { getSiteUrl } from '@/lib/site-url';
+import {
+    buildPageSeoTitle,
+    getKeywordSentence,
+    getPageKeywordSet,
+} from '@/lib/seo-keywords';
+import { SEO_SITE_NAME } from '@/lib/next-seo';
 
 const SITE_URL = getSiteUrl();
 
 export const metadata: Metadata = {
-    title: 'Features - SIM Details Check & Verification',
-    description: 'Review SIM Finder features for SIM owner lookup, CNIC-linked data checks, and verification tools for Pakistan users.',
+    title: buildPageSeoTitle('SIM Features for Owner Lookup, CNIC Check and Verification', 'features', 3, 94),
+    description: `Review SIM Finder features for SIM owner lookup and CNIC-linked checks in Pakistan with phrases like ${getKeywordSentence(22, 10)}.`,
+    keywords: getPageKeywordSet('features', 28),
     alternates: {
         canonical: `${SITE_URL}/features`,
     },
     openGraph: {
-        title: 'Features - SIM Details Check & Verification',
-        description: 'Explore powerful SIM verification, number insights, and CNIC data-check features from SIM Finder.',
+        title: buildPageSeoTitle('SIM Verification Features and Number Insight Tools', 'features', 3, 94),
+        description: `Explore powerful SIM verification, number insights, and CNIC data-check features from SIM Finder: ${getKeywordSentence(32, 8)}.`,
         url: `${SITE_URL}/features`,
+        siteName: SEO_SITE_NAME,
         type: 'website',
+    },
+    twitter: {
+        card: 'summary_large_image',
+        title: buildPageSeoTitle('SIM Verification Features for Pakistan', 'features', 2, 88),
+        description: `Feature coverage includes: ${getKeywordSentence(42, 8)}.`,
+    },
+    robots: {
+        index: true,
+        follow: true,
     },
 };
 

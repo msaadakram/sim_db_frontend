@@ -4,14 +4,33 @@ import { Header } from '@/components/Header';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { DisclaimerPage as DisclaimerPageContent } from '@/components/DisclaimerPage';
 import { getSiteUrl } from '@/lib/site-url';
+import {
+    buildPageSeoTitle,
+    getKeywordSentence,
+    getPageKeywordSet,
+} from '@/lib/seo-keywords';
+import { SEO_SITE_NAME } from '@/lib/next-seo';
 
 const SITE_URL = getSiteUrl();
 
 export const metadata: Metadata = {
-    title: 'Disclaimer - SIM Finder',
-    description: 'Read the SIM Finder disclaimer for legal, privacy, and data-usage guidance related to SIM details and verification content.',
+    title: buildPageSeoTitle('Disclaimer for SIM Details, CNIC and Number Verification Content', 'disclaimer', 2, 90),
+    description: `Read the legal and privacy disclaimer for SIM details and verification content, including keyword scopes like ${getKeywordSentence(54, 8)}.`,
+    keywords: getPageKeywordSet('disclaimer', 20),
     alternates: {
         canonical: `${SITE_URL}/disclaimer`,
+    },
+    openGraph: {
+        title: buildPageSeoTitle('Legal Disclaimer for SIM Verification Content', 'disclaimer', 2, 90),
+        description: `Privacy and legal usage guidance for SIM detail and number-check content in Pakistan: ${getKeywordSentence(64, 7)}.`,
+        url: `${SITE_URL}/disclaimer`,
+        siteName: SEO_SITE_NAME,
+        type: 'website',
+    },
+    twitter: {
+        card: 'summary',
+        title: buildPageSeoTitle('SIM Verification Disclaimer', 'disclaimer', 2, 84),
+        description: `Legal and privacy limits for SIM detail usage and content publication in Pakistan.`,
     },
     robots: {
         index: true,
