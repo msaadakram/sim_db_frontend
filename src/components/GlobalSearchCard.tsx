@@ -1,7 +1,7 @@
 'use client';
 
 import { CheckCircle2, CreditCard, Phone, Search, Shield, User, Zap } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 
 type SearchTab = 'number' | 'cnic';
@@ -10,21 +10,31 @@ interface GlobalSearchCardProps {
   className?: string;
 }
 
-function normalizeTab(value: string | null): SearchTab {
-  return value === 'cnic' ? 'cnic' : 'number';
-}
-
 export function GlobalSearchCard({ className = '' }: GlobalSearchCardProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
-  const [activeTab, setActiveTab] = useState<SearchTab>(() => normalizeTab(searchParams.get('type')));
-  const [searchQuery, setSearchQuery] = useState(() => searchParams.get('query') ?? '');
+  const [activeTab, setActiveTab] = useState<SearchTab>('number');
+  const [searchQuery, setSearchQuery] = useState('');
 
   useEffect(() => {
-    setActiveTab(normalizeTab(searchParams.get('type')));
-    setSearchQuery(searchParams.get('query') ?? '');
-  }, [searchParams]);
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const params = new URLSearchParams(window.location.search);
+    const query = params.get('query');
+    const type = params.get('type');
+
+    if (type === 'cnic') {
+      setActiveTab('cnic');
+    } else if (type === 'mobile') {
+      setActiveTab('number');
+    }
+
+    if (query) {
+      setSearchQuery(query);
+    }
+  }, []);
 
   const placeholder = useMemo(
     () =>
