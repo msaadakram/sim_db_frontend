@@ -2,6 +2,7 @@
 
 import { Suspense, lazy } from 'react';
 import { Header } from '@/components/Header';
+import { GlobalSearchCard } from '@/components/GlobalSearchCard';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { SearchResultsPage } from '@/components/SearchResultsPage';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -43,6 +44,7 @@ export default function SearchPageClient() {
         <div className="min-h-screen overflow-x-hidden">
             <Header />
             <main className="w-full">
+                <GlobalSearchCard className="pt-20 sm:pt-24 md:pt-28 pb-2 sm:pb-4" />
                 <Suspense fallback={<SectionLoader />}>
                     <SearchContent />
                 </Suspense>

@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Header } from '@/components/Header';
+import { GlobalSearchCard } from '@/components/GlobalSearchCard';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { BlogPage as BlogPageContent } from '@/components/BlogPage';
 import { Footer } from '@/components/Footer';
@@ -67,6 +68,7 @@ export default async function BlogListPage() {
             <Header />
             <main className="w-full">
                 <div className="pt-16 sm:pt-20">
+                    <GlobalSearchCard className="pt-5 sm:pt-6 pb-5 sm:pb-7" />
                     <BlogPageContent posts={posts} />
                     <Suspense fallback={<SectionLoader />}>
                         <Footer />

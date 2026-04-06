@@ -1,6 +1,7 @@
 import { Suspense, lazy } from 'react';
 import type { Metadata } from 'next';
 import { Header } from '@/components/Header';
+import { GlobalSearchCard } from '@/components/GlobalSearchCard';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { DisclaimerPage as DisclaimerPageContent } from '@/components/DisclaimerPage';
 import { getSiteUrl } from '@/lib/site-url';
@@ -54,6 +55,7 @@ export default function DisclaimerRoutePage() {
             <Header />
             <main className="w-full">
                 <div className="pt-16 sm:pt-20">
+                    <GlobalSearchCard className="pt-5 sm:pt-6 pb-5 sm:pb-7" />
                     <DisclaimerPageContent />
                     <Suspense fallback={<SectionLoader />}>
                         <Footer />

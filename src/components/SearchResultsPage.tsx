@@ -572,7 +572,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white via-muted/10 to-white pt-16 sm:pt-20 md:pt-24 pb-8 sm:pb-12 md:pb-16">
+    <div className="min-h-screen bg-gradient-to-b from-white via-muted/10 to-white pt-4 sm:pt-6 md:pt-8 pb-8 sm:pb-12 md:pb-16">
       <div className="max-w-7xl mx-auto px-3 xs:px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
