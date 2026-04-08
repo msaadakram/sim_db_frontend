@@ -47,6 +47,15 @@ function normalizeSiteUrl(url) {
   return normalized;
 }
 
+function slugify(text) {
+  return String(text)
+    .toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 function getBlogSlugs() {
   const blogDataPath = path.join(process.cwd(), 'src', 'data', 'blogData.ts');
 
@@ -55,6 +64,29 @@ function getBlogSlugs() {
   }
 
   const fileContents = fs.readFileSync(blogDataPath, 'utf8');
+
+  const postBlocks = fileContents.match(/^  \{\n[\s\S]*?^  \},?$/gm) ?? [];
+  const extractedSlugs = postBlocks
+    .map((postBlock) => {
+      const explicitSlugMatch = postBlock.match(/^\s{4}slug:\s*'([^']+)'/m);
+      if (explicitSlugMatch?.[1]) {
+        return explicitSlugMatch[1].trim();
+      }
+
+      const titleMatch = postBlock.match(/^\s{4}title:\s*'([^']+)'/m);
+      if (!titleMatch?.[1]) {
+        return null;
+      }
+
+      const fallbackSlug = slugify(titleMatch[1]);
+      return fallbackSlug || null;
+    })
+    .filter(Boolean);
+
+  if (extractedSlugs.length > 0) {
+    return [...new Set(extractedSlugs)];
+  }
+
   const matches = fileContents.matchAll(/slug:\s*'([^']+)'/g);
 
   return [...new Set(Array.from(matches, (match) => match[1]))];
