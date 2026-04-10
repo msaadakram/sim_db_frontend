@@ -7,36 +7,33 @@ import { BlogPage as BlogPageContent } from '@/components/BlogPage';
 import { Footer } from '@/components/Footer';
 import { getAllBlogPosts } from '@/lib/blog';
 import { getSiteUrl } from '@/lib/site-url';
-import {
-    buildPageSeoTitle,
-    getKeywordSentence,
-    getPageKeywordSet,
-} from '@/lib/seo-keywords';
+import { getPageKeywordSet } from '@/lib/seo-keywords';
 import { BreadcrumbJsonLd } from 'next-seo';
 import { SEO_SITE_NAME } from '@/lib/next-seo';
 
 export const revalidate = 60;
 
 const SITE_URL = getSiteUrl();
+const BLOG_DESCRIPTION = 'Read practical guides on SIM owner checks, CNIC verification, fraud prevention, and mobile identity security updates for Pakistan in 2026 and beyond.';
 
 export const metadata: Metadata = {
-    title: buildPageSeoTitle('Blog Guides for SIM Check, CNIC Verification & Number Details', 'blog', 3, 94),
-    description: `Explore expert articles, practical walkthroughs, and updates on SIM tracking, CNIC verification, and number detail checks, including ${getKeywordSentence(28, 10)}.`,
-    keywords: getPageKeywordSet('blog', 36),
+    title: 'SIM Verification Blog Pakistan | CNIC & Number Guides',
+    description: BLOG_DESCRIPTION,
+    keywords: getPageKeywordSet('blog', 16),
     alternates: {
         canonical: `${SITE_URL}/blog`,
     },
     openGraph: {
-        title: buildPageSeoTitle('SIM Blog: Tracking, Ownership & CNIC Guides', 'blog', 3, 94),
-        description: `Explore SIM tracking and verification guides with high-intent terms like ${getKeywordSentence(38, 8)}.`,
+        title: 'SIM Verification Blog Pakistan | CNIC & Number Guides',
+        description: BLOG_DESCRIPTION,
         url: `${SITE_URL}/blog`,
         siteName: SEO_SITE_NAME,
         type: 'website',
     },
     twitter: {
         card: 'summary',
-        title: buildPageSeoTitle('SIM Blog: Verification & Number Check Insights', 'blog', 2, 88),
-        description: `SIM tracking guides and insights covering ${getKeywordSentence(46, 8)}.`,
+        title: 'SIM Verification Blog Pakistan | SIM Finder',
+        description: 'Explore practical SIM and CNIC verification guides, security walkthroughs, and mobile identity tips for Pakistan users.',
     },
     robots: {
         index: true,
@@ -55,9 +52,33 @@ function SectionLoader() {
 export default async function BlogListPage() {
     const posts = getAllBlogPosts();
     const blogUrl = `${SITE_URL}/blog`;
+    const blogCollectionSchema = {
+        '@context': 'https://schema.org',
+        '@type': 'CollectionPage',
+        name: 'SIM Verification Blog Pakistan',
+        url: blogUrl,
+        description: BLOG_DESCRIPTION,
+        mainEntity: {
+            '@type': 'ItemList',
+            itemListElement: posts
+                .filter((post) => Boolean(post.slug))
+                .slice(0, 30)
+                .map((post, index) => ({
+                '@type': 'ListItem',
+                position: index + 1,
+                url: `${SITE_URL}/blog/${post.slug}`,
+                name: post.title,
+                })),
+        },
+    } as const;
 
     return (
         <div className="min-h-screen overflow-x-hidden">
+            <script
+                id="collection-jsonld-blog"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(blogCollectionSchema) }}
+            />
             <BreadcrumbJsonLd
                 scriptId="breadcrumb-jsonld-blog"
                 items={[

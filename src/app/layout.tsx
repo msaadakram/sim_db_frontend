@@ -2,27 +2,39 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Analytics } from '@vercel/analytics/react';
 import { getSiteUrl } from '@/lib/site-url';
-import { buildPageSeoTitle, getKeywordSentence, getPageKeywordSet } from '@/lib/seo-keywords';
 import { OrganizationJsonLd } from 'next-seo';
 import { SEO_SITE_NAME, getSeoIdentity } from '@/lib/next-seo';
 
 const SITE_URL = getSiteUrl();
 const SEO_IDENTITY = getSeoIdentity();
+const WEBSITE_JSON_LD = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: SEO_IDENTITY.siteName,
+  url: SEO_IDENTITY.siteUrl,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${SITE_URL}/search?query={search_term_string}&type=mobile`,
+    'query-input': 'required name=search_term_string',
+  },
+} as const;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: buildPageSeoTitle(
-      'SIM Details Check Pakistan, SIM Owner Details & CNIC Check',
-      'home',
-      3,
-      96
-    ),
-    template: '%s | sim owner details online check',
+    default: 'SIM Owner Details Check Pakistan | CNIC & Number Lookup',
+    template: '%s | SIM Finder',
   },
   description:
-    `SIM Finder helps you perform SIM details checks in Pakistan with practical CNIC-linked verification workflows. High-demand intents from your keyword dataset include: ${getKeywordSentence(0, 8)}.`,
-  keywords: getPageKeywordSet('home', 42),
+    'Check SIM owner details in Pakistan with secure CNIC and number lookup workflows. Verify linked SIM records quickly using legal, privacy-safe methods.',
+  keywords: [
+    'sim owner details',
+    'sim details check pakistan',
+    'cnic verification',
+    'sim number check',
+    'sim owner details by number',
+    'sim owner details online check',
+  ],
   alternates: {
     canonical: SITE_URL,
   },
@@ -30,20 +42,15 @@ export const metadata: Metadata = {
     type: 'website',
     siteName: SEO_SITE_NAME,
     locale: 'en_US',
-    title: buildPageSeoTitle(
-      'SIM Details Check Pakistan, SIM Owner Details & CNIC Check',
-      'home',
-      3,
-      96
-    ),
+    title: 'SIM Owner Details Check Pakistan | CNIC & Number Lookup',
     description:
-      `Check SIM owner and number verification workflows in Pakistan with terms from your latest search dataset: ${getKeywordSentence(8, 10)}.`,
+      'Securely verify SIM owner details, CNIC-linked records, and mobile number information in Pakistan using practical and legal workflows.',
     url: SITE_URL,
   },
   twitter: {
     card: 'summary_large_image',
-    title: buildPageSeoTitle('SIM Details Check Pakistan, SIM Owner Verification', 'home', 2, 90),
-    description: `Pakistan SIM details check and CNIC-linked verification coverage: ${getKeywordSentence(18, 8)}.`,
+    title: 'SIM Owner Details Check Pakistan | SIM Finder',
+    description: 'Verify SIM owner details and CNIC-linked mobile records in Pakistan with privacy-safe, practical lookup guidance.',
   },
   robots: {
     index: true,
@@ -91,6 +98,11 @@ export default function RootLayout({
             addressLocality: 'Karachi',
             addressCountry: 'PK',
           }}
+        />
+        <script
+          id="website-jsonld"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }}
         />
         {children}
         <Analytics />

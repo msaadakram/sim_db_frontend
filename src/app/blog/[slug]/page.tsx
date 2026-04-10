@@ -11,7 +11,6 @@ import { getSiteUrl } from '@/lib/site-url';
 import {
     buildBlogSeoDescription,
     buildBlogSeoTitle,
-    getKeywordSentence,
     getRelevantCsvKeywords,
 } from '@/lib/seo-keywords';
 import { ArticleJsonLd, BreadcrumbJsonLd } from 'next-seo';
@@ -61,18 +60,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const canonicalUrl = `${SITE_URL}/blog/${slug}`;
     const keywordPool = post.seoKeywords?.length
         ? post.seoKeywords
-        : getRelevantCsvKeywords(`${post.title} ${post.excerpt} ${post.category} ${slug}`, 24);
+        : getRelevantCsvKeywords(`${post.title} ${post.excerpt} ${post.category} ${slug}`, 16);
 
     return {
         title,
         description,
-        keywords: [post.title, post.category, ...keywordPool.slice(0, 30)],
+        keywords: [post.title, post.category, ...keywordPool.slice(0, 16)],
         alternates: {
             canonical: canonicalUrl,
         },
         openGraph: {
             title,
-            description: `${description} Related search terms: ${getKeywordSentence(54, 8)}.`,
+            description,
             url: canonicalUrl,
             siteName: SEO_SITE_NAME,
             images: imageUrl ? [{ url: imageUrl, width: 1200, height: 630, alt: post.title }] : [],

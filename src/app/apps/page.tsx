@@ -5,33 +5,59 @@ import { GlobalSearchCard } from '@/components/GlobalSearchCard';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { AppPage as AppPageContent } from '@/components/AppPage';
 import { getSiteUrl } from '@/lib/site-url';
-import {
-    buildPageSeoTitle,
-    getKeywordSentence,
-    getPageKeywordSet,
-} from '@/lib/seo-keywords';
+import { getPageKeywordSet } from '@/lib/seo-keywords';
 import { SEO_SITE_NAME } from '@/lib/next-seo';
 
 const SITE_URL = getSiteUrl();
+const APPS_FAQ_JSON_LD = {
+    '@context': 'https://schema.org',
+    '@type': 'FAQPage',
+    mainEntity: [
+        {
+            '@type': 'Question',
+            name: 'Is the SIM check app free to download?',
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'Yes, users can access the app download with core SIM verification capabilities and expand workflows based on their usage needs.',
+            },
+        },
+        {
+            '@type': 'Question',
+            name: 'Can I verify CNIC-linked SIM details in the app?',
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'The app is designed to support practical CNIC and number verification workflows using authorized, privacy-safe methods.',
+            },
+        },
+        {
+            '@type': 'Question',
+            name: 'Does the app support secure identity checks?',
+            acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'Yes, the app emphasizes secure access, privacy controls, and structured verification actions for safer long-term usage.',
+            },
+        },
+    ],
+} as const;
 
 export const metadata: Metadata = {
-    title: buildPageSeoTitle('Apps & Tools for SIM Check, CNIC Verification and Number Lookup', 'apps', 3, 94),
-    description: `Explore SIM Finder apps and tools for SIM details checks and CNIC workflows in Pakistan, including ${getKeywordSentence(30, 8)}.`,
-    keywords: getPageKeywordSet('apps', 26),
+    title: 'SIM Check Apps for Pakistan | CNIC & Number Tools Online',
+    description: 'Download SIM check apps for Pakistan to verify number and CNIC-linked records, track risk signals, and run secure lookup tasks from your mobile.',
+    keywords: getPageKeywordSet('apps', 12),
     alternates: {
         canonical: `${SITE_URL}/apps`,
     },
     openGraph: {
-        title: buildPageSeoTitle('Apps for SIM Verification and Number Intelligence', 'apps', 3, 94),
-        description: `Discover SIM Finder apps for secure SIM details and owner verification workflows in Pakistan with terms like ${getKeywordSentence(40, 8)}.`,
+        title: 'SIM Check Apps for Pakistan | CNIC & Number Tools Online',
+        description: 'Explore SIM verification apps for Pakistan focused on CNIC-linked checks, secure number lookup workflows, and identity risk awareness.',
         url: `${SITE_URL}/apps`,
         siteName: SEO_SITE_NAME,
         type: 'website',
     },
     twitter: {
         card: 'summary_large_image',
-        title: buildPageSeoTitle('SIM Verification Apps for Pakistan', 'apps', 2, 88),
-        description: `SIM check and number lookup app coverage with keywords: ${getKeywordSentence(48, 7)}.`,
+        title: 'SIM Check Apps for Pakistan | SIM Finder',
+        description: 'Get SIM verification apps for number checks, CNIC validation guidance, and secure mobile-first workflows in Pakistan.',
     },
     robots: {
         index: true,
@@ -52,6 +78,11 @@ function SectionLoader() {
 export default function AppsPage() {
     return (
         <div className="min-h-screen overflow-x-hidden">
+            <script
+                id="faq-jsonld-apps"
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(APPS_FAQ_JSON_LD) }}
+            />
             <Header />
             <main className="w-full">
                 <div className="pt-16 sm:pt-20">

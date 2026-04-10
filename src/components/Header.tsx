@@ -1,6 +1,6 @@
 'use client';
 
-import { Menu, X, Phone, Shield, Smartphone, Home, Star, BookOpen } from 'lucide-react';
+import { Menu, X, Phone, Shield, Smartphone, Home, Star, BookOpen, Mail } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'motion/react';
 import Link from 'next/link';
@@ -135,6 +135,7 @@ export function Header() {
                   <RouterNavLink to="/features">Features</RouterNavLink>
                   <RouterNavLink to="/blog">Blog</RouterNavLink>
                   <RouterNavLink to="/apps" icon={<Smartphone className="w-4 h-4" />}>Apps</RouterNavLink>
+                  <RouterNavLink to="/contact" icon={<Mail className="w-4 h-4" />}>Contact</RouterNavLink>
                   <RouterNavLink to="/disclaimer">Disclaimer</RouterNavLink>
                 </>
               ) : (
@@ -143,6 +144,7 @@ export function Header() {
                   <RouterNavLink to="/features">Features</RouterNavLink>
                   <RouterNavLink to="/blog">Blog</RouterNavLink>
                   <RouterNavLink to="/apps" icon={<Smartphone className="w-4 h-4" />}>Apps</RouterNavLink>
+                  <RouterNavLink to="/contact" icon={<Mail className="w-4 h-4" />}>Contact</RouterNavLink>
                   <RouterNavLink to="/disclaimer">Disclaimer</RouterNavLink>
                 </>
               )}
@@ -236,6 +238,9 @@ export function Header() {
                     icon={<Smartphone className="w-5 h-5" />}
                   >
                     Apps
+                  </MobileRouterNavLink>
+                  <MobileRouterNavLink to="/contact" onClick={handleLinkClick} icon={<Mail className="w-5 h-5" />}>
+                    Contact
                   </MobileRouterNavLink>
                   <MobileRouterNavLink to="/disclaimer" onClick={handleLinkClick} icon={<Shield className="w-5 h-5" />}>
                     Disclaimer

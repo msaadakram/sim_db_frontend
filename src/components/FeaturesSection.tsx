@@ -3,7 +3,6 @@
 import { motion } from 'motion/react';
 import { MapPin, Shield, Phone, Search, Clock, Globe, UserCheck, FileText } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import { getKeywordSentence } from '@/lib/seo-keywords';
 
 const features = [
   {
@@ -101,7 +100,7 @@ export function FeaturesSection() {
           </h2>
           <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto px-4" style={{ fontFamily: "'Inter', sans-serif" }}>
             Check SIM owner details, mobile number registration information, and CNIC-linked SIM records across Pakistan with fast, accurate results.
-            Extra keyword coverage: {getKeywordSentence(20, 14)}.
+            We prioritize clarity, responsible usage, and practical verification guidance for everyday users.
           </p>
         </motion.div>
 

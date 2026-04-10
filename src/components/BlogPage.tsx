@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { NewsletterSubscribeSection } from './NewsletterSubscribeSection';
-import { getKeywordSentence } from '@/lib/seo-keywords';
 interface BlogPost {
   id: string | number;
   slug: string;
@@ -107,7 +106,7 @@ export function BlogPage({ posts }: BlogPageProps) {
 
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto px-4 leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
               Explore expert articles, comprehensive guides, and the latest trends in SIM tracking technology.
-              Search intent coverage: {getKeywordSentence(62, 12)}.
+              Learn practical ways to verify SIM-linked records, protect your identity, and stay updated on mobile security in Pakistan.
             </p>
           </motion.div>
 

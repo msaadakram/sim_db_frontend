@@ -5,33 +5,33 @@ import { GlobalSearchCard } from '@/components/GlobalSearchCard';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { DisclaimerPage as DisclaimerPageContent } from '@/components/DisclaimerPage';
 import { getSiteUrl } from '@/lib/site-url';
-import {
-    buildPageSeoTitle,
-    getKeywordSentence,
-    getPageKeywordSet,
-} from '@/lib/seo-keywords';
 import { SEO_SITE_NAME } from '@/lib/next-seo';
 
 const SITE_URL = getSiteUrl();
 
 export const metadata: Metadata = {
-    title: buildPageSeoTitle('Disclaimer for SIM Details, CNIC and Number Verification Content', 'disclaimer', 2, 90),
-    description: `Read the legal and privacy disclaimer for SIM details and verification content, including keyword scopes like ${getKeywordSentence(54, 8)}.`,
-    keywords: getPageKeywordSet('disclaimer', 20),
+    title: 'SIM Finder Disclaimer | Legal, Privacy and Data Use',
+    description: 'Review SIM Finder legal, privacy, and acceptable-use policies for SIM/CNIC verification content, data handling, and user responsibilities in Pakistan.',
+    keywords: [
+        'sim finder disclaimer',
+        'sim verification legal policy',
+        'cnic verification privacy policy',
+        'acceptable use sim lookup',
+    ],
     alternates: {
         canonical: `${SITE_URL}/disclaimer`,
     },
     openGraph: {
-        title: buildPageSeoTitle('Legal Disclaimer for SIM Verification Content', 'disclaimer', 2, 90),
-        description: `Privacy and legal usage guidance for SIM detail and number-check content in Pakistan: ${getKeywordSentence(64, 7)}.`,
+        title: 'SIM Finder Disclaimer | Legal, Privacy and Data Use',
+        description: 'Read legal and privacy guidance for SIM and CNIC verification content, data handling rules, and responsible user obligations in Pakistan.',
         url: `${SITE_URL}/disclaimer`,
         siteName: SEO_SITE_NAME,
         type: 'website',
     },
     twitter: {
         card: 'summary',
-        title: buildPageSeoTitle('SIM Verification Disclaimer', 'disclaimer', 2, 84),
-        description: `Legal and privacy limits for SIM detail usage and content publication in Pakistan.`,
+        title: 'SIM Finder Disclaimer | Legal and Privacy Policy',
+        description: 'Understand legal and privacy boundaries for SIM/CNIC verification usage and content publication in Pakistan.',
     },
     robots: {
         index: true,

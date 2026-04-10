@@ -172,14 +172,6 @@ const SEO_SURFACE_HINTS: Record<SeoSurface, string> = {
     'sim owner details online check sim owner details by number sim owner details online sim card owner details online nadra sim owner details sim number details online check cnic details check pta sim check sim verification',
 };
 
-const SEO_TITLE_PRIORITY_KEYWORDS = [
-  'sim owner details online check',
-  'sim owner details by number',
-  'sim owner details online',
-  'sim card owner details online',
-  'nadra sim owner details',
-] as const;
-
 const STOP_WORDS = new Set([
   'the',
   'and',
@@ -246,74 +238,18 @@ function scoreKeyword(entry: CsvKeywordEntry, topicText: string, topicTokens: Se
   return score;
 }
 
-function rotateArray<T>(items: T[], shift: number): T[] {
-  if (!items.length) {
-    return [];
+function truncateMetaText(input: string, maxLength: number): string {
+  const clean = String(input || '').replace(/\s+/g, ' ').trim();
+  if (!clean) {
+    return '';
   }
 
-  const normalizedShift = ((shift % items.length) + items.length) % items.length;
-  return [...items.slice(normalizedShift), ...items.slice(0, normalizedShift)];
-}
-
-function prioritizeTitleKeywords(keywords: string[], seed?: string): string[] {
-  const cleanKeywords = keywords.map((keyword) => String(keyword || '').trim()).filter(Boolean);
-  const uniqueSeen = new Set<string>();
-  const uniqueCleanKeywords = cleanKeywords.filter((keyword) => {
-    if (uniqueSeen.has(keyword)) {
-      return false;
-    }
-    uniqueSeen.add(keyword);
-    return true;
-  });
-
-  const availablePriorityKeywords = SEO_TITLE_PRIORITY_KEYWORDS.filter((keyword) =>
-    SIM_OWNER_SEO_KEYWORDS.includes(keyword)
-  );
-
-  const priorityPool = seed
-    ? rotateArray([...availablePriorityKeywords], hashString(seed))
-    : [...availablePriorityKeywords];
-
-  const merged = [...priorityPool, ...uniqueCleanKeywords];
-  const deduped: string[] = [];
-  const mergedSeen = new Set<string>();
-
-  for (const keyword of merged) {
-    if (mergedSeen.has(keyword)) {
-      continue;
-    }
-    deduped.push(keyword);
-    mergedSeen.add(keyword);
+  if (clean.length <= maxLength) {
+    return clean;
   }
 
-  return deduped;
-}
-
-function buildTitleWithKeywords(baseTitle: string, keywords: string[], maxLength = 95): string {
-  const cleanBaseTitle = String(baseTitle || '').replace(/\s+/g, ' ').trim();
-  const cleanKeywords = keywords.map((keyword) => String(keyword || '').trim()).filter(Boolean);
-
-  if (!cleanBaseTitle) {
-    return cleanKeywords.slice(0, 3).join(', ');
-  }
-
-  if (!cleanKeywords.length) {
-    return cleanBaseTitle;
-  }
-
-  for (const take of [3, 2, 1]) {
-    const suffix = cleanKeywords.slice(0, take).join(', ');
-    const candidate = `${cleanBaseTitle} | ${suffix}`;
-    if (candidate.length <= maxLength) {
-      return candidate;
-    }
-  }
-
-  const fallbackSuffix = cleanKeywords[0];
-  const reserve = ` | ${fallbackSuffix}`.length;
-  const maxBaseLength = Math.max(24, maxLength - reserve);
-  const compactBase = cleanBaseTitle.slice(0, maxBaseLength).replace(/[\s,:;|\-]+$/g, '').trim();
-  return `${compactBase} | ${fallbackSuffix}`;
+  const trimmed = clean.slice(0, Math.max(24, maxLength - 3)).replace(/\s+\S*$/, '').trim();
+  return `${trimmed}...`;
 }
 
 export function getRelevantCsvKeywords(topicText: string, count = 12): string[] {
@@ -388,9 +324,9 @@ export function buildPageSeoTitle(
   keywordCount = 3,
   maxLength = 95
 ): string {
-  const keywords = getRelevantCsvKeywords(SEO_SURFACE_HINTS[surface], keywordCount + 2);
-  const prioritized = prioritizeTitleKeywords(keywords);
-  return buildTitleWithKeywords(baseTitle, prioritized, maxLength);
+  void surface;
+  void keywordCount;
+  return truncateMetaText(baseTitle, maxLength) || 'SIM Finder';
 }
 
 interface BlogSeoOptions {
@@ -402,56 +338,31 @@ interface BlogSeoOptions {
 }
 
 export function buildBlogSeoTitle(baseTitle: string, options: BlogSeoOptions = {}): string {
-  const { slug = '', excerpt = '', category = '', keywordCount = 3, maxLength = 95 } = options;
-  const topic = `${baseTitle} ${excerpt} ${category} ${SEO_SURFACE_HINTS.article}`;
-  const candidates = getRelevantCsvKeywords(topic, Math.max(keywordCount + 4, 8));
-  const rotated = rotateArray(candidates, hashString(`${slug}|${baseTitle}|${category}`));
-  const prioritized = prioritizeTitleKeywords(rotated, `${slug}|${baseTitle}|${category}`);
-  return buildTitleWithKeywords(baseTitle, prioritized.slice(0, Math.max(keywordCount, 3)), maxLength);
+  const { maxLength = 95 } = options;
+  return truncateMetaText(baseTitle, maxLength) || 'SIM Verification Guide | SIM Finder';
 }
 
 export function buildBlogSeoDescription(baseDescription: string, options: BlogSeoOptions = {}): string {
-  const { slug = '', excerpt = '', category = '' } = options;
-  const topic = `${baseDescription} ${excerpt} ${category} ${slug} ${SEO_SURFACE_HINTS.article}`;
-  const keywords = getRelevantCsvKeywords(topic, 3);
-  const suffix = keywords.length ? ` Focus keywords: ${keywords.join(', ')}.` : '';
+  void options;
   const cleanDescription = String(baseDescription || '').replace(/\s+/g, ' ').trim();
 
   if (!cleanDescription) {
-    return `Learn practical SIM verification guidance in Pakistan.${suffix}`.trim();
+    return 'Learn practical SIM and CNIC verification guidance in Pakistan with legal, privacy-safe workflows and actionable security best practices.';
   }
 
-  if (!suffix) {
-    return cleanDescription;
-  }
-
-  if ((cleanDescription + suffix).length <= 160) {
-    return cleanDescription + suffix;
-  }
-
-  const targetBaseLength = Math.max(90, 160 - suffix.length - 3);
-  return `${cleanDescription.slice(0, targetBaseLength).replace(/\s+\S*$/, '').trim()}...${suffix}`;
+  return truncateMetaText(cleanDescription, 160);
 }
 
-export const SEO_ALT_SUFFIX = 'sim owner details, sim data check, sim number details online check';
+export const SEO_ALT_SUFFIX = 'SIM Finder';
 
 export function withSeoAlt(baseAlt: string): string {
   const cleanBaseAlt = String(baseAlt || '').replace(/\s+/g, ' ').trim();
 
   if (!cleanBaseAlt) {
-    return `sim owner detail | ${SEO_ALT_SUFFIX}`;
+    return SEO_ALT_SUFFIX;
   }
 
-  const lower = cleanBaseAlt.toLowerCase();
-  if (
-    lower.includes('sim owner details') ||
-    lower.includes('sim data check') ||
-    lower.includes('sim number details online check')
-  ) {
-    return cleanBaseAlt;
-  }
-
-  return `${cleanBaseAlt} | ${SEO_ALT_SUFFIX}`;
+  return cleanBaseAlt;
 }
 
 export function getKeywordSentence(start = 0, count = 12): string {

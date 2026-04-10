@@ -1,14 +1,17 @@
 import type { Metadata } from 'next';
 import { getSiteUrl } from '@/lib/site-url';
-import { buildPageSeoTitle, getPageKeywordSet } from '@/lib/seo-keywords';
 import SearchPageClient from './SearchPageClient';
 
 const SITE_URL = getSiteUrl();
 
 export const metadata: Metadata = {
-    title: buildPageSeoTitle('Search SIM Details, Owner Information and Number Records', 'search', 2, 88),
-    description: 'Search SIM details and CNIC-linked records using SIM Finder secure lookup tools.',
-    keywords: getPageKeywordSet('search', 20),
+    title: 'Search SIM Number Details | Private Lookup Results',
+    description: 'Run secure SIM and CNIC searches in a private session. This utility page is intentionally noindex to protect privacy and avoid thin indexed URLs.',
+    keywords: [
+        'sim number search',
+        'cnic search session',
+        'private sim lookup results',
+    ],
     alternates: {
         canonical: `${SITE_URL}/search`,
     },
