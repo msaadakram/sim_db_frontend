@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Analytics } from '@vercel/analytics/react';
 import { getSiteUrl } from '@/lib/site-url';
 import { buildPageSeoTitle, getKeywordSentence, getPageKeywordSet } from '@/lib/seo-keywords';
 import { OrganizationJsonLd } from 'next-seo';
@@ -92,6 +93,7 @@ export default function RootLayout({
           }}
         />
         {children}
+        <Analytics />
       </body>
     </html>
   );
