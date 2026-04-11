@@ -7,6 +7,7 @@ import { SEO_SITE_NAME, getSeoIdentity } from '@/lib/next-seo';
 
 const SITE_URL = getSiteUrl();
 const SEO_IDENTITY = getSeoIdentity();
+const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029Vb7eGJN1NCrSvQXX0L3g';
 const WEBSITE_JSON_LD = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
@@ -105,6 +106,19 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(WEBSITE_JSON_LD) }}
         />
         {children}
+        <a
+          href={WHATSAPP_CHANNEL_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Join our WhatsApp channel"
+          className="fixed bottom-5 right-5 z-[90] inline-flex items-center gap-2 rounded-full bg-[#25D366] px-3 py-3 text-sm font-semibold text-white shadow-lg transition-transform duration-200 hover:scale-105 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#25D366] focus-visible:ring-offset-2"
+        >
+          <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M8 10h8M8 14h5m8 8-4.35-2.49A9 9 0 1 1 21 12c0 1.64-.44 3.18-1.21 4.5L21 22Z" />
+          </svg>
+          <span className="hidden sm:inline">WhatsApp Channel</span>
+          <span className="sm:hidden">Channel</span>
+        </a>
         <Analytics />
       </body>
     </html>
