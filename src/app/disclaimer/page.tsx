@@ -10,10 +10,10 @@ import { SEO_SITE_NAME } from '@/lib/next-seo';
 const SITE_URL = getSiteUrl();
 
 export const metadata: Metadata = {
-    title: 'SIM Finder Disclaimer | Legal, Privacy and Data Use',
-    description: 'Review SIM Finder legal, privacy, and acceptable-use policies for SIM/CNIC verification content, data handling, and user responsibilities in Pakistan.',
+    title: 'SIM OWNER DETAIL Disclaimer | Legal, Privacy and Data Use',
+    description: 'Review SIM OWNER DETAIL legal, privacy, and acceptable-use policies for SIM/CNIC verification content, data handling, and user responsibilities in Pakistan.',
     keywords: [
-        'sim finder disclaimer',
+        'sim owner detail disclaimer',
         'sim verification legal policy',
         'cnic verification privacy policy',
         'acceptable use sim lookup',
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
         canonical: `${SITE_URL}/disclaimer`,
     },
     openGraph: {
-        title: 'SIM Finder Disclaimer | Legal, Privacy and Data Use',
+        title: 'SIM OWNER DETAIL Disclaimer | Legal, Privacy and Data Use',
         description: 'Read legal and privacy guidance for SIM and CNIC verification content, data handling rules, and responsible user obligations in Pakistan.',
         url: `${SITE_URL}/disclaimer`,
         siteName: SEO_SITE_NAME,
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: 'summary',
-        title: 'SIM Finder Disclaimer | Legal and Privacy Policy',
+        title: 'SIM OWNER DETAIL Disclaimer | Legal and Privacy Policy',
         description: 'Understand legal and privacy boundaries for SIM/CNIC verification usage and content publication in Pakistan.',
     },
     robots: {

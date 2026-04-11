@@ -300,7 +300,7 @@ export function getRelevantCsvKeywords(topicText: string, count = 12): string[] 
   }
 
   if (selected.length < targetCount && CSV_SEO_KEYWORD_ENTRIES.length) {
-    const hashStart = hashString(normalizedTopic || 'sim-finder-keywords') % CSV_SEO_KEYWORD_ENTRIES.length;
+    const hashStart = hashString(normalizedTopic || 'sim-owner-detail-keywords') % CSV_SEO_KEYWORD_ENTRIES.length;
 
     for (let i = 0; i < CSV_SEO_KEYWORD_ENTRIES.length && selected.length < targetCount; i += 1) {
       const phrase = CSV_SEO_KEYWORD_ENTRIES[(hashStart + i) % CSV_SEO_KEYWORD_ENTRIES.length].phrase;
@@ -326,7 +326,7 @@ export function buildPageSeoTitle(
 ): string {
   void surface;
   void keywordCount;
-  return truncateMetaText(baseTitle, maxLength) || 'SIM Finder';
+  return truncateMetaText(baseTitle, maxLength) || 'SIM OWNER DETAIL';
 }
 
 interface BlogSeoOptions {
@@ -339,7 +339,7 @@ interface BlogSeoOptions {
 
 export function buildBlogSeoTitle(baseTitle: string, options: BlogSeoOptions = {}): string {
   const { maxLength = 95 } = options;
-  return truncateMetaText(baseTitle, maxLength) || 'SIM Verification Guide | SIM Finder';
+  return truncateMetaText(baseTitle, maxLength) || 'SIM Verification Guide | SIM OWNER DETAIL';
 }
 
 export function buildBlogSeoDescription(baseDescription: string, options: BlogSeoOptions = {}): string {
@@ -353,7 +353,7 @@ export function buildBlogSeoDescription(baseDescription: string, options: BlogSe
   return truncateMetaText(cleanDescription, 160);
 }
 
-export const SEO_ALT_SUFFIX = 'SIM Finder';
+export const SEO_ALT_SUFFIX = 'SIM OWNER DETAIL';
 
 export function withSeoAlt(baseAlt: string): string {
   const cleanBaseAlt = String(baseAlt || '').replace(/\s+/g, ' ').trim();

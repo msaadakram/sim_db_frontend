@@ -1,4 +1,4 @@
-# SIM Finder (Next.js)
+# SIM OWNER DETAIL (Next.js)
 
 Production-ready Next.js app with local blog content and MongoDB-backed view tracking API.
 

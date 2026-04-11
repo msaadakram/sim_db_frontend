@@ -2,7 +2,7 @@
 
 import { motion } from 'motion/react';
 import { Search, Shield, MapPin, Phone, CreditCard, User } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
+import { useState } from 'react';
 
 interface HeroSectionProps {
   onSearch?: (query: string, type: 'mobile' | 'cnic') => void;
@@ -11,14 +11,6 @@ interface HeroSectionProps {
 export function HeroSection({ onSearch }: HeroSectionProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [activeTab, setActiveTab] = useState<'number' | 'cnic'>('number');
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  useEffect(() => {
-    // Auto-focus input on mount
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, []);
 
   const handleSearch = () => {
     if (searchQuery.trim() && onSearch) {
@@ -140,7 +132,6 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
                       )}
                     </div>
                     <input
-                      ref={inputRef}
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}

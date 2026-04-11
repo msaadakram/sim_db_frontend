@@ -127,7 +127,7 @@ export function DisclaimerSection() {
                 Terms of Service
               </h3>
               <p className="text-white/90 text-sm sm:text-base leading-relaxed mb-4" style={{ fontFamily: "'Inter', sans-serif" }}>
-                By using SIM Finder services, you agree to our terms of service and privacy policy. We reserve the right to modify these terms at any time. Continued use of our services constitutes acceptance of any changes.
+                By using SIM OWNER DETAIL services, you agree to our terms of service and privacy policy. We reserve the right to modify these terms at any time. Continued use of our services constitutes acceptance of any changes.
               </p>
               <p className="text-white/80 text-xs sm:text-sm italic" style={{ fontFamily: "'Inter', sans-serif" }}>
                 Last updated: February 18, 2026

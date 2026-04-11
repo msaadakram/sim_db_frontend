@@ -114,15 +114,16 @@ export function Header() {
                 <div className="w-9 h-9 sm:w-11 sm:h-11 lg:w-12 lg:h-12 rounded-xl overflow-hidden shadow-lg ring-1 ring-border/60 bg-white/90 group-hover:shadow-xl transition-shadow">
                   <Image
                     src="/app-logo.png"
-                    alt={withSeoAlt('SIM Finder Logo')}
+                    alt={withSeoAlt('SIM OWNER DETAIL Logo')}
                     width={48}
                     height={48}
+                    sizes="48px"
                     priority
                     className="w-full h-full object-cover"
                   />
                 </div>
                 <span className="text-xl sm:text-2xl lg:text-3xl text-primary whitespace-nowrap font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  SIM Finder
+                  SIM OWNER DETAIL
                 </span>
               </motion.div>
             </Link>
@@ -274,7 +275,7 @@ export function Header() {
                   {/* Mobile Menu Footer */}
                   <div className="mt-6 pt-6 border-t border-border">
                     <p className="text-xs text-muted-foreground text-center" style={{ fontFamily: "'Inter', sans-serif" }}>
-                      © 2026 SIM Finder. All rights reserved.
+                      © 2026 SIM OWNER DETAIL. All rights reserved.
                     </p>
                   </div>
                 </nav>

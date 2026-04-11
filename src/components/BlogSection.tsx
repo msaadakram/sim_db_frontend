@@ -158,6 +158,10 @@ export function BlogSection({ initialPosts }: BlogSectionProps) {
                   <ImageWithFallback
                     src={posts[0].image}
                     alt={posts[0].title}
+                    width={1200}
+                    height={675}
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 90vw, (max-width: 1536px) 50vw, 640px"
+                    quality={65}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
                   {/* Overlay Gradient */}
@@ -265,6 +269,10 @@ export function BlogSection({ initialPosts }: BlogSectionProps) {
                     <ImageWithFallback
                       src={post.image}
                       alt={post.title}
+                      width={860}
+                      height={512}
+                      sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 430px"
+                      quality={62}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                     />
 

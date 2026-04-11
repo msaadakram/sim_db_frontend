@@ -219,6 +219,10 @@ export function BlogPage({ posts }: BlogPageProps) {
                         <ImageWithFallback
                           src={post.image}
                           alt={post.title}
+                          width={860}
+                          height={512}
+                          sizes="(max-width: 768px) 100vw, (max-width: 1280px) 50vw, 430px"
+                          quality={62}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                         />
 

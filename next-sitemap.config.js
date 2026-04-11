@@ -10,6 +10,20 @@ const PLACEHOLDER_HOSTS = new Set([
   'localhost',
 ]);
 
+const BUILD_LASTMOD = (() => {
+  const configured = String(process.env.SITEMAP_LASTMOD || '').trim();
+  if (!configured) {
+    return new Date().toISOString();
+  }
+
+  const parsed = new Date(configured);
+  if (Number.isNaN(parsed.getTime())) {
+    return new Date().toISOString();
+  }
+
+  return parsed.toISOString();
+})();
+
 function isPlaceholderUrl(url) {
   try {
     const { hostname } = new URL(url);
@@ -121,7 +135,7 @@ const config = {
       loc: pathName,
       changefreq: isBlogPost ? 'weekly' : 'daily',
       priority: isHome ? 1.0 : isBlogListing ? 0.9 : isBlogPost ? 0.7 : 0.8,
-      lastmod: new Date().toISOString(),
+      lastmod: BUILD_LASTMOD,
       alternateRefs: siteConfig.alternateRefs ?? [],
     };
   },
@@ -132,7 +146,7 @@ const config = {
       loc: `/blog/${slug}`,
       changefreq: 'weekly',
       priority: 0.7,
-      lastmod: new Date().toISOString(),
+      lastmod: BUILD_LASTMOD,
       alternateRefs: siteConfig.alternateRefs ?? [],
     }));
   },

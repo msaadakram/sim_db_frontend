@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, lazy, Suspense } from 'react';
+import { lazy, Suspense } from 'react';
 import { Header } from '@/components/Header';
 import { HeroSection } from '@/components/HeroSection';
 import { LazySection } from '@/components/LazySection';
@@ -46,13 +46,6 @@ interface HomeContentProps {
 
 export function HomeContent({ blogPosts }: HomeContentProps) {
     const router = useRouter();
-
-    useEffect(() => {
-        document.documentElement.style.scrollBehavior = 'smooth';
-        return () => {
-            document.documentElement.style.scrollBehavior = 'auto';
-        };
-    }, []);
 
     const handleSearch = (query: string, type: 'mobile' | 'cnic') => {
         router.push(`/search?query=${encodeURIComponent(query)}&type=${type}`);

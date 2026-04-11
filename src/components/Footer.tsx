@@ -17,7 +17,7 @@ export function Footer() {
                 <Phone className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
               </div>
               <span className="text-xl sm:text-2xl" style={{ fontFamily: "'Playfair Display', serif" }}>
-                SIM Finder
+                SIM OWNER DETAIL
               </span>
             </div>
             <p className="text-white/70 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base" style={{ fontFamily: "'Inter', sans-serif" }}>
@@ -131,7 +131,7 @@ export function Footer() {
               <li className="flex items-start gap-2 sm:gap-3">
                 <Mail className="w-4 h-4 sm:w-5 sm:h-5 text-accent flex-shrink-0 mt-0.5" />
                 <span className="text-white/70 break-all">
-                  info@simfinder.com
+                  info@simownerdetail.app
                 </span>
               </li>
             </ul>
@@ -152,7 +152,7 @@ export function Footer() {
         <div className="pt-6 sm:pt-8 border-t border-white/10">
           <div className="flex flex-col md:flex-row justify-between items-center gap-3 sm:gap-4">
             <p className="text-white/70 text-xs sm:text-sm text-center md:text-left" style={{ fontFamily: "'Inter', sans-serif" }}>
-              © {currentYear} SIM Finder. All rights reserved.
+              © {currentYear} SIM OWNER DETAIL. All rights reserved.
             </p>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-6 text-xs sm:text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
               <a href="#" className="text-white/70 hover:text-accent transition-colors">Privacy Policy</a>

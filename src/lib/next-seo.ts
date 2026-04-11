@@ -1,6 +1,6 @@
 import { getSiteUrl } from '@/lib/site-url';
 
-export const SEO_SITE_NAME = 'SIM Finder';
+export const SEO_SITE_NAME = 'SIM OWNER DETAIL';
 
 export function getSeoIdentity() {
   const siteUrl = getSiteUrl();

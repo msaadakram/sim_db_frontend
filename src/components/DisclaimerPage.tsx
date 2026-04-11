@@ -39,9 +39,9 @@ export function DisclaimerPage() {
       icon: <Shield className="w-6 h-6" />,
       title: 'General Information',
       content: [
-        'This service is provided for informational purposes only. By accessing and using SIM Finder, you acknowledge that you have read, understood, and agree to be bound by these terms and conditions.',
+        'This service is provided for informational purposes only. By accessing and using SIM OWNER DETAIL, you acknowledge that you have read, understood, and agree to be bound by these terms and conditions.',
         'The information provided through our platform is obtained from publicly available sources and third-party data providers. We strive to ensure accuracy but cannot guarantee the completeness or reliability of all information.',
-        'SIM Finder is not affiliated with any telecommunications company, government agency, or regulatory body. We operate as an independent information service provider.'
+        'SIM OWNER DETAIL is not affiliated with any telecommunications company, government agency, or regulatory body. We operate as an independent information service provider.'
       ]
     },
     {
@@ -69,7 +69,7 @@ export function DisclaimerPage() {
       icon: <AlertTriangle className="w-6 h-6" />,
       title: 'Limitation of Liability',
       content: [
-        'SIM Finder provides information "as is" without any warranties, express or implied, including but not limited to warranties of accuracy, completeness, or fitness for a particular purpose.',
+        'SIM OWNER DETAIL provides information "as is" without any warranties, express or implied, including but not limited to warranties of accuracy, completeness, or fitness for a particular purpose.',
         'We shall not be liable for any direct, indirect, incidental, consequential, or punitive damages arising from the use or inability to use our services.',
         'The accuracy of location data depends on various factors including GPS availability, network coverage, and device settings. Location information should not be solely relied upon for critical decisions.',
         'We are not responsible for actions taken based on information obtained through our service. Users should verify critical information through official channels.',
@@ -84,7 +84,7 @@ export function DisclaimerPage() {
         'You are responsible for all activities that occur under your account. Notify us immediately of any unauthorized use.',
         'Do not attempt to circumvent any security measures or access systems or data you are not authorized to access.',
         'Users must not use automated systems, bots, or scripts to access the service without express written permission.',
-        'Respect the intellectual property rights of SIM Finder and do not reproduce, distribute, or create derivative works without authorization.'
+        'Respect the intellectual property rights of SIM OWNER DETAIL and do not reproduce, distribute, or create derivative works without authorization.'
       ]
     },
     {
@@ -188,7 +188,7 @@ export function DisclaimerPage() {
             className="text-lg sm:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            Please read these terms carefully before using our services. By accessing SIM Finder, you agree to be bound by these terms and conditions.
+            Please read these terms carefully before using our services. By accessing SIM OWNER DETAIL, you agree to be bound by these terms and conditions.
           </motion.p>
 
           {/* Last Updated */}
@@ -229,7 +229,7 @@ export function DisclaimerPage() {
                 </p>
                 <div className="bg-yellow-50 rounded-xl p-4 border border-yellow-200">
                   <p className="text-sm font-semibold text-yellow-800">
-                    ⚠️ SIM Finder is NOT intended for collecting personally identifiable information (PII) or securing sensitive data. Use this service responsibly and ethically.
+                    ⚠️ SIM OWNER DETAIL is NOT intended for collecting personally identifiable information (PII) or securing sensitive data. Use this service responsibly and ethically.
                   </p>
                 </div>
               </div>
@@ -365,7 +365,7 @@ export function DisclaimerPage() {
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
             <a
-              href="mailto:support@simfinder.com"
+              href="mailto:support@simownerdetail.app"
               className="inline-flex items-center gap-3 px-8 py-4 bg-white text-primary rounded-2xl hover:bg-gray-50 transition-all duration-300 shadow-2xl hover:shadow-3xl group"
             >
               <span className="text-lg font-semibold">Contact Support</span>
@@ -408,7 +408,7 @@ export function DisclaimerPage() {
 
           <div className="mt-8 text-center">
             <p className="text-sm text-muted-foreground" style={{ fontFamily: "'Inter', sans-serif" }}>
-              © 2026 SIM Finder. All rights reserved. | Last Updated: February 18, 2026
+              © 2026 SIM OWNER DETAIL. All rights reserved. | Last Updated: February 18, 2026
             </p>
           </div>
         </div>

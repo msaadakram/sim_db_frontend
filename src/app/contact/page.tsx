@@ -11,7 +11,7 @@ const SITE_URL = getSiteUrl();
 const CONTACT_URL = `${SITE_URL}/contact`;
 
 const CONTACT_DESCRIPTION =
-  'Contact SIM Finder support for help with CNIC checks, SIM number verification workflows, technical issues, and partnership inquiries in Pakistan.';
+  'Contact SIM OWNER DETAIL support for help with CNIC checks, SIM number verification workflows, technical issues, and partnership inquiries in Pakistan.';
 
 const CONTACT_PAGE_JSON_LD = {
   '@context': 'https://schema.org',
@@ -27,7 +27,7 @@ const CONTACT_PAGE_JSON_LD = {
       {
         '@type': 'ContactPoint',
         contactType: 'customer support',
-        email: 'support@simfinder.com',
+        email: 'support@simownerdetail.app',
         telephone: '+92 300 1234567',
         areaServed: 'PK',
         availableLanguage: ['en', 'ur'],
@@ -42,7 +42,7 @@ const CONTACT_FAQ_JSON_LD = {
   mainEntity: [
     {
       '@type': 'Question',
-      name: 'How quickly does SIM Finder support reply?',
+      name: 'How quickly does SIM OWNER DETAIL support reply?',
       acceptedAnswer: {
         '@type': 'Answer',
         text: 'Support inquiries are typically reviewed within one business day, with urgent verification-flow issues prioritized earlier.',
@@ -68,10 +68,10 @@ const CONTACT_FAQ_JSON_LD = {
 } as const;
 
 export const metadata: Metadata = {
-  title: 'Contact SIM Finder | Support for SIM & CNIC Queries',
+  title: 'Contact SIM OWNER DETAIL | Support for SIM & CNIC Queries',
   description: CONTACT_DESCRIPTION,
   keywords: [
-    'contact sim finder',
+    'contact sim owner detail',
     'sim verification support pakistan',
     'cnic check help',
     'sim number verification support',
@@ -80,7 +80,7 @@ export const metadata: Metadata = {
     canonical: CONTACT_URL,
   },
   openGraph: {
-    title: 'Contact SIM Finder | Support for SIM & CNIC Queries',
+    title: 'Contact SIM OWNER DETAIL | Support for SIM & CNIC Queries',
     description: CONTACT_DESCRIPTION,
     url: CONTACT_URL,
     siteName: SEO_SITE_NAME,
@@ -88,7 +88,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary',
-    title: 'Contact SIM Finder | Support Team',
+    title: 'Contact SIM OWNER DETAIL | Support Team',
     description:
       'Get support for SIM and CNIC verification workflows, technical issues, and business inquiries in Pakistan.',
   },
@@ -140,7 +140,7 @@ export default function ContactPage() {
             <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
               <div className="text-center max-w-3xl mx-auto mb-12">
                 <h1 className="text-4xl sm:text-5xl md:text-6xl text-primary mb-5" style={{ fontFamily: "'Playfair Display', serif" }}>
-                  Contact SIM Finder
+                  Contact SIM OWNER DETAIL
                 </h1>
                 <p className="text-base sm:text-lg text-muted-foreground leading-relaxed" style={{ fontFamily: "'Inter', sans-serif" }}>
                   Need help with SIM owner checks, CNIC verification workflows, or technical issues?
@@ -150,25 +150,25 @@ export default function ContactPage() {
 
               <div className="grid md:grid-cols-3 gap-6 mb-10">
                 <a
-                  href="mailto:support@simfinder.com"
+                  href="mailto:support@simownerdetail.app"
                   className="rounded-2xl border border-border/60 bg-white p-6 shadow-sm hover:shadow-lg transition"
                 >
                   <h2 className="text-xl text-primary mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
                     Support Email
                   </h2>
                   <p className="text-muted-foreground text-sm mb-2">General help, troubleshooting, and verification guidance.</p>
-                  <p className="text-accent font-medium">support@simfinder.com</p>
+                  <p className="text-accent font-medium">support@simownerdetail.app</p>
                 </a>
 
                 <a
-                  href="mailto:partnerships@simfinder.com"
+                  href="mailto:partnerships@simownerdetail.app"
                   className="rounded-2xl border border-border/60 bg-white p-6 shadow-sm hover:shadow-lg transition"
                 >
                   <h2 className="text-xl text-primary mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
                     Partnerships
                   </h2>
                   <p className="text-muted-foreground text-sm mb-2">Business collaboration, integrations, and enterprise workflows.</p>
-                  <p className="text-accent font-medium">partnerships@simfinder.com</p>
+                  <p className="text-accent font-medium">partnerships@simownerdetail.app</p>
                 </a>
 
                 <a

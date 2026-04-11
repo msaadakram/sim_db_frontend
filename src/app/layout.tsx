@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default: 'SIM Owner Details Check Pakistan | CNIC & Number Lookup',
-    template: '%s | SIM Finder',
+    template: '%s | SIM OWNER DETAIL',
   },
   description:
     'Check SIM owner details in Pakistan with secure CNIC and number lookup workflows. Verify linked SIM records quickly using legal, privacy-safe methods.',
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'SIM Owner Details Check Pakistan | SIM Finder',
+    title: 'SIM Owner Details Check Pakistan | SIM OWNER DETAIL',
     description: 'Verify SIM owner details and CNIC-linked mobile records in Pakistan with privacy-safe, practical lookup guidance.',
   },
   robots: {
@@ -91,7 +91,7 @@ export default function RootLayout({
           contactPoint={{
             contactType: 'customer support',
             telephone: '+92 300 1234567',
-            email: 'info@simfinder.com',
+            email: 'info@simownerdetail.app',
           }}
           address={{
             streetAddress: 'Karachi, Pakistan',

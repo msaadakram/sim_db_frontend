@@ -487,7 +487,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
       }, 3500);
     };
 
-    const reportText = `SIM Finder Report\nQuery: ${cleanedQuery} (${searchType.toUpperCase()})\nTotal Records: ${allRecords.length}`;
+    const reportText = `SIM OWNER DETAIL Report\nQuery: ${cleanedQuery} (${searchType.toUpperCase()})\nTotal Records: ${allRecords.length}`;
     const sharePayload = `${reportText}\n${window.location.href}`;
 
     const copyUsingLegacyFallback = () => {
@@ -513,7 +513,7 @@ export function SearchResultsPage({ searchQuery, searchType, unlockToken = '', o
       if (navigator.share) {
         try {
           await navigator.share({
-            title: 'SIM Finder Report',
+            title: 'SIM OWNER DETAIL Report',
             text: reportText,
             url: window.location.href,
           });

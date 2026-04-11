@@ -112,6 +112,10 @@ export function TestimonialsSection() {
                   <ImageWithFallback
                     src={testimonial.avatar}
                     alt={testimonial.name}
+                    width={150}
+                    height={150}
+                    sizes="48px"
+                    quality={60}
                     className="w-full h-full object-cover"
                   />
                 </div>

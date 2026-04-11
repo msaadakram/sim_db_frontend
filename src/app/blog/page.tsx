@@ -32,7 +32,7 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: 'summary',
-        title: 'SIM Verification Blog Pakistan | SIM Finder',
+        title: 'SIM Verification Blog Pakistan | SIM OWNER DETAIL',
         description: 'Explore practical SIM and CNIC verification guides, security walkthroughs, and mobile identity tips for Pakistan users.',
     },
     robots: {

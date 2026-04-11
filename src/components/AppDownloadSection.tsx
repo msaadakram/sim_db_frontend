@@ -289,7 +289,7 @@ export function AppDownloadSection() {
                     <div className="flex items-center justify-between mb-6">
                       <div>
                         <h3 className="text-xl font-bold text-primary" style={{ fontFamily: "'Playfair Display', serif" }}>
-                          SIM Finder
+                          SIM OWNER DETAIL
                         </h3>
                         <p className="text-sm text-muted-foreground">Track & Verify</p>
                       </div>

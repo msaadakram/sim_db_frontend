@@ -230,7 +230,7 @@ export function AppPage() {
                           <Phone className="w-8 h-8 text-white" />
                         </div>
                         <h3 className="text-xl font-bold text-primary mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-                          SIM Finder
+                          SIM OWNER DETAIL
                         </h3>
                         <p className="text-sm text-muted-foreground">Track • Verify • Locate</p>
                       </div>

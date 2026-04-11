@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'SIM Check Apps for Pakistan | SIM Finder',
+        title: 'SIM Check Apps for Pakistan | SIM OWNER DETAIL',
         description: 'Get SIM verification apps for number checks, CNIC validation guidance, and secure mobile-first workflows in Pakistan.',
     },
     robots: {

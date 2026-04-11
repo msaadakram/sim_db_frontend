@@ -352,7 +352,7 @@ export function FeaturesPage() {
             >
               Why Choose{' '}
               <span className="bg-gradient-to-r from-accent to-primary bg-clip-text text-transparent">
-                SIM Finder?
+                SIM OWNER DETAIL?
               </span>
             </h2>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
@@ -456,7 +456,7 @@ export function FeaturesPage() {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-base sm:text-lg md:text-xl text-white/90 mb-8 sm:mb-10 max-w-2xl mx-auto px-4"
           >
-            Join millions of users who trust SIM Finder for accurate and secure mobile number tracking
+            Join millions of users who trust SIM OWNER DETAIL for accurate and secure mobile number tracking
           </motion.p>
 
           <motion.div

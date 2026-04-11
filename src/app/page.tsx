@@ -62,7 +62,7 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'SIM Owner Details Check Pakistan | SIM Finder',
+        title: 'SIM Owner Details Check Pakistan | SIM OWNER DETAIL',
         description: 'Practical SIM and CNIC verification guidance for privacy-safe number checks in Pakistan.',
     },
 };

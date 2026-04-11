@@ -928,7 +928,7 @@ export const blogPosts: BlogPost[] = [
         },
         {
           title: 'Legal Methods to Check SIM Card Information',
-          content: 'There are several legal and authorized methods to check SIM card information in Pakistan. The most official method is through the PTA\'s Device Identification Registration and Blocking System (DIRBS) for checking IMEI registration status. For checking numbers registered against your CNIC, you can send an SMS to 668 from any mobile number. These official channels ensure you\'re accessing information through legitimate means while respecting privacy laws. Third-party verification services like SIM Finder provide additional features including owner name verification, location tracking, and comprehensive reports, all while maintaining compliance with Pakistani telecommunications laws.',
+          content: 'There are several legal and authorized methods to check SIM card information in Pakistan. The most official method is through the PTA\'s Device Identification Registration and Blocking System (DIRBS) for checking IMEI registration status. For checking numbers registered against your CNIC, you can send an SMS to 668 from any mobile number. These official channels ensure you\'re accessing information through legitimate means while respecting privacy laws. Third-party verification services like SIM OWNER DETAIL provide additional features including owner name verification, location tracking, and comprehensive reports, all while maintaining compliance with Pakistani telecommunications laws.',
           points: [
             'SMS 668 to check numbers registered on your CNIC',
             'Visit PTA\'s DIRBS portal for device verification',
@@ -1008,7 +1008,7 @@ export const blogPosts: BlogPost[] = [
         },
         {
           title: 'Step-by-Step Guide to Check SIM Information',
-          content: 'Here\'s a practical walkthrough of how to check SIM card information using professional verification platforms. First, visit a trusted SIM verification website like SIM Finder. Navigate to the search section and select your search type (mobile number or CNIC). Enter the complete number with proper formatting (03XX-XXXXXXX for mobile numbers). Click "Search" and wait for the system to process your query. Within seconds, you\'ll receive a comprehensive report containing owner details, registration information, and additional data. For enhanced features like location tracking, you may need to register an account and subscribe to premium services.',
+          content: 'Here\'s a practical walkthrough of how to check SIM card information using professional verification platforms. First, visit a trusted SIM verification website like SIM OWNER DETAIL. Navigate to the search section and select your search type (mobile number or CNIC). Enter the complete number with proper formatting (03XX-XXXXXXX for mobile numbers). Click "Search" and wait for the system to process your query. Within seconds, you\'ll receive a comprehensive report containing owner details, registration information, and additional data. For enhanced features like location tracking, you may need to register an account and subscribe to premium services.',
           points: [
             'Step 1: Choose a reputable verification platform',
             'Step 2: Select search type (Mobile Number or CNIC)',

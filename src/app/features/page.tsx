@@ -42,7 +42,7 @@ const FEATURES_FAQ_JSON_LD = {
 
 export const metadata: Metadata = {
     title: 'SIM Verification Features | CNIC and Number Check Tools',
-    description: 'Explore SIM Finder features for CNIC verification, SIM number checks, tracking safeguards, and secure identity workflows tailored for users in Pakistan.',
+    description: 'Explore SIM OWNER DETAIL features for CNIC verification, SIM number checks, tracking safeguards, and secure identity workflows tailored for users in Pakistan.',
     keywords: getPageKeywordSet('features', 14),
     alternates: {
         canonical: `${SITE_URL}/features`,
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     },
     twitter: {
         card: 'summary_large_image',
-        title: 'SIM Verification Features for Pakistan | SIM Finder',
+        title: 'SIM Verification Features for Pakistan | SIM OWNER DETAIL',
         description: 'Explore secure features for SIM checks, CNIC verification, and number intelligence workflows in Pakistan.',
     },
     robots: {
