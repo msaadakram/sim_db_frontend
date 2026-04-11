@@ -2,10 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { MessageCircle, Search, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { throttle } from '../lib/performance';
-
-const WHATSAPP_CHANNEL_URL = 'https://whatsapp.com/channel/0029Vb7eGJN1NCrSvQXX0L3g';
 
 export function ScrollToTop() {
   const [isVisible, setIsVisible] = useState(false);
@@ -91,20 +89,6 @@ export function ScrollToTop() {
               {/* Decorative Shine */}
               <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/40 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000 ease-in-out pointer-events-none" />
             </motion.button>
-
-            <motion.a
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              href={WHATSAPP_CHANNEL_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-2 flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-3 py-2 text-xs font-semibold text-white shadow-md transition-shadow hover:shadow-lg"
-              style={{ fontFamily: "'Inter', sans-serif" }}
-              aria-label="Join WhatsApp channel from quick search"
-            >
-              <MessageCircle className="w-3.5 h-3.5" />
-              <span>Join WhatsApp Channel</span>
-            </motion.a>
 
             {/* Dismiss Button */}
             <button
