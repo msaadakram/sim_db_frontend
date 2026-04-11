@@ -48,7 +48,7 @@ export function ScrollToTop() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 50, scale: 0.9 }}
           transition={{ type: "spring", stiffness: 300, damping: 25 }}
-          className="fixed bottom-16 right-6 z-50 flex items-end justify-end"
+          className="fixed bottom-18 right-6 z-50 flex items-end justify-end"
         >
           <div className="relative group">
             {/* Notification Badge */}
