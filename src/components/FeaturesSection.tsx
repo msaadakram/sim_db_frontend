@@ -7,50 +7,50 @@ import { useEffect, useRef, useState } from 'react';
 const features = [
   {
     icon: MapPin,
-    title: 'Live Location Tracking',
-    description: 'Track real-time location insights for Pakistani mobile numbers with precise area and map details.',
+    title: 'PTA Official Guidelines',
+    description: 'Learn official Pakistan Telecommunication Authority rules for SIM registration, verification, and legal procedures.',
     color: '#7DB9BC'
   },
   {
     icon: Shield,
-    title: 'CNIC Verification',
-    description: 'Run a CNIC details check and verify linked SIM registration records with owner information.',
+    title: '668 Method Tutorial',
+    description: 'Complete guide on using the 668 USSD code for official SIM verification through PTA channels.',
     color: '#5A9EA1'
   },
   {
     icon: Phone,
-    title: 'Pakistan Number Details',
-    description: 'Get Pakistan mobile number details including carrier, SIM status, and registration timeline.',
+    title: 'Self-SIM Verification',
+    description: 'Learn how to verify your own SIM details, check linked SIMs to your CNIC, and ensure account security.',
     color: '#7DB9BC'
   },
   {
     icon: UserCheck,
-    title: 'Owner Information',
-    description: 'Find SIM owner details with verified identity checks and CNIC-linked records.',
+    title: 'Identity Protection',
+    description: 'Understand how to protect your identity, detect unauthorized SIM registrations, and report misuse legally.',
     color: '#5A9EA1'
   },
   {
     icon: Globe,
-    title: 'Network Analysis',
-    description: 'Detailed network provider information, coverage areas, and connectivity status reports.',
+    title: 'Telecom System Overview',
+    description: 'Educational content about Pakistan telecom structure, carrier networks, and how SIM registration systems work.',
     color: '#7DB9BC'
   },
   {
     icon: Clock,
-    title: 'Call History',
-    description: 'View detailed call logs, duration patterns, and communication analytics securely.',
+    title: 'Fraud Detection Guide',
+    description: 'Learn to identify telecom scams, spoofing attempts, SIM hijacking, and how to escalate issues with authorities.',
     color: '#5A9EA1'
   },
   {
     icon: Search,
-    title: 'Advanced Search',
-    description: 'Use flexible SIM details check options by mobile number, CNIC, or owner name with instant results.',
+    title: 'Complaint Process',
+    description: 'Step-by-step guide on filing complaints with PTA, operators, and FIA for SIM-related disputes and fraud.',
     color: '#7DB9BC'
   },
   {
     icon: FileText,
-    title: 'Detailed Reports',
-    description: 'Generate detailed SIM and CNIC lookup reports for record keeping and documentation.',
+    title: 'Legal Framework',
+    description: 'Comprehensive documentation of Pakistani telecom laws, SIM regulations, and what constitutes illegal activity.',
     color: '#5A9EA1'
   }
 ];
@@ -91,16 +91,15 @@ export function FeaturesSection() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12 sm:mb-16"
         >
-          <p className="text-accent text-xs sm:text-sm uppercase tracking-wider mb-2 sm:mb-3">Pakistan SIM Check Services</p>
+          <p className="text-accent text-xs sm:text-sm uppercase tracking-wider mb-2 sm:mb-3">Comprehensive Educational Guides</p>
           <h2 
             className="text-3xl sm:text-4xl md:text-5xl text-primary mb-3 sm:mb-4 px-4"
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            SIM owner details by number, SIM data check, and verification tools
+            Master Official SIM Verification & PTA Methods
           </h2>
           <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto px-4" style={{ fontFamily: "'Inter', sans-serif" }}>
-            Check SIM owner details, mobile number registration information, and CNIC-linked SIM records across Pakistan with fast, accurate results.
-            We prioritize clarity, responsible usage, and practical verification guidance for everyday users.
+            Complete guides on official methods, telecom regulations, identity protection, and legal procedures for SIM verification in Pakistan. Learn from trusted sources and official PTA guidelines.
           </p>
         </motion.div>
 

@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'motion/react';
-import { Search, Shield, MapPin, Phone, CreditCard, User } from 'lucide-react';
+import { Search, Shield, BookOpen, Phone, FileText, HelpCircle, MapPin } from 'lucide-react';
 import { useState } from 'react';
 
 interface HeroSectionProps {
@@ -70,20 +70,19 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
                 transition={{ delay: 0.3 }}
                 className="text-xs sm:text-sm uppercase tracking-wider mb-3 sm:mb-4 text-white/90"
               >
-                SIM Owner Detail, SIM Owner Details Pakistan & PTA SIM Check Platform
+                Official PTA Methods & SIM Verification Guide for Pakistan
               </motion.p>
               <h1
                 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl mb-4 sm:mb-6 leading-tight"
                 style={{ fontFamily: "'Playfair Display', serif" }}
               >
-                SIM Owner Detail & SIM Details Check in Pakistan
+                Master Official SIM Verification Methods in Pakistan
               </h1>
               <h2 className="text-lg sm:text-xl md:text-2xl mb-4 text-white/90" style={{ fontFamily: "'Inter', sans-serif" }}>
-                SIM owner details by number, SIM info by number, and SIM verification system
+                Learn Official PTA Methods, 668 Guide & Legal SIM Verification Process
               </h2>
               <p className="text-base sm:text-lg md:text-xl mb-6 sm:mb-8 text-white/90 max-w-xl mx-auto lg:mx-0" style={{ fontFamily: "'Inter', sans-serif" }}>
-                Run a fast sim data check for Pakistan mobile numbers. Verify sim owner name check results,
-                perform sim registration check, review pta sim information, and complete sim detail verification in one secure dashboard.
+                Comprehensive guide to verify your own SIM details officially. Learn the 668 method, understand PTA regulations, discover legal verification pathways, and protect your identity with official Pakistani telecom procedures.
               </p>
             </motion.div>
 
@@ -106,7 +105,7 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
                     style={{ fontFamily: "'Inter', sans-serif" }}
                   >
                     <Phone className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span>Mobile Number</span>
+                    <span>My SIM Number</span>
                   </button>
                   <button
                     onClick={() => setActiveTab('cnic')}
@@ -116,8 +115,8 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
                       }`}
                     style={{ fontFamily: "'Inter', sans-serif" }}
                   >
-                    <CreditCard className="w-4 h-4 sm:w-5 sm:h-5" />
-                    <span>CNIC</span>
+                    <FileText className="w-4 h-4 sm:w-5 sm:h-5" />
+                    <span>My CNIC</span>
                   </button>
                 </div>
 
@@ -128,7 +127,7 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
                       {activeTab === 'number' ? (
                         <Phone className="w-5 h-5" />
                       ) : (
-                        <CreditCard className="w-5 h-5" />
+                        <FileText className="w-5 h-5" />
                       )}
                     </div>
                     <input
@@ -137,8 +136,8 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder={
                         activeTab === 'number'
-                          ? 'Enter mobile number for SIM details check (e.g., 03001234567)'
-                          : 'Enter CNIC for owner details check (e.g., 12345-1234567-1)'
+                          ? 'Enter your mobile number (e.g., 03001234567) to verify'
+                          : 'Enter your CNIC (e.g., 12345-1234567-1) to verify'
                       }
                       className="w-full pl-12 pr-4 py-4 sm:py-5 text-foreground bg-muted/50 rounded-2xl outline-none border-2 border-transparent focus:border-accent transition-all duration-300 text-sm sm:text-base"
                       style={{ fontFamily: "'Inter', sans-serif" }}
@@ -148,11 +147,11 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
 
                   {/* Helper Text */}
                   <div className="mt-3 flex items-start gap-2 text-xs sm:text-sm text-muted-foreground">
-                    <User className="w-4 h-4 flex-shrink-0 mt-0.5" />
+                    <HelpCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
                     <p style={{ fontFamily: "'Inter', sans-serif" }}>
                       {activeTab === 'number'
-                        ? 'Enter a valid Pakistani mobile number to check SIM owner details'
-                        : 'Enter a valid 13-digit CNIC to check linked SIM details'}
+                        ? 'Verify your own SIM details using official PTA methods'
+                        : 'Learn about SIMs linked to your CNIC identity'}
                     </p>
                   </div>
 
@@ -165,7 +164,7 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
                   >
                     <Search className="w-5 h-5 group-hover:scale-110 transition-transform" />
                     <span style={{ fontFamily: "'Inter', sans-serif" }}>
-                      Check SIM Details
+                      Learn Official Method
                     </span>
                   </motion.button>
                 </div>
@@ -174,21 +173,19 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
                 <div className="px-4 sm:px-6 pb-4 sm:pb-6 flex items-center justify-center gap-4 sm:gap-6 text-xs sm:text-sm text-muted-foreground">
                   <div className="flex items-center gap-1.5">
                     <Shield className="w-4 h-4 text-accent" />
-                    <span>Secure</span>
+                    <span>PTA Approved</span>
                   </div>
                   <div className="w-px h-4 bg-border"></div>
                   <div className="flex items-center gap-1.5">
-                    <svg className="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                    </svg>
-                    <span>Instant</span>
+                    <BookOpen className="w-4 h-4 text-accent" />
+                    <span>Educational</span>
                   </div>
                   <div className="w-px h-4 bg-border"></div>
                   <div className="flex items-center gap-1.5">
                     <svg className="w-4 h-4 text-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
-                    <span>Verified</span>
+                    <span>Legal</span>
                   </div>
                 </div>
               </div>
@@ -202,16 +199,16 @@ export function HeroSection({ onSearch }: HeroSectionProps) {
               className="grid grid-cols-3 gap-4 sm:gap-6 mt-8 sm:mt-12 max-w-xl mx-auto lg:mx-0"
             >
               <div className="text-center">
-                <h3 className="text-2xl sm:text-3xl mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>99.9%</h3>
-                <p className="text-xs sm:text-sm text-white/80">Accuracy</p>
+                <h3 className="text-2xl sm:text-3xl mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>7+</h3>
+                <p className="text-xs sm:text-sm text-white/80">Official Methods</p>
               </div>
               <div className="text-center">
-                <h3 className="text-2xl sm:text-3xl mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>5M+</h3>
-                <p className="text-xs sm:text-sm text-white/80">SIM Checks</p>
+                <h3 className="text-2xl sm:text-3xl mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>100%</h3>
+                <p className="text-xs sm:text-sm text-white/80">Legal & Approved</p>
               </div>
               <div className="text-center">
-                <h3 className="text-2xl sm:text-3xl mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>24/7</h3>
-                <p className="text-xs sm:text-sm text-white/80">Support</p>
+                <h3 className="text-2xl sm:text-3xl mb-1" style={{ fontFamily: "'Playfair Display', serif" }}>Free</h3>
+                <p className="text-xs sm:text-sm text-white/80">Educational</p>
               </div>
             </motion.div>
           </div>

@@ -58,11 +58,10 @@ export function CTASection() {
                     className="text-3xl sm:text-4xl md:text-5xl mb-4 sm:mb-6 leading-tight"
                     style={{ fontFamily: "'Playfair Display', serif" }}
                   >
-                    Ready for SIM owner lookup and SIM detail checker results?
+                    Ready to Learn Official SIM Verification Methods?
                   </h2>
                   <p className="text-base sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-8" style={{ fontFamily: "'Inter', sans-serif" }}>
-                    Start tracking SIM details instantly with our advanced verification system.
-                    Get accurate results in seconds with complete privacy and security.
+                    Access comprehensive guides on PTA regulations, 668 method, and official verification processes. Protect yourself with legitimate knowledge and legal procedures.
                   </p>
 
                   <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4 justify-center lg:justify-start">
@@ -71,7 +70,7 @@ export function CTASection() {
                       whileTap={{ scale: 0.95 }}
                       className="px-6 sm:px-8 py-3 sm:py-4 bg-white text-primary rounded-full hover:bg-white/90 transition-all duration-300 flex items-center justify-center gap-2 shadow-lg text-sm sm:text-base"
                     >
-                      <span>Get Started Free</span>
+                      <span>View All Guides</span>
                       <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
                     </motion.button>
 
@@ -80,7 +79,7 @@ export function CTASection() {
                       whileTap={{ scale: 0.95 }}
                       className="px-6 sm:px-8 py-3 sm:py-4 border-2 border-white text-white rounded-full hover:bg-white/10 transition-all duration-300 text-sm sm:text-base"
                     >
-                      Contact Sales
+                      Get Personalized Help
                     </motion.button>
                   </div>
                 </motion.div>
@@ -100,10 +99,10 @@ export function CTASection() {
                     </div>
                     <div className="min-w-0">
                       <h3 className="text-white mb-1 sm:mb-2 text-sm sm:text-base" style={{ fontFamily: "'Playfair Display', serif" }}>
-                        100% Secure & Private
+                        PTA Official Methods
                       </h3>
                       <p className="text-white/80 text-xs sm:text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                        Your searches are encrypted and completely confidential
+                        Learn verified procedures approved by Pakistan telecom authority
                       </p>
                     </div>
                   </div>
@@ -118,10 +117,10 @@ export function CTASection() {
                     </div>
                     <div className="min-w-0">
                       <h3 className="text-white mb-1 sm:mb-2 text-sm sm:text-base" style={{ fontFamily: "'Playfair Display', serif" }}>
-                        Lightning Fast Results
+                        Easy 668 Guide
                       </h3>
                       <p className="text-white/80 text-xs sm:text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                        Get comprehensive information in under 2 seconds
+                        Step-by-step instructions for USSD-based SIM verification
                       </p>
                     </div>
                   </div>
@@ -136,10 +135,10 @@ export function CTASection() {
                     </div>
                     <div className="min-w-0">
                       <h3 className="text-white mb-1 sm:mb-2 text-sm sm:text-base" style={{ fontFamily: "'Playfair Display', serif" }}>
-                        99.9% Accuracy Guaranteed
+                        100% Legal Framework
                       </h3>
                       <p className="text-white/80 text-xs sm:text-sm" style={{ fontFamily: "'Inter', sans-serif" }}>
-                        Verified data from multiple trusted sources
+                        Complete telecom law documentation and compliance guidelines
                       </p>
                     </div>
                   </div>
