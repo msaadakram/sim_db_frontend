@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { HomeContent } from '@/components/HomeContent';
 import { getHomepageBlogPosts } from '@/lib/blog';
+import { getSiteUrl } from '@/lib/site-url';
+
+const SITE_URL = getSiteUrl();
 
 export const revalidate = 60;
 
@@ -8,6 +11,9 @@ export const metadata: Metadata = {
   title: 'Official PTA SIM Verification Guide Pakistan | 668 Method & Legal SIM Checks',
   description:
     'Learn official PTA methods to verify your own SIMs, understand the 668 guide, and follow legal telecom and fraud-reporting steps in Pakistan.',
+  alternates: {
+    canonical: SITE_URL,
+  },
 };
 
 export default async function Page() {

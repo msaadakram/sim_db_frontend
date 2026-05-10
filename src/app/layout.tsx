@@ -12,6 +12,9 @@ export const metadata: Metadata = {
   },
   description:
     'Learn official PTA methods, the 668 SIM verification guide, SIM registration laws, fraud reporting steps, and legal telecom education for Pakistan.',
+  alternates: {
+    canonical: SITE_URL,
+  },
   openGraph: {
     type: 'website',
     siteName: 'PTA SIM Guide',
