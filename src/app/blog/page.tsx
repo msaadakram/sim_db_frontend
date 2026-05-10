@@ -6,7 +6,7 @@ import { ScrollToTop } from '@/components/ScrollToTop';
 import { BlogPage as BlogPageContent } from '@/components/BlogPage';
 import { Footer } from '@/components/Footer';
 import { getAllBlogPosts } from '@/lib/blog';
-import { getSiteUrl } from '@/lib/site-url';
+import { getSiteUrl, getCanonicalUrl } from '@/lib/site-url';
 import { getPageKeywordSet } from '@/lib/seo-keywords';
 import { BreadcrumbJsonLd } from 'next-seo';
 import { SEO_SITE_NAME } from '@/lib/next-seo';
@@ -14,6 +14,7 @@ import { SEO_SITE_NAME } from '@/lib/next-seo';
 export const revalidate = 60;
 
 const SITE_URL = getSiteUrl();
+const CANONICAL_URL = getCanonicalUrl();
 const BLOG_DESCRIPTION = 'Read practical guides on SIM owner checks, CNIC verification, fraud prevention, and mobile identity security updates for Pakistan in 2026 and beyond.';
 
 export const metadata: Metadata = {
@@ -21,12 +22,12 @@ export const metadata: Metadata = {
     description: BLOG_DESCRIPTION,
     keywords: getPageKeywordSet('blog', 16),
     alternates: {
-        canonical: `${SITE_URL}/blog`,
+        canonical: `${CANONICAL_URL}/blog`,
     },
     openGraph: {
         title: 'SIM Verification Blog Pakistan | CNIC & Number Guides',
         description: BLOG_DESCRIPTION,
-        url: `${SITE_URL}/blog`,
+        url: `${CANONICAL_URL}/blog`,
         siteName: SEO_SITE_NAME,
         type: 'website',
     },

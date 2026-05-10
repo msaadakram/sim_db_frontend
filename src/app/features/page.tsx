@@ -4,11 +4,12 @@ import { Header } from '@/components/Header';
 import { GlobalSearchCard } from '@/components/GlobalSearchCard';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { FeaturesPage as FeaturesPageContent } from '@/components/FeaturesPage';
-import { getSiteUrl } from '@/lib/site-url';
+import { getSiteUrl, getCanonicalUrl } from '@/lib/site-url';
 import { getPageKeywordSet } from '@/lib/seo-keywords';
 import { SEO_SITE_NAME } from '@/lib/next-seo';
 
 const SITE_URL = getSiteUrl();
+const CANONICAL_URL = getCanonicalUrl();
 const FEATURES_FAQ_JSON_LD = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -45,7 +46,7 @@ export const metadata: Metadata = {
     description: 'Explore SIM OWNER DETAIL features for CNIC verification, SIM number checks, tracking safeguards, and secure identity workflows tailored for users in Pakistan.',
     keywords: getPageKeywordSet('features', 14),
     alternates: {
-        canonical: `${SITE_URL}/features`,
+        canonical: `${CANONICAL_URL}/features`,
     },
     openGraph: {
         title: 'SIM Verification Features | CNIC and Number Check Tools',

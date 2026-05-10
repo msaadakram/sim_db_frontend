@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import { HomeContent } from '@/components/HomeContent';
 import { getHomepageBlogPosts } from '@/lib/blog';
-import { getSiteUrl } from '@/lib/site-url';
+import { getCanonicalUrl } from '@/lib/site-url';
 
-const SITE_URL = getSiteUrl();
+const CANONICAL_URL = getCanonicalUrl();
 
 export const revalidate = 60;
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   description:
     'Learn official PTA methods to verify your own SIMs, understand the 668 guide, and follow legal telecom and fraud-reporting steps in Pakistan.',
   alternates: {
-    canonical: SITE_URL,
+    canonical: CANONICAL_URL,
   },
 };
 

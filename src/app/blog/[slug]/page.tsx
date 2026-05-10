@@ -7,7 +7,7 @@ import { BlogPostDetail } from '@/components/BlogPostDetail';
 import { BlogSection } from '@/components/BlogSection';
 import { getBlogPostBySlug, getRelatedBlogPosts } from '@/lib/blog';
 import { notFound } from 'next/navigation';
-import { getSiteUrl } from '@/lib/site-url';
+import { getSiteUrl, getCanonicalUrl } from '@/lib/site-url';
 import {
     buildBlogSeoDescription,
     buildBlogSeoTitle,
@@ -19,6 +19,7 @@ import { SEO_SITE_NAME, getSeoIdentity } from '@/lib/next-seo';
 export const revalidate = 60;
 
 const SITE_URL = getSiteUrl();
+const CANONICAL_URL = getCanonicalUrl();
 const SEO_IDENTITY = getSeoIdentity();
 
 const Footer = lazy(() => import('@/components/Footer').then(m => ({ default: m.Footer })));
@@ -57,7 +58,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
             category: post.category,
         });
     const imageUrl = post.image || '';
-    const canonicalUrl = `${SITE_URL}/blog/${slug}`;
+    const canonicalUrl = `${CANONICAL_URL}/blog/${slug}`;
     const keywordPool = post.seoKeywords?.length
         ? post.seoKeywords
         : getRelevantCsvKeywords(`${post.title} ${post.excerpt} ${post.category} ${slug}`, 16);

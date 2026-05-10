@@ -1,3 +1,4 @@
+const PRODUCTION_CANONICAL = 'https://pak.simownerdetail.app';
 const DEFAULT_LOCAL_SITE_URL = 'http://localhost:3000';
 
 function normalizeUrl(value: string): string {
@@ -33,4 +34,20 @@ export function getSiteUrl(): string {
   }
 
   return DEFAULT_LOCAL_SITE_URL;
+}
+
+export function getCanonicalUrl(): string {
+  const envCanonical = normalizeUrl(process.env.NEXT_PUBLIC_CANONICAL_URL ?? '');
+  if (envCanonical) {
+    return envCanonical;
+  }
+
+  const vercelProductionUrl = normalizeUrl(
+    process.env.VERCEL_PROJECT_PRODUCTION_URL ?? ''
+  );
+  if (vercelProductionUrl) {
+    return vercelProductionUrl;
+  }
+
+  return PRODUCTION_CANONICAL;
 }

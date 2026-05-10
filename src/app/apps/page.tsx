@@ -4,11 +4,12 @@ import { Header } from '@/components/Header';
 import { GlobalSearchCard } from '@/components/GlobalSearchCard';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { AppPage as AppPageContent } from '@/components/AppPage';
-import { getSiteUrl } from '@/lib/site-url';
+import { getSiteUrl, getCanonicalUrl } from '@/lib/site-url';
 import { getPageKeywordSet } from '@/lib/seo-keywords';
 import { SEO_SITE_NAME } from '@/lib/next-seo';
 
 const SITE_URL = getSiteUrl();
+const CANONICAL_URL = getCanonicalUrl();
 const APPS_FAQ_JSON_LD = {
     '@context': 'https://schema.org',
     '@type': 'FAQPage',
@@ -45,12 +46,12 @@ export const metadata: Metadata = {
     description: 'Download SIM check apps for Pakistan to verify number and CNIC-linked records, track risk signals, and run secure lookup tasks from your mobile.',
     keywords: getPageKeywordSet('apps', 12),
     alternates: {
-        canonical: `${SITE_URL}/apps`,
+        canonical: `${CANONICAL_URL}/apps`,
     },
     openGraph: {
         title: 'SIM Check Apps for Pakistan | CNIC & Number Tools Online',
         description: 'Explore SIM verification apps for Pakistan focused on CNIC-linked checks, secure number lookup workflows, and identity risk awareness.',
-        url: `${SITE_URL}/apps`,
+        url: `${CANONICAL_URL}/apps`,
         siteName: SEO_SITE_NAME,
         type: 'website',
     },

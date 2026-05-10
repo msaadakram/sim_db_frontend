@@ -3,12 +3,13 @@ import type { Metadata } from 'next';
 import { Header } from '@/components/Header';
 import { GlobalSearchCard } from '@/components/GlobalSearchCard';
 import { ScrollToTop } from '@/components/ScrollToTop';
-import { getSiteUrl } from '@/lib/site-url';
+import { getSiteUrl, getCanonicalUrl } from '@/lib/site-url';
 import { SEO_SITE_NAME } from '@/lib/next-seo';
 import { BreadcrumbJsonLd } from 'next-seo';
 
 const SITE_URL = getSiteUrl();
-const CONTACT_URL = `${SITE_URL}/contact`;
+const CANONICAL_URL = getCanonicalUrl();
+const CONTACT_URL = `${CANONICAL_URL}/contact`;
 
 const CONTACT_DESCRIPTION =
   'Contact SIM OWNER DETAIL support for help with CNIC checks, SIM number verification workflows, technical issues, and partnership inquiries in Pakistan.';

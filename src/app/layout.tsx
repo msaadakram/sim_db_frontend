@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { getSiteUrl } from '@/lib/site-url';
+import { getSiteUrl, getCanonicalUrl } from '@/lib/site-url';
 
 const SITE_URL = getSiteUrl();
+const CANONICAL_URL = getCanonicalUrl();
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
   description:
     'Learn official PTA methods, the 668 SIM verification guide, SIM registration laws, fraud reporting steps, and legal telecom education for Pakistan.',
   alternates: {
-    canonical: SITE_URL,
+    canonical: CANONICAL_URL,
   },
   openGraph: {
     type: 'website',

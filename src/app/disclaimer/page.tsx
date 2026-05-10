@@ -4,10 +4,11 @@ import { Header } from '@/components/Header';
 import { GlobalSearchCard } from '@/components/GlobalSearchCard';
 import { ScrollToTop } from '@/components/ScrollToTop';
 import { DisclaimerPage as DisclaimerPageContent } from '@/components/DisclaimerPage';
-import { getSiteUrl } from '@/lib/site-url';
+import { getSiteUrl, getCanonicalUrl } from '@/lib/site-url';
 import { SEO_SITE_NAME } from '@/lib/next-seo';
 
 const SITE_URL = getSiteUrl();
+const CANONICAL_URL = getCanonicalUrl();
 
 export const metadata: Metadata = {
     title: 'SIM OWNER DETAIL Disclaimer | Legal, Privacy and Data Use',
@@ -19,12 +20,12 @@ export const metadata: Metadata = {
         'acceptable use sim lookup',
     ],
     alternates: {
-        canonical: `${SITE_URL}/disclaimer`,
+        canonical: `${CANONICAL_URL}/disclaimer`,
     },
     openGraph: {
         title: 'SIM OWNER DETAIL Disclaimer | Legal, Privacy and Data Use',
         description: 'Read legal and privacy guidance for SIM and CNIC verification content, data handling rules, and responsible user obligations in Pakistan.',
-        url: `${SITE_URL}/disclaimer`,
+        url: `${CANONICAL_URL}/disclaimer`,
         siteName: SEO_SITE_NAME,
         type: 'website',
     },

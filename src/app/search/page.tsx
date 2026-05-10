@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import { getSiteUrl } from '@/lib/site-url';
+import { getCanonicalUrl } from '@/lib/site-url';
 import SearchPageClient from './SearchPageClient';
 
-const SITE_URL = getSiteUrl();
+const CANONICAL_URL = getCanonicalUrl();
 
 export const metadata: Metadata = {
     title: 'Search SIM Number Details | Private Lookup Results',
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
         'private sim lookup results',
     ],
     alternates: {
-        canonical: `${SITE_URL}/search`,
+        canonical: `${CANONICAL_URL}/search`,
     },
     robots: {
         index: false,
