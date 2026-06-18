@@ -16,6 +16,9 @@ export const metadata: Metadata = {
   alternates: {
     canonical: CANONICAL_URL,
   },
+  verification: {
+    google: 'OKsQOE0_msEJg2uxDRX_-2z9ec2YQCZxhc4XQwDz5kQ',
+  },
   openGraph: {
     type: 'website',
     siteName: 'PTA SIM Guide',
